@@ -1,0 +1,50 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules for both root and subdirectories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build output for both root and subdirectories
+dist/
+client/dist/
+server/dist/
+dist-ssr/
+
+# Local environment files
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignore client specific stuff
+/client/.env
+/client/.DS_Store
+/client/npm-debug.log*
+/client/yarn-debug.log*
+/client/yarn-error.log*
+
+# Ignore server specific stuff
+/server/.env
+/server/.DS_Store
+/server/npm-debug.log*
+/server/yarn-debug.log*
+/server/yarn-error.log*
+/server/*.env*
+
+*temp*
