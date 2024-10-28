@@ -27,9 +27,9 @@ const Footer = () => (
           <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
           <address className="text-gray-400 not-italic">
             <p>123 Gourmet Street</p>
-            <p>Foodie City, FC 12345</p>
-            <p className="mt-2">Phone: (123) 456-7890</p>
-            <p>Email: info@gourmet.com</p>
+            <p>Pune City, MH 411057</p>
+            <p className="mt-2">Phone: (+91) 90223 28048</p>
+            <p>Email: contanct@techamica.com</p>
           </address>
         </div>
         <div>
