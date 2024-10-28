@@ -1,19 +1,18 @@
-import "./App.css";
+// src/App.js
 
-import { useEffect, useState } from "react";
-import MenuSection from "./components/MenuSection";
+import { useDataManager } from "./utils/dataManager";
 import Header from "./components/Header";
+import MenuSection from "./components/MenuSection";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
-
-import menuData from "./constant/data.js";
+import { useEffect, useState } from "react";
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const dataManager = useDataManager();
 
   useEffect(() => {
-    // Simulate loading
     setTimeout(() => {
       setIsLoading(false);
     }, 1500);
@@ -30,15 +29,17 @@ const App = () => {
   return (
     <div
       className="min-h-screen bg-orange-500"
-      style={{
-        backgroundColor: "hsl(196.8deg 33.78% 29.02%)",
-      }}
+      style={{ backgroundColor: "hsl(196.8deg 33.78% 29.02%)" }}
     >
-      <Header toggleSidebar={() => setIsSidebarOpen(true)} />
+      <Header
+        toggleSidebar={() => setIsSidebarOpen(true)}
+        searchQuery={dataManager.searchQuery}
+        setSearchQuery={dataManager.setSearchQuery}
+      />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
       <main className="pt-24 pb-12 flex justify-center items-center">
-        <MenuSection items={menuData} />
+        <MenuSection dataManager={dataManager} />
       </main>
 
       <Footer />

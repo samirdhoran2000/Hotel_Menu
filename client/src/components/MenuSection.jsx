@@ -1,9 +1,9 @@
-import { ChevronDown, Filter } from "lucide-react";
-import MenuItem from "./MenuItem";
-import { useState, useEffect } from "react";
-import seedrandom from "seedrandom";
+// src/components/MenuSection.js
 
-// Categories Data
+import { useState } from "react";
+import { ChevronDown, Filter, Grid, List } from "lucide-react";
+import MenuItem from "./MenuItem";
+
 const categories = [
   { id: "all", name: "All" },
   { id: "popular", name: "Popular" },
@@ -12,39 +12,22 @@ const categories = [
   { id: "new", name: "New Arrivals" },
 ];
 
-const MenuSection = ({ items }) => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortOption, setSortOption] = useState("featured");
+const MenuSection = ({ dataManager }) => {
   const [showFilters, setShowFilters] = useState(false);
-  const [shuffledItems, setShuffledItems] = useState(items);
 
-  const seededShuffle = (array, seed) => {
-    const rng = seedrandom(seed);
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(rng() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
+  const {
+    filteredItems,
+    selectedCategory,
+    setSelectedCategory,
+    sortOption,
+    setSortOption,
+    viewMode,
+    setViewMode,
+  } = dataManager;
+
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId);
   };
-
-  const sortItems = (array, option) => {
-    const sorted = [...array];
-    if (option === "price-asc") {
-      sorted.sort((a, b) => a.price - b.price);
-    } else if (option === "price-desc") {
-      sorted.sort((a, b) => b.price - a.price);
-    } else if (option === "rating") {
-      sorted.sort((a, b) => b.rating - a.rating); // Assume `rating` is in the item data
-    }
-    return sorted;
-  };
-
-  useEffect(() => {
-    const shuffled = seededShuffle(items, selectedCategory);
-    const sorted = sortItems(shuffled, sortOption);
-    setShuffledItems(sorted);
-  }, [selectedCategory, sortOption]);
 
   return (
     <section
@@ -69,7 +52,7 @@ const MenuSection = ({ items }) => {
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
+              onClick={() => handleCategoryChange(category.id)}
               className={`px-6 py-2 rounded-full transition-all duration-300 ${
                 selectedCategory === category.id
                   ? "bg-black text-white"
@@ -81,16 +64,8 @@ const MenuSection = ({ items }) => {
           ))}
         </div>
 
-        {/* Filters and Sort */}
+        {/* Filters, Sort, and View Toggle */}
         <div className="flex justify-between items-center w-full mb-6">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            <Filter className="w-5 h-5" />
-            <span>Filters</span>
-          </button>
-
           <div className="relative inline-flex">
             <select
               value={sortOption}
@@ -104,18 +79,44 @@ const MenuSection = ({ items }) => {
             </select>
             <ChevronDown className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
           </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-lg ${
+                  viewMode === "grid"
+                    ? "bg-gray-200"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded-lg ${
+                  viewMode === "list"
+                    ? "bg-gray-200"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Menu Items */}
-      <div className="flex flex-wrap w-full gap-6">
-        {shuffledItems.map((item) => (
-          <div
-            key={item.id}
-            className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]"
-          >
-            <MenuItem item={item} />
-          </div>
+      <div
+        className={
+          viewMode === "grid"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            : "flex flex-col gap-6 w-full"
+        }
+      >
+        {filteredItems.map((item) => (
+          <MenuItem key={item.id} item={item} viewMode={viewMode} />
         ))}
       </div>
     </section>

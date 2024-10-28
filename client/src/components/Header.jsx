@@ -1,10 +1,9 @@
 import { Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const Header = ({ toggleSidebar }) => {
+const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
