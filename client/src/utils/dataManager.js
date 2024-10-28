@@ -33,7 +33,8 @@ export const useDataManager = () => {
       result = result.filter(
         (item) =>
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+              item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              item.ingredients.includes(searchQuery)
       );
     }
 

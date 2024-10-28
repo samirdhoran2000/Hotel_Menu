@@ -1,8 +1,8 @@
-// src/components/MenuSection.js
-
-import { useState } from "react";
-import { ChevronDown, Filter, Grid, List } from "lucide-react";
-import MenuItem from "./MenuItem";
+// MenuSection.js
+import React from "react";
+import { ChevronDown, Grid, List } from "lucide-react";
+import ListViewItem from "./ListViewItem";
+import GridViewItem from "./GridViewItem";
 
 const categories = [
   { id: "all", name: "All" },
@@ -13,8 +13,6 @@ const categories = [
 ];
 
 const MenuSection = ({ dataManager }) => {
-  const [showFilters, setShowFilters] = useState(false);
-
   const {
     filteredItems,
     selectedCategory,
@@ -115,9 +113,13 @@ const MenuSection = ({ dataManager }) => {
             : "flex flex-col gap-6 w-full"
         }
       >
-        {filteredItems.map((item) => (
-          <MenuItem key={item.id} item={item} viewMode={viewMode} />
-        ))}
+        {filteredItems.map((item) =>
+          viewMode === "grid" ? (
+            <GridViewItem key={item.id} item={item} />
+          ) : (
+            <ListViewItem key={item.id} item={item} />
+          )
+        )}
       </div>
     </section>
   );
