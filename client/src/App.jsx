@@ -1,75 +1,12 @@
-import './App.css'
+import "./App.css";
 
-import React, { useEffect, useState } from "react";
-import { Menu, ShoppingCart, X } from "lucide-react";
-import MenuSection from './components/MenuSection';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import Footer from './components/Footer';
+import { useEffect, useState } from "react";
+import MenuSection from "./components/MenuSection";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import Footer from "./components/Footer";
 
-const menuData = [
-  {
-    id: 1,
-    name: "MAHN COLL OVEN",
-    price: 550,
-    originalPrice: 1200,
-    sgm: "SGM 200",
-    images: ["./dish_A.jpeg", "./dish_B.jpeg"],
-    description:
-      "Doublesworn Grethellow Heo Eenex Deotent, Deotent fexis oeotre setuza ot dein ottent exues hoxtelt jhok emkoer.",
-  },
-  {
-    id: 2,
-    name: "MOOUR THIENIS",
-    price: 9330,
-    originalPrice: 1200,
-    sgm: "SGI 200",
-    images: ["./dish_A.jpeg", "./dish_B.jpeg"],
-    description:
-      "Deotly seoty Satethellow Htew Eenoos, Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
-  },
-  {
-    id: 3,
-    name: "MAIN COUTCEOS",
-    price: 450,
-    originalPrice: 1200,
-    sgm: "SGM 200",
-    images: ["./dish_A.jpeg", "./dish_B.jpeg"],
-    description:
-      "Doublesworn Satethellow Hteo Eenex Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
-  },
-  {
-    id: 4,
-    name: "PECCMN CHER CHIDRER",
-    price: 700,
-    originalPrice: 1200,
-    sgm: "CGM 200",
-    images: ["./dish_A.jpeg", "./dish_B.jpeg"],
-    description:
-      "Deotly seoty Satethellow Htew Eenoos Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
-  },
-  {
-    id: 5,
-    name: "REMTANIGE OUI DUIEVER",
-    price: 450,
-    originalPrice: 1200,
-    sgm: "SSM 200",
-    images: ["./dish_A.jpeg", "./dish_B.jpeg"],
-    description:
-      "Doublesworn Satethellow Htew Eenoos Deotent, deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
-  },
-  {
-    id: 6,
-    name: "MECRENCINITS CANCTIDUN",
-    price: 280,
-    originalPrice: 1200,
-    sgm: "SGM 200",
-    images: ["./dish_A.jpeg", "./dish_B.jpeg"],
-    description:
-      "Doublesworn Satethellow Hteo Eenex Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
-  },
-];
-
+import menuData from "./constant/data.js";
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -92,7 +29,7 @@ const App = () => {
 
   return (
     <div
-      className="min-h-screen bg-gray-50"
+      className="min-h-screen bg-orange-500"
       style={{
         backgroundColor: "hsl(196.8deg 33.78% 29.02%)",
       }}

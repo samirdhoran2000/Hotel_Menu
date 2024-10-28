@@ -1,37 +1,69 @@
 import { ChevronDown, Filter } from "lucide-react";
 import MenuItem from "./MenuItem";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import seedrandom from "seedrandom";
 
 // Categories Data
 const categories = [
-  { id: 'all', name: 'All' },
-  { id: 'popular', name: 'Popular' },
-  { id: 'trending', name: 'Trending' },
-  { id: 'featured', name: 'Featured' },
-  { id: 'new', name: 'New Arrivals' },
+  { id: "all", name: "All" },
+  { id: "popular", name: "Popular" },
+  { id: "trending", name: "Trending" },
+  { id: "featured", name: "Featured" },
+  { id: "new", name: "New Arrivals" },
 ];
+
 const MenuSection = ({ items }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOption, setSortOption] = useState("featured");
   const [showFilters, setShowFilters] = useState(false);
+  const [shuffledItems, setShuffledItems] = useState(items);
+
+  const seededShuffle = (array, seed) => {
+    const rng = seedrandom(seed);
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const sortItems = (array, option) => {
+    const sorted = [...array];
+    if (option === "price-asc") {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (option === "price-desc") {
+      sorted.sort((a, b) => b.price - a.price);
+    } else if (option === "rating") {
+      sorted.sort((a, b) => b.rating - a.rating); // Assume `rating` is in the item data
+    }
+    return sorted;
+  };
+
+  useEffect(() => {
+    const shuffled = seededShuffle(items, selectedCategory);
+    const sorted = sortItems(shuffled, sortOption);
+    setShuffledItems(sorted);
+  }, [selectedCategory, sortOption]);
 
   return (
     <section
-      className="w-full max-w-7xl px-4 "
+      className="flex flex-col items-center w-full max-w-7xl px-4"
       id="menu"
-      
     >
-      <div className="mb-8">
+      {/* Header Section */}
+      <div className="flex flex-col items-center w-full mb-8">
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
           Our Special Menu
         </h2>
-        <p className="text-gray-600 text-center max-w-2xl mx-auto">
+        <p className="text-gray-800 text-center max-w-2xl">
           Discover our carefully curated selection of dishes, made with love and
           the finest ingredients
         </p>
       </div>
 
-      <div className="mb-8">
+      {/* Navigation and Controls */}
+      <div className="flex flex-col w-full mb-8">
         {/* Categories */}
         <div className="flex flex-wrap justify-center gap-4 mb-6">
           {categories.map((category) => (
@@ -50,7 +82,7 @@ const MenuSection = ({ items }) => {
         </div>
 
         {/* Filters and Sort */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center w-full mb-6">
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center space-x-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
@@ -59,7 +91,7 @@ const MenuSection = ({ items }) => {
             <span>Filters</span>
           </button>
 
-          <div className="relative">
+          <div className="relative inline-flex">
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
@@ -75,10 +107,15 @@ const MenuSection = ({ items }) => {
         </div>
       </div>
 
-      {/* Menu Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {items.map((item) => (
-          <MenuItem key={item.id} item={item} />
+      {/* Menu Items */}
+      <div className="flex flex-wrap w-full gap-6">
+        {shuffledItems.map((item) => (
+          <div
+            key={item.id}
+            className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]"
+          >
+            <MenuItem item={item} />
+          </div>
         ))}
       </div>
     </section>

@@ -1,5 +1,5 @@
 const Footer = () => (
-  <footer className="bg-gray-900 text-white py-16">
+  <footer className="bg-gray-900 text-white py-16" id="footer">
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <div>
@@ -10,22 +10,16 @@ const Footer = () => (
           </p>
         </div>
         <div>
-          <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+          <h4 className="text-2xl font-bold mb-4">Quick Links</h4>
           <nav className="space-y-2">
             <a href="#menu" className="block text-gray-400 hover:text-white">
               Menu
             </a>
-            <a href="#about" className="block text-gray-400 hover:text-white">
+            <a href="#footer" className="block text-gray-400 hover:text-white">
               About Us
             </a>
-            <a href="#contact" className="block text-gray-400 hover:text-white">
+            <a href="#footer" className="block text-gray-400 hover:text-white">
               Contact
-            </a>
-            <a
-              href="#reservations"
-              className="block text-gray-400 hover:text-white"
-            >
-              Reservations
             </a>
           </nav>
         </div>

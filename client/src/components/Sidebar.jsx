@@ -5,7 +5,7 @@ const Sidebar = ({ isOpen, onClose }) => (
     className={`fixed inset-0 z-50 lg:hidden ${isOpen ? "block" : "hidden"}`}
   >
     <div
-      className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+      className="absolute inset-0 bg-black bg-opacity-20 transition-opacity"
       onClick={onClose}
     />
     <div
@@ -24,10 +24,10 @@ const Sidebar = ({ isOpen, onClose }) => (
           <a href="#menu" className="block text-lg hover:text-gray-600 py-2">
             Menu
           </a>
-          <a href="#about" className="block text-lg hover:text-gray-600 py-2">
+          <a href="#footer" className="block text-lg hover:text-gray-600 py-2">
             About
           </a>
-          <a href="#contact" className="block text-lg hover:text-gray-600 py-2">
+          <a href="#footer" className="block text-lg hover:text-gray-600 py-2">
             Contact
           </a>
         </nav>
