@@ -218,9 +218,6 @@ const MenuItem = ({ item }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [itemPrice, setItemPrice] = useState(0);
-  const [originalPrice, setOriginalPrice] = useState(0);
-  const [rating, setRating] = useState(0);
 
   // Generate and store random values on component mount
   useEffect(() => {
