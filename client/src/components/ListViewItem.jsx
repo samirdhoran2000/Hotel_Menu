@@ -41,7 +41,7 @@ const ListViewItem = ({ item }) => {
           >
             <Heart
               className={`w-4 h-4 ${
-                isLiked ? "fill-red-500 text-red-500" : "text-gray-400"
+                isLiked ? "fill-orange-500 text-orange-500" : "text-gray-400"
               }`}
             />
           </button>

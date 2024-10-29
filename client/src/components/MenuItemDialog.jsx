@@ -56,14 +56,6 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
     { id: "full", name: "Full", price: item.price },
   ];
 
-  const ingredients = [
-    "Fresh Tomatoes",
-    "Mozzarella",
-    "Basil",
-    "Olive Oil",
-    "Italian Herbs",
-    "Sea Salt",
-  ];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % item.images.length);
@@ -84,7 +76,13 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
             onClick={onClose}
             className="md:hidden absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-all"
           >
-            <X className="w-8 h-8 " />
+            <X
+              className="w-8 h-8 text-white p-1 bg-black"
+              style={{
+                borderRadius: "50%",
+                opacity: 0.5,
+              }}
+            />
           </button>
           <img
             src={item.images[currentImageIndex]}
@@ -128,7 +126,7 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 p-2 hover:bg-gray-100 bg-gray-400 rounded-full transition-all"
+            className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-all"
           >
             <X className="w-8 h-8 " />
           </button>
@@ -148,14 +146,14 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 pr-10">
                 <button
                   onClick={() => setIsLiked(!isLiked)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-all"
                 >
                   <Heart
                     className={`w-6 h-6 ${
-                      isLiked ? "fill-red-500 text-red-500" : "text-gray-400"
+                      isLiked ? "fill-orange-500 text-orange-500" : "text-gray-400"
                     }`}
                   />
                 </button>

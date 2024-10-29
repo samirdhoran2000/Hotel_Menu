@@ -49,7 +49,7 @@ const GridViewItem = ({ item }) => {
           >
             <Heart
               className={`w-5 h-5 ${
-                isLiked ? "fill-red-500 text-red-500" : "text-gray-600"
+                isLiked ? "fill-orange-500 text-orange-500" : "text-gray-600"
               }`}
             />
           </button>
