@@ -28,8 +28,8 @@ const App = () => {
 
   return (
     <div
-      className="min-h-screen bg-orange-500"
-      style={{ backgroundColor: "hsl(196.8deg 33.78% 29.02%)" }}
+      className="min-h-screen bg-orange-100"
+      // style={{ backgroundColor: "hsl(196.8deg 33.78% 29.02%)" }}
     >
       <Header
         toggleSidebar={() => setIsSidebarOpen(true)}

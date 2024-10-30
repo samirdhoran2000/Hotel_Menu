@@ -15,7 +15,7 @@ export const useDataManager = () => {
   const [viewMode, setViewMode] = useState("grid");
 
   // Use a seeded random number generator
-  const rng = seedrandom("your-seed-here");
+  const rng = seedrandom(0);
 
   // Assign random categories to items (only once)
   const [itemsWithCategories] = useState(() =>

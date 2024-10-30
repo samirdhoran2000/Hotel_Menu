@@ -86,6 +86,7 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
           </button>
           <img
             src={item.images[currentImageIndex]}
+            loading="lazy"
             alt={item.name}
             className="w-full h-full object-cover"
           />
@@ -153,7 +154,9 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
                 >
                   <Heart
                     className={`w-6 h-6 ${
-                      isLiked ? "fill-orange-500 text-orange-500" : "text-gray-400"
+                      isLiked
+                        ? "fill-orange-500 text-orange-500"
+                        : "text-gray-400"
                     }`}
                   />
                 </button>

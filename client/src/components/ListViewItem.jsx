@@ -32,6 +32,7 @@ const ListViewItem = ({ item }) => {
         <div className="relative w-32 h-32 flex-shrink-0">
           <img
             src={item.images[0]}
+            loading="lazy"
             alt={item.name}
             className="w-full h-full object-cover rounded-lg"
           />

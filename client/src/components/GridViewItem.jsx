@@ -37,6 +37,7 @@ const GridViewItem = ({ item }) => {
         <div className="relative aspect-square">
           <img
             src={item.images[0]}
+            loading="lazy"
             alt={item.name}
             className="w-full h-full object-cover transition-transform duration-300"
             style={{
@@ -57,14 +58,16 @@ const GridViewItem = ({ item }) => {
 
         <div className="p-4">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-gray-800 line-clamp-2">
               {item?.name?.length > 17
                 ? `${item?.name?.slice(0, 17)}...`
                 : item?.name}
             </h3>
-            <div className="flex items-center space-x-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-medium">{item.rating}</span>
+            <div className="flex items-center space-x-1 bg-green-100 px-2 py-1 rounded-full">
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+              <span className="text-sm font-medium text-green-800">
+                {item.rating}
+              </span>
             </div>
           </div>
 
