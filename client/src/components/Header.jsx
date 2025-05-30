@@ -27,10 +27,13 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={` fixed w-full z-50 transition-all duration-300 ${
         isScrolled ? "backdrop-blur-md shadow-md" : "backdrop-blur-md"
       }`}
     >
+      <div className="max-w-6xl w-full mx-auto">
+
+      
       {/* Main Header */}
       <div className="container mx-auto px-4">
         <div
@@ -127,7 +130,7 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
             </form>
           </div>
         </div>
-      )}
+      )}</div>
     </header>
   );
 };

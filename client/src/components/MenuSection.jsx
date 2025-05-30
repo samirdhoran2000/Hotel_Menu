@@ -84,8 +84,8 @@ const MenuSection = ({ dataManager }) => {
                 onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-lg ${
                   viewMode === "grid"
-                    ? "bg-gray-200"
-                    : "bg-gray-100 hover:bg-gray-200"
+                    ? "bg-green-200"
+                    : "bg-gray-100 hover:bg-green-200"
                 }`}
               >
                 <Grid className="w-5 h-5" />
@@ -94,8 +94,8 @@ const MenuSection = ({ dataManager }) => {
                 onClick={() => setViewMode("list")}
                 className={`p-2 rounded-lg ${
                   viewMode === "list"
-                    ? "bg-gray-200"
-                    : "bg-gray-100 hover:bg-gray-200"
+                    ? "bg-green-200"
+                    : "bg-gray-100 hover:bg-green-200"
                 }`}
               >
                 <List className="w-5 h-5" />

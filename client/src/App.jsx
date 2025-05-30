@@ -28,9 +28,13 @@ const App = () => {
 
   return (
     <div
-      className="min-h-screen bg-orange-100"
+      className="min-h-screen bg-orange-100 relative"
       // style={{ backgroundColor: "hsl(196.8deg 33.78% 29.02%)" }}
     >
+      {/* Decorative background blobs */}
+      <div className="absolute top-0 left-0 w-96 h-9w-96 bg-orange-500 rounded-full opacity-10 filter blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-800 rounded-full opacity-15 filter blur-3xl" />
+      <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-orange-700 rounded-full opacity-15 filter blur-3xl" />
       <Header
         toggleSidebar={() => setIsSidebarOpen(true)}
         searchQuery={dataManager.searchQuery}
