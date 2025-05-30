@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Alice",
+        "email": "alice@example.com",
+        "password": "Passw0rd!",
+        "phoneNo": "1234567890",
+        "role": "hotel_admin"
+    },
+    {
+        "name": "Bob",
+        "email": "bob@example.com",
+        "password": "Passw0rd!",
+        "phoneNo": "0987654321",
+        "role": "hotel_kitchen"
+    },
+    {
+        "name": "Cara",
+        "email": "cara@example.com",
+        "password": "Passw0rd!",
+        "phoneNo": "5555555555",
+        "role": "hotel_kitchen"
+    }
+]
