@@ -12,11 +12,12 @@ import { authenticateHotelToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.use(authenticateHotelToken);
-
 // Public login route
 router.post("/login", loginUser);
+
 // CRUD routes for users (protected via auth middleware)
+router.use(authenticateHotelToken);
+
 router.post("/", createUser);
 router.get("/", getUsers);
 router.get("/:id", getUserById);

@@ -13,7 +13,7 @@ const MenuItem = sequelize.define(
       },
       hotelId: {
         type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "hotels",
           key: "id",

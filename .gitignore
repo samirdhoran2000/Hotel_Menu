@@ -48,3 +48,4 @@ dist-ssr/
 /server/*.env*
 
 *temp*
+issues.txt

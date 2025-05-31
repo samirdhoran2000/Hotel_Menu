@@ -28,23 +28,23 @@ const Hotel = sequelize.define(
     website: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      validate: {
-        isUrl: true,
-      },
+      // validate: {
+      //   isUrl: true,
+      // },
     },
     phoneNo: {
       type: DataTypes.STRING(20),
       allowNull: true,
-      validate: {
-        is: /^[0-9\-\+\s\(\)]+$/i,
-      },
+      // validate: {
+      //   is: /^[0-9\-\+\s\(\)]+$/i,
+      // },
     },
     email: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      validate: {
-        isEmail: true,
-      },
+      // validate: {
+      //   isEmail: true,
+      // },
     },
     dateOfEstablishment: {
       type: DataTypes.DATEONLY,

@@ -1,0 +1,102 @@
+[
+    {
+        "name": "Seaside Resort",
+        "address": "123 Ocean Drive, Miami, FL",
+        "description": "A luxury beachfront hotel with stunning ocean views.",
+        "website": "https://www.seasideresort.com",
+        "phoneNo": "8888646362",
+        "email": "info@seasideresort.com",
+        "dateOfEstablishment": "2005-06-15",
+        "password": "securepassword1"
+    },
+    {
+        "name": "Mountain View Lodge",
+        "address": "456 Summit Road, Aspen, CO",
+        "description": "Cozy lodge nestled in the Rockies, perfect for ski enthusiasts.",
+        "website": "https://www.mountainviewlodge.com",
+        "phoneNo": "8888646362",
+        "email": "contact@mountainviewlodge.com",
+        "dateOfEstablishment": "1998-11-01",
+        "password": "securepassword2"
+    },
+    {
+        "name": "Urban Oasis Hotel",
+        "address": "789 City Center Blvd, New York, NY",
+        "description": "Modern hotel in the heart of the city, close to all attractions.",
+        "website": "https://www.urbanoasishotel.com",
+        "phoneNo": "8888646362",
+        "email": "reservations@urbanoasishotel.com",
+        "dateOfEstablishment": "2010-03-20",
+        "password": "securepassword3"
+    },
+    {
+        "name": "Lakeside Retreat",
+        "address": "101 Lakefront Way, Lake Tahoe, CA",
+        "description": "Tranquil retreat offering stunning lake views and outdoor activities.",
+        "website": "https://www.lakesideretreat.com",
+        "phoneNo": "8888646362",
+        "email": "info@lakesideretreat.com",
+        "dateOfEstablishment": "2001-08-10",
+        "password": "securepassword4"
+    },
+    {
+        "name": "Desert Sands Inn",
+        "address": "222 Oasis Drive, Scottsdale, AZ",
+        "description": "Southwestern-style inn with a beautiful desert landscape.",
+        "website": "https://www.desertsandsinn.com",
+        "phoneNo": "8888646362",
+        "email": "stay@desertsandsinn.com",
+        "dateOfEstablishment": "1995-02-28",
+        "password": "securepassword5"
+    },
+    {
+        "name": "Historic Grand Hotel",
+        "address": "333 Heritage Lane, Boston, MA",
+        "description": "Elegant hotel with rich history and classic architecture.",
+        "website": "https://www.historicgrandhotel.com",
+        "phoneNo": "8888646362",
+        "email": "frontdesk@historicgrandhotel.com",
+        "dateOfEstablishment": "1920-09-01",
+        "password": "securepassword6"
+    },
+    {
+        "name": "Riverside Suites",
+        "address": "444 Riverwalk, San Antonio, TX",
+        "description": "Charming suites along the scenic riverwalk.",
+        "website": "https://www.riversidesuites.com",
+        "phoneNo": "8888646362",
+        "email": "info@riversidesuites.com",
+        "dateOfEstablishment": "2008-04-05",
+        "password": "securepassword7"
+    },
+    {
+        "name": "Vineyard Estate",
+        "address": "555 Wine Country Rd, Napa Valley, CA",
+        "description": "Luxury estate surrounded by vineyards, perfect for wine lovers.",
+        "website": "https://www.vineyardestate.com",
+        "phoneNo": "8888646362",
+        "email": "events@vineyardestate.com",
+        "dateOfEstablishment": "2012-10-25",
+        "password": "securepassword8"
+    },
+    {
+        "name": "Tropical Paradise Resort",
+        "address": "666 Palm Tree Lane, Honolulu, HI",
+        "description": "Exotic resort with lush gardens and beachfront access.",
+        "website": "https://www.tropicalparadiseresort.com",
+        "phoneNo": "8888646362",
+        "email": "aloha@tropicalparadiseresort.com",
+        "dateOfEstablishment": "1985-07-18",
+        "password": "securepassword9"
+    },
+    {
+        "name": "City View Hotel",
+        "address": "777 Skyscraper Ave, Chicago, IL",
+        "description": "Sleek, modern hotel with panoramic city views.",
+        "website": "https://www.cityviewhotel.com",
+        "phoneNo": "8888646362",
+        "email": "hello@cityviewhotel.com",
+        "dateOfEstablishment": "2015-01-01",
+        "password": "securepassword10"
+    }
+]
