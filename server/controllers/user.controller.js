@@ -20,16 +20,15 @@ export const createUser = async (req, res) => {
         message: "Name, email and password are required",
       });
     }
-      const { hotelId, ...rest } = req.hotel;
-      console.log("Hotel ID from request:", hotelId , 'rest:', rest);
-      
+    const { id } = req.hotel;
+
     const user = await User.create({
       name,
       email,
       password,
       phoneNo,
       role,
-      hotelId,
+      hotelId: id, // Use hotel ID from authenticated hotel
     });
     res.status(201).json({
       success: true,
@@ -71,8 +70,7 @@ export const getUsers = async (req, res) => {
       message: "Internal server error",
       error: err.message,
     });
-    }
-    
+  }
 };
 
 // Get single user by ID
