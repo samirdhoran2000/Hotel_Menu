@@ -4,6 +4,7 @@ import cors from "cors";
 import sequelize from "./models/index.js";
 import hotelRoutes from "./routes/hotel.route.js";
 import userRoutes from "./routes/user.route.js";
+import menuRoutes from "./routes/menuItem.route.js";
 
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.json());
 
 app.use("/api/hotel", hotelRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/menu", menuRoutes);
 
 // Sync database
 sequelize

@@ -1,70 +1,113 @@
 // src/utils/dataManager.js
 
 import { useState, useEffect } from "react";
-import menuData from "../constant/data";
-import seedrandom from "seedrandom"; // You might need to install this package: npm install seedrandom
 
-const categories = ["all", "popular", "trending", "featured", "new"];
 
 export const useDataManager = () => {
-  const [items] = useState(menuData);
-  const [filteredItems, setFilteredItems] = useState(menuData);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortOption, setSortOption] = useState("featured");
-  const [viewMode, setViewMode] = useState("grid");
+  // --- raw data from API ---
+  const [items, setItems] = useState([]); // the full list of fetched menuItems
+  const [categories, setCategories] = useState([]); // ["all", "beverage", "main_course", …]
 
-  // Use a seeded random number generator
-  const rng = seedrandom(0);
+  // --- UI / filter state ---
+  const [searchQuery, setSearchQuery] = useState(""); // text search
+  const [selectedCategory, setSelectedCategory] = useState("all"); // single‐category filter
+  const [sortOption, setSortOption] = useState("featured"); // e.g. "featured" | "price-asc" | "price-desc" | ...
+  const [viewMode, setViewMode] = useState("grid"); // e.g. "grid" or "list"
 
-  // Assign random categories to items (only once)
-  const [itemsWithCategories] = useState(() =>
-    items.map((item) => ({
-      ...item,
-      category: categories[Math.floor(rng() * (categories.length - 1)) + 1], // Exclude 'all'
-    }))
-  );
+  // --- filtered + sorted items exposed to UI ---
+  const [filteredItems, setFilteredItems] = useState([]);
 
+  // ──────────── 1. FETCH DATA + BUILD UNIQUE CATEGORY LIST ────────────
   useEffect(() => {
-    let result = [...itemsWithCategories];
+    async function fetchData() {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/menu`);
+        const json = await res.json();
 
-    // Apply search filter
-    if (searchQuery) {
-      result = result.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              item.ingredients.includes(searchQuery)
-      );
+        // Assume API response shape: { success: true, data: { menuItems: [ … ] } }
+        const fetchedItems = json?.data?.menuItems || [];
+        setItems(fetchedItems);
+
+        // Build a Set of distinct categories
+        const distinctCats = new Set(
+          fetchedItems.map((it) => it.category || "")
+        );
+        // Turn into an array, filter out any empty strings or null; then prepend "all"
+        const uniqueCatsArray = [
+          "all",
+          ...Array.from(distinctCats).filter((c) => c !== ""),
+        ];
+        setCategories(uniqueCatsArray);
+      } catch (err) {
+        console.error("Error fetching menu items:", err);
+      }
+    }
+    fetchData();
+  }, []); // run once on mount
+
+  // ──────────── 2. COMPUTE FILTERED + SORTED RESULTS ────────────
+  useEffect(() => {
+    // Start from the full items array
+    let result = Array.isArray(items) ? [...items] : [];
+
+    // 2a) SEARCH FILTER
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((item) => {
+        const nameMatch = item.name?.toLowerCase().includes(q);
+        const descMatch = item.description?.toLowerCase().includes(q);
+        const ingrMatch =
+          Array.isArray(item.ingredients) &&
+          item.ingredients.some((ing) => ing.toLowerCase().includes(q));
+        return nameMatch || descMatch || ingrMatch;
+      });
     }
 
-    // Apply category filter
-    if (selectedCategory !== "all") {
+    // 2b) CATEGORY FILTER
+    if (selectedCategory && selectedCategory !== "all") {
       result = result.filter((item) => item.category === selectedCategory);
     }
 
-    // Apply sorting
-    if (sortOption === "price-asc") {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortOption === "price-desc") {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortOption === "rating") {
-      result.sort((a, b) => b.rating - a.rating);
+    // 2c) SORTING
+    switch (sortOption) {
+      case "price-asc":
+        result.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        break;
+      case "price-desc":
+        result.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        break;
+      case "rating":
+        // If your API sends a `rating` field, otherwise skip
+        result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      // "featured" or default → leave as‐is
+      default:
+        break;
     }
-    // For "featured", we don't change the order
 
     setFilteredItems(result);
-  }, [itemsWithCategories, searchQuery, selectedCategory, sortOption]);
+  }, [items, searchQuery, selectedCategory, sortOption]);
 
+  // ──────────── 3. RETURN EVERYTHING YOU’LL NEED IN YOUR COMPONENT ────────────
   return {
-    items: itemsWithCategories,
+    // Raw data + category list
+    items,
+    categories, // ["all", "beverage", "main_course", …]
+
+    // Filtered & sorted data
     filteredItems,
+
+    // Filter/sort state + setters
     searchQuery,
     setSearchQuery,
+
     selectedCategory,
     setSelectedCategory,
+
     sortOption,
     setSortOption,
+
+    // View‐mode (grid/list)
     viewMode,
     setViewMode,
   };

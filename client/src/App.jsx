@@ -1,53 +1,37 @@
 // src/App.js
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MenuPage from "./pages/MenuPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import HotelDashboard from "./pages/HotelDashboard";
+import HomePage from "./pages/HomePage";
+import { DashboardHome, Analytics,Orders,Reports,Settings,Users } from "./components/DashboardComponents";
 
-import { useDataManager } from "./utils/dataManager";
-import Header from "./components/Header";
-import MenuSection from "./components/MenuSection";
-import Sidebar from "./components/Sidebar";
-import Footer from "./components/Footer";
-import { useEffect, useState } from "react";
 
 const App = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const dataManager = useDataManager();
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-black"></div>
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="min-h-screen bg-orange-100 relative"
-      // style={{ backgroundColor: "hsl(196.8deg 33.78% 29.02%)" }}
-    >
-      {/* Decorative background blobs */}
-      <div className="absolute top-0 left-0 w-96 h-9w-96 bg-orange-500 rounded-full opacity-10 filter blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-800 rounded-full opacity-15 filter blur-3xl" />
-      <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-orange-700 rounded-full opacity-15 filter blur-3xl" />
-      <Header
-        toggleSidebar={() => setIsSidebarOpen(true)}
-        searchQuery={dataManager.searchQuery}
-        setSearchQuery={dataManager.setSearchQuery}
-      />
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/hotel/:id" element={<MenuPage />} />
+          <Route path="/hotel/login" element={<LoginPage />} />
+          <Route path="/hotel/registration" element={<RegisterPage />} />
 
-      <main className="pt-24 pb-12 flex justify-center items-center">
-        <MenuSection dataManager={dataManager} />
-      </main>
+          {/* Dashboard with nested routes */}
+          <Route path="/hotel/dashboard/*" element={<HotelDashboard />}>
+            <Route index element={<DashboardHome />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="users" element={<Users />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
 
-      <Footer />
-    </div>
+          {/* Add other routes here as needed */}
+        </Routes>
+      </Router>
+    </>
   );
 };
 

@@ -4,17 +4,10 @@ import { ChevronDown, Grid, List } from "lucide-react";
 import ListViewItem from "./ListViewItem";
 import GridViewItem from "./GridViewItem";
 
-const categories = [
-  { id: "all", name: "All" },
-  { id: "popular", name: "Popular" },
-  { id: "trending", name: "Trending" },
-  { id: "featured", name: "Featured" },
-  { id: "new", name: "New Arrivals" },
-];
-
 const MenuSection = ({ dataManager }) => {
   const {
     filteredItems,
+    categories,
     selectedCategory,
     setSelectedCategory,
     sortOption,
@@ -23,8 +16,8 @@ const MenuSection = ({ dataManager }) => {
     setViewMode,
   } = dataManager;
 
-  const handleCategoryChange = (categoryId) => {
-    setSelectedCategory(categoryId);
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
   };
 
   return (
@@ -49,15 +42,17 @@ const MenuSection = ({ dataManager }) => {
         <div className="flex flex-wrap justify-center gap-4 mb-6">
           {categories.map((category) => (
             <button
-              key={category.id}
-              onClick={() => handleCategoryChange(category.id)}
+              key={category}
+              onClick={() => handleCategoryChange(category)}
               className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                selectedCategory === category.id
+                selectedCategory === category
                   ? "bg-black text-white"
                   : "bg-gray-100 text-gray-800 hover:bg-gray-200"
               }`}
             >
-              {category.name}
+              {category === "all"
+                ? "All"
+                : category.replace("_", " ").toUpperCase()}
             </button>
           ))}
         </div>
@@ -113,7 +108,7 @@ const MenuSection = ({ dataManager }) => {
             : "flex flex-col gap-6 w-full"
         }
       >
-        {filteredItems.map((item) =>
+        {filteredItems?.map((item) =>
           viewMode === "grid" ? (
             <GridViewItem key={item.id} item={item} />
           ) : (

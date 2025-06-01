@@ -1,0 +1,202 @@
+[
+    {
+        "name": "Margherita Pizza",
+        "description": "Classic pizza topped with fresh mozzarella, tomato sauce, and basil.",
+        "price": 8.99,
+        "category": "main_course",
+        "isVegetarian": true,
+        "available": true,
+        "original_price": 10.99,
+        "images": [
+            "/images/margherita_A.jpg",
+            "/images/margherita_B.jpg"
+        ],
+        "ingredients": [
+            "Pizza Dough",
+            "Tomato Sauce",
+            "Mozzarella Cheese",
+            "Basil",
+            "Olive Oil"
+        ]
+    },
+    {
+        "name": "Caesar Salad",
+        "description": "Crisp romaine lettuce tossed with Caesar dressing, croutons, and Parmesan.",
+        "price": 6.50,
+        "category": "appetizer",
+        "isVegetarian": true,
+        "available": true,
+        "original_price": 7.50,
+        "images": [
+            "/images/caesar_A.jpg",
+            "/images/caesar_B.jpg"
+        ],
+        "ingredients": [
+            "Romaine Lettuce",
+            "Caesar Dressing",
+            "Croutons",
+            "Parmesan Cheese"
+        ]
+    },
+    {
+        "name": "Grilled Chicken Sandwich",
+        "description": "Juicy grilled chicken breast served on a toasted bun with lettuce, tomato, and mayo.",
+        "price": 9.25,
+        "category": "main_course",
+        "isVegetarian": false,
+        "available": true,
+        "original_price": 11.00,
+        "images": [
+            "/images/grilled_chicken_A.jpg",
+            "/images/grilled_chicken_B.jpg"
+        ],
+        "ingredients": [
+            "Grilled Chicken Breast",
+            "Brioche Bun",
+            "Lettuce",
+            "Tomato",
+            "Mayonnaise"
+        ]
+    },
+    {
+        "name": "Chocolate Lava Cake",
+        "description": "Warm chocolate cake with a gooey molten center, served with vanilla ice cream.",
+        "price": 5.75,
+        "category": "dessert",
+        "isVegetarian": true,
+        "available": true,
+        "original_price": 6.75,
+        "images": [
+            "/images/lava_cake_A.jpg",
+            "/images/lava_cake_B.jpg"
+        ],
+        "ingredients": [
+            "Dark Chocolate",
+            "Butter",
+            "Sugar",
+            "Eggs",
+            "Flour",
+            "Vanilla Ice Cream"
+        ]
+    },
+    {
+        "name": "Spicy Buffalo Wings",
+        "description": "Crispy chicken wings tossed in spicy buffalo sauce, served with blue cheese dip.",
+        "price": 7.99,
+        "category": "appetizer",
+        "isVegetarian": false,
+        "available": true,
+        "original_price": 9.00,
+        "images": [
+            "/images/buffalo_wings_A.jpg",
+            "/images/buffalo_wings_B.jpg"
+        ],
+        "ingredients": [
+            "Chicken Wings",
+            "Buffalo Sauce",
+            "Butter",
+            "Blue Cheese Dip",
+            "Celery Sticks"
+        ]
+    },
+    {
+        "name": "Tomato Basil Soup",
+        "description": "Creamy tomato soup garnished with fresh basil and a drizzle of olive oil.",
+        "price": 4.50,
+        "category": "appetizer",
+        "isVegetarian": true,
+        "available": true,
+        "original_price": 5.50,
+        "images": [
+            "/images/tomato_soup_A.jpg",
+            "/images/tomato_soup_B.jpg"
+        ],
+        "ingredients": [
+            "Tomatoes",
+            "Cream",
+            "Basil",
+            "Garlic",
+            "Olive Oil"
+        ]
+    },
+    {
+        "name": "Beef Burger",
+        "description": "Grilled beef patty with cheddar cheese, lettuce, tomato, pickles, and special sauce.",
+        "price": 10.00,
+        "category": "main_course",
+        "isVegetarian": false,
+        "available": true,
+        "original_price": 12.00,
+        "images": [
+            "/images/beef_burger_A.jpg",
+            "/images/beef_burger_B.jpg"
+        ],
+        "ingredients": [
+            "Beef Patty",
+            "Cheddar Cheese",
+            "Brioche Bun",
+            "Lettuce",
+            "Tomato",
+            "Pickles",
+            "Special Sauce"
+        ]
+    },
+    {
+        "name": "Penne Alfredo",
+        "description": "Penne pasta tossed in a rich Alfredo sauce with Parmesan and parsley.",
+        "price": 9.50,
+        "category": "main_course",
+        "isVegetarian": true,
+        "available": true,
+        "original_price": 11.00,
+        "images": [
+            "/images/penne_alfredo_A.jpg",
+            "/images/penne_alfredo_B.jpg"
+        ],
+        "ingredients": [
+            "Penne Pasta",
+            "Alfredo Sauce",
+            "Parmesan Cheese",
+            "Parsley"
+        ]
+    },
+    {
+        "name": "Strawberry Cheesecake",
+        "description": "Creamy cheesecake topped with fresh strawberry sauce.",
+        "price": 6.25,
+        "category": "dessert",
+        "isVegetarian": true,
+        "available": true,
+        "original_price": 7.25,
+        "images": [
+            "/images/cheesecake_A.jpg",
+            "/images/cheesecake_B.jpg"
+        ],
+        "ingredients": [
+            "Cream Cheese",
+            "Sugar",
+            "Eggs",
+            "Graham Cracker Crust",
+            "Strawberries"
+        ]
+    },
+    {
+        "name": "Iced Mocha",
+        "description": "Chilled espresso mixed with chocolate syrup and milk, served over ice.",
+        "price": 3.50,
+        "category": "beverage",
+        "isVegetarian": true,
+        "available": true,
+        "original_price": 4.25,
+        "images": [
+            "/images/iced_mocha_A.jpg",
+            "/images/iced_mocha_B.jpg"
+        ],
+        "ingredients": [
+            "Espresso",
+            "Chocolate Syrup",
+            "Milk",
+            "Ice"
+        ]
+    }
+]
