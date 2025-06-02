@@ -3,7 +3,7 @@ import {MenuItem} from "../models/associations.js";
 import { Op } from "sequelize";
 
 // Helper to standardize error response
-const handleSequelizeError = (err, res) => {
+export const handleSequelizeError = (err, res) => {
   if (err.name === "SequelizeValidationError") {
     return res.status(400).json({
       success: false,
@@ -20,61 +20,63 @@ const handleSequelizeError = (err, res) => {
     });
 };
 
-// Create a new menu item
-export const createMenuItem = async (req, res) => {
-  try {
-    const {
-      name,
-      description,
-      price,
-      category,
-      isVegetarian,
-      available,
-      original_price,
-      images,
-      ingredients,
-    } = req.body;
-      const { id: userId, hotelId } = req.user;
+// // Create a new menu item
+// export const createMenuItem = async (req, res) => {
+//   try {
+//     const {
+//       name,
+//       description,
+//       price,
+//       category,
+//       isVegetarian,
+//       available,
+//       original_price,
+//       // images,
+//       ingredients,
+//     } = req.body;
+//       const { id: userId, hotelId } = req.user;
       
-      console.log(" req bocy is ", req.body);
+//       console.log(" req bocy is ", req.body);
       
 
-    // Basic validation
-    if (!name || price == null || original_price == null) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Name, price, and original_price are required",
-        });
-    }
+//     // Basic validation
+//     if (!name || price == null || original_price == null) {
+//       return res
+//         .status(400)
+//         .json({
+//           success: false,
+//           message: "Name, price, and original_price are required",
+//         });
+//     }
 
-    const menuItem = await MenuItem.create({
-      name,
-      description,
-      price,
-      category,
-      isVegetarian,
-      available,
-      original_price,
-      images,
-      ingredients,
-      hotelId,
-      userId,
-    });
 
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Menu item created successfully",
-        data: menuItem,
-      });
-  } catch (err) {
-    console.error("something went wrong in create menu controller ",err);
-    return handleSequelizeError(err, res);
-  }
-};
+
+//     const menuItem = await MenuItem.create({
+//       name,
+//       description,
+//       price,
+//       category,
+//       isVegetarian,
+//       available,
+//       original_price,
+//       images,
+//       ingredients,
+//       hotelId,
+//       userId,
+//     });
+
+//     res
+//       .status(201)
+//       .json({
+//         success: true,
+//         message: "Menu item created successfully",
+//         data: menuItem,
+//       });
+//   } catch (err) {
+//     console.error("something went wrong in create menu controller ",err);
+//     return handleSequelizeError(err, res);
+//   }
+// };
 
 // Get all menu items for the authenticated user's hotel, with optional filtering
 export const getMenuItems = async (req, res) => {

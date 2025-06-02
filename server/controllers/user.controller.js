@@ -61,7 +61,11 @@ export const createUser = async (req, res) => {
 // Get all users
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({ where: { hotelId: req.hotel.id } });
+    if (!users || users.length === 0)
+      return res
+        .status(404)
+        .json({ success: false, message: "No users found" });
     res.status(200).json({ success: true, data: users.map(sanitizeUser) });
   } catch (err) {
     console.error(err);

@@ -49,14 +49,17 @@ const MenuItem = sequelize.define(
     },
     category: {
       type: DataTypes.ENUM(
-        "appetizer",
+        "appetizers", 
         "main_course",
-        "dessert",
-        "beverage",
-        "other"
+        "desserts",
+        "beverages",
+        "snacks",
+        "salads",
+        "soups",
+        "others"
       ),
       allowNull: false,
-      defaultValue: "other",
+      defaultValue: "others",
     },
     isVegetarian: {
       type: DataTypes.BOOLEAN,

@@ -1,6 +1,5 @@
 // src/middleware/auth.js
 import jwt from "jsonwebtoken";
-import { config } from "../config/config.js";
 import { Hotel, User } from "../models/associations.js";
 
 export const authenticateHotelToken = async (req, res, next) => {

@@ -23,7 +23,7 @@ const Dashboard = () => {
     { icon: Users, label: "Users", path: "/hotel/dashboard/users" },
     { icon: BarChart3, label: "Analytics", path: "/hotel/dashboard/analytics" },
     { icon: ShoppingCart, label: "Orders", path: "/hotel/dashboard/orders" },
-    { icon: FileText, label: "Reports", path: "/hotel/dashboard/reports" },
+    { icon: FileText, label: "Menu", path: "/hotel/dashboard/menu" },
     { icon: Settings, label: "Settings", path: "/hotel/dashboard/settings" },
   ];
 

@@ -5,6 +5,7 @@ import sequelize from "./models/index.js";
 import hotelRoutes from "./routes/hotel.route.js";
 import userRoutes from "./routes/user.route.js";
 import menuRoutes from "./routes/menuItem.route.js";
+import menuRouteCreate from "./service/file.upload.service.js";
 
 
 const app = express();
@@ -22,10 +23,12 @@ app.use(express.json());
 app.use("/api/hotel", hotelRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/menu", menuRoutes);
+app.use("/api/menu", menuRouteCreate);
 
 // Sync database
 sequelize
-  .sync({ alter: true })
+  .sync()
+  // .sync({ alter: true })
   .then(() => console.log("Database synced"))
   .catch((err) => console.error("Database sync error:", err));
 

@@ -1,4 +1,4 @@
-import { BarChart3 } from "lucide-react";
+import { BarChart3, X, User, Mail, Phone, Lock, UserCheck } from "lucide-react";
 
 const DashboardHome = () => {
   return (
@@ -129,26 +129,6 @@ const Analytics = () => {
 
 // src/components/dashboard/Users.jsx
 
-const Users = () => {
-  return (
-    <div className="max-w-full">
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Users Management
-        </h2>
-        <p className="text-gray-600">Manage your users and permissions.</p>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">User List</h3>
-        <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">User management interface goes here</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // src/components/dashboard/Orders.jsx
 
 const Orders = () => {
@@ -217,4 +197,4 @@ const Settings = () => {
   );
 };
 
-export { Settings, Reports, Orders, Users, Analytics, DashboardHome };
+export { Settings, Reports, Orders, Analytics, DashboardHome };
