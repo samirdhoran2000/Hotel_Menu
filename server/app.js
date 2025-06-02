@@ -24,6 +24,7 @@ app.use("/api/hotel", hotelRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/menu", menuRouteCreate);
+app.use("/api/public", express.static("uploads"));
 
 // Sync database
 sequelize

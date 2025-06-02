@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Upload, X, Plus, DollarSign, AlertCircle, Check } from "lucide-react";
 
 const MenuItemForm = () => {
@@ -68,12 +68,12 @@ const MenuItemForm = () => {
   const categories = [
     { name: "appetizer", label: "Appetizers" },
     { name: "main_course", label: "Main Course" },
-    { name: "desserts", label: "Desserts" },
-    { name: "beverages", label: "Beverages" },
-    { name: "snacks", label: "Snacks" },
-    { name: "salads", label: "Salads" },
-    { name: "soups", label: "Soups" },
-    { name: "others", label: "Others" },
+    { name: "dessert", label: "Desserts" },
+    { name: "beverage", label: "Beverages" },
+    { name: "snack", label: "Snacks" },
+    { name: "salad", label: "Salads" },
+    { name: "soup", label: "Soups" },
+    { name: "other", label: "Others" },
   ];
 
   const handleInputChange = (e) => {
@@ -178,35 +178,69 @@ const MenuItemForm = () => {
     setSubmitStatus(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const token = localStorage.getItem("token");
 
-      setSubmitStatus({
-        type: "success",
-        message: "Menu item created successfully!",
+      const formDataToSend = new FormData();
+
+      // For every key in formData, append—but if it’s “ingredients”, JSON.stringify it.
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "ingredients") {
+          // ----> THIS IS THE IMPORTANT PART:
+          // Turn the JS array into a proper JSON‐string before appending.
+          formDataToSend.append(key, JSON.stringify(value));
+        } else {
+          formDataToSend.append(key, value);
+        }
       });
 
-      // Reset form
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        original_price: "",
-        category: "",
-        ingredients: [],
-        isVegetarian: false,
-        available: true,
+      // Append files
+      files.forEach((file) => {
+        formDataToSend.append("files", file);
       });
-      setFiles([]);
-      setPreviews([]);
-      setValue("");
 
-      // Close modal after success
-      setTimeout(() => {
-        setIsOpen(false);
-        setSubmitStatus(null);
-      }, 2000);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/menu`, {
+        method: "POST",
+        body: formDataToSend,
+        headers: {
+          // Don't set Content-Type for FormData, let browser set it with boundary
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus({
+          type: "success",
+          message: "Menu item created successfully!",
+        });
+        // Reset form
+        setFormData({
+          name: "",
+          description: "",
+          price: "",
+          original_price: "",
+          category: "",
+          ingredients: [],
+          isVegetarian: false,
+          available: true,
+        });
+        setFiles([]);
+        setPreviews([]);
+
+        setTimeout(() => {
+          setIsOpen(false);
+        }, 1500);
+        setValue("");
+      } else {
+        setSubmitStatus({
+          type: "error",
+          message: result.message || "Failed to create menu item",
+        });
+      }
     } catch (error) {
+      console.log("Error submitting form:", error);
+
       setSubmitStatus({
         type: "error",
         message: "Network error. Please try again.",
@@ -224,15 +258,23 @@ const MenuItemForm = () => {
 
   return (
     <>
-      {/* Trigger Button */}
-      <div className="p-8">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2 transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Add Menu Item
-        </button>
+      <div className="max-w-full">
+        {/* Trigger Button */}
+        <div className="p-8 flex justify-between items-center bg-white shadow-md rounded-lg mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Menu Management
+          </h3>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Add Menu Item
+          </button>
+        </div>
+        <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center">
+          <p className="text-gray-500">Menu management interface goes here</p>
+        </div>
       </div>
 
       {/* Modal Overlay */}
@@ -469,7 +511,7 @@ const MenuItemForm = () => {
                       htmlFor="comma-input"
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
-                      Ingredients (press "," or Enter to add)
+                      Ingredients (press &ldquo;,&ldquo; or Enter to add)
                     </label>
                     <textarea
                       id="comma-input"
@@ -477,7 +519,7 @@ const MenuItemForm = () => {
                       onChange={(e) => setValue(e.target.value)}
                       onKeyDown={handleKeyDown}
                       placeholder="e.g. apple, banana, cherry,…"
-                      className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full h-16 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     {formData.ingredients.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-2">

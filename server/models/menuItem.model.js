@@ -49,14 +49,14 @@ const MenuItem = sequelize.define(
     },
     category: {
       type: DataTypes.ENUM(
-        "appetizers", 
+        "appetizer", 
         "main_course",
-        "desserts",
-        "beverages",
-        "snacks",
-        "salads",
-        "soups",
-        "others"
+        "dessert",
+        "beverage",
+        "snack",
+        "salad",
+        "soup",
+        "other"
       ),
       allowNull: false,
       defaultValue: "others",

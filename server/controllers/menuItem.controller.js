@@ -91,10 +91,12 @@ export const getMenuItems = async (req, res) => {
       sortBy = "created_at",
       sortOrder = "DESC",
     } = req.query;
-    // const { hotelId } = req.user;
-    // const offset = (page - 1) * limit;
-    // const whereClause = { hotelId };
 
+    // Build your where-clause if needed (uncomment / adjust if filtering by hotelId, etc.)
+    const whereClause = {};
+    // if (req.user?.hotelId) {
+    //   whereClause.hotelId = req.user.hotelId;
+    // }
     if (search) {
       whereClause.name = { [Op.iLike]: `%${search}%` };
     }
@@ -109,17 +111,42 @@ export const getMenuItems = async (req, res) => {
       whereClause.price = { [Op.lte]: maxPrice };
     }
 
+    const offset = (page - 1) * limit;
     const { count, rows } = await MenuItem.findAndCountAll({
-    //   where: whereClause,
-      limit: parseInt(limit, 10),
-    //   offset: parseInt(offset, 10),
+      where: whereClause,
+      // limit: parseInt(limit, 10),
+      offset: offset,
       order: [[sortBy, sortOrder.toUpperCase()]],
     });
 
-    res.status(200).json({
+    // Helper: true if every element in `arr` is a string
+    function isArrayOfStrings(arr) {
+      if (!Array.isArray(arr)) return false;
+      return arr.every((el) => typeof el === "string");
+    }
+
+    // Transform each row’s images if needed
+    const processedRows = rows.map((item) => {
+      // If images is not an array of strings, assume array of objects
+      if (!isArrayOfStrings(item.images)) {
+        // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
+        item.images = item.images.map((imgObj) => {
+      
+          
+          // replace `filename` with your actual key
+          const fileName = imgObj.savedFilename;
+          // build your URL however your server is configured:
+          // here we assume you have an endpoint like /api/public/:filename
+          return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
+        });
+      }
+      return item;
+    });
+
+    return res.status(200).json({
       success: true,
       data: {
-        menuItems: rows,
+        menuItems: processedRows,
         pagination: {
           currentPage: parseInt(page, 10),
           totalPages: Math.ceil(count / limit),
@@ -130,13 +157,11 @@ export const getMenuItems = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Internal server error",
-        error: err.message,
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
   }
 };
 
