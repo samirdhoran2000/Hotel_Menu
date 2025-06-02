@@ -1,14 +1,14 @@
 // routes/menuItemRoutes.js
 import express from "express";
 import {
-  // createMenuItem,
+  createMenuItem,
   getMenuItems,
   getMenuItemById,
   updateMenuItem,
   deleteMenuItem,
 } from "../controllers/menuItem.controller.js";
-// import { createMenuItem} from '../service/file.upload.service.js'
-import { authenticateUserToken } from "../middleware/auth.js";
+import upload from '../service/file.upload.service.js'
+import { authenticateUserToken,authenticateHotelToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -18,6 +18,10 @@ router.get("/", getMenuItems);
 router.use(authenticateUserToken);
 
 // All routes assume authentication middleware has populated req.user
+
+// If you truly want **only up to 5** images, change the “10” to “5” here:
+router.post("/", upload.array("files", 5), createMenuItem);
+
 // router.post("/", createMenuItem);
 router.get("/:id", getMenuItemById);
 router.put("/:id", updateMenuItem);
