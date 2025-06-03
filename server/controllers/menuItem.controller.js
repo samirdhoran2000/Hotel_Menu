@@ -20,6 +20,13 @@ export const handleSequelizeError = (err, res) => {
     });
 };
 
+
+    // Helper: true if every element in `arr` is a string
+    function isArrayOfStrings(arr) {
+      if (!Array.isArray(arr)) return false;
+      return arr.every((el) => typeof el === "string");
+    }
+
 export const createMenuItem = async (req, res) => {
   try {
     const {
@@ -193,11 +200,6 @@ export const getMenuItems = async (req, res) => {
       order: [[sortBy, sortOrder.toUpperCase()]],
     });
 
-    // Helper: true if every element in `arr` is a string
-    function isArrayOfStrings(arr) {
-      if (!Array.isArray(arr)) return false;
-      return arr.every((el) => typeof el === "string");
-    }
 
     // Transform each row’s images if needed
     const processedRows = rows.map((item) => {
@@ -244,13 +246,33 @@ export const getMenuItemById = async (req, res) => {
   try {
     const { id } = req.params;
     const { hotelId } = req.user;
-    const menuItem = await MenuItem.findOne({ where: { id, hotelId } });
-    if (!menuItem) {
+    const { count, rows } = await MenuItem.findAndCountAll({ where: { id } });
+    
+    console.log("Fetching menu item with ID:", id, "for hotelId:", hotelId,"");
+    
+    if (!rows) {
       return res
         .status(404)
         .json({ success: false, message: "Menu item not found" });
     }
-    res.status(200).json({ success: true, data: menuItem });
+
+    // Transform each row’s images if needed
+    const processedRows = rows.map((item) => {
+      // If images is not an array of strings, assume array of objects
+      if (!isArrayOfStrings(item.images)) {
+        // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
+        item.images = item.images.map((imgObj) => {
+          // replace `filename` with your actual key
+          const fileName = imgObj.savedFilename;
+          // build your URL however your server is configured:
+          // here we assume you have an endpoint like /api/public/:filename
+          return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
+        });
+      }
+      return item;
+    });
+
+    res.status(200).json({ success: true, data: processedRows });
   } catch (err) {
     console.error(err);
     return res
@@ -268,22 +290,116 @@ export const updateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
     const { hotelId } = req.user;
-    const menuItem = await MenuItem.findOne({ where: { id, hotelId } });
+
+    // 1) Find the item by id + hotelId (so user can only update items in their own hotel)
+    const menuItem = await MenuItem.findOne({
+      where: { id, hotelId },
+    });
     if (!menuItem) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Menu item not found" });
-    }
-    await menuItem.update(req.body);
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Menu item updated successfully",
-        data: menuItem,
+      return res.status(404).json({
+        success: false,
+        message: "Menu item not found",
       });
+    }
+
+    // 2) Extract incoming fields from req.body
+    //    Only update those fields if they are provided:
+    const {
+      name,
+      description,
+      price,
+      category,
+      isVegetarian,
+      available,
+      original_price,
+      ingredients,
+    } = req.body;
+
+    // 3) Build an updateData object that includes only the fields that exist in the request
+    const updateData = {};
+
+    // If the client sent a new name, update it
+    if (typeof name === "string" && name.trim().length > 0) {
+      updateData.name = name.trim();
+    }
+    // Description can be an empty string, but if it's provided, update
+    if (typeof description === "string") {
+      updateData.description = description;
+    }
+    // If price is provided (could be "0"), parse it to float
+    if (price != null) {
+      const parsedPrice = parseFloat(price);
+      if (isNaN(parsedPrice)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid value for price",
+        });
+      }
+      updateData.price = parsedPrice;
+    }
+    // If original_price is provided, parse to float
+    if (original_price != null) {
+      const parsedOrig = parseFloat(original_price);
+      if (isNaN(parsedOrig)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid value for original_price",
+        });
+      }
+      updateData.original_price = parsedOrig;
+    }
+    // Category
+    if (typeof category === "string") {
+      updateData.category = category;
+    }
+    // Boolean fields: they might come in as strings ("true"/"false") or booleans
+    if (isVegetarian != null) {
+      updateData.isVegetarian =
+        isVegetarian === "true" || isVegetarian === true;
+    }
+    if (available != null) {
+      updateData.available = available === "true" || available === true;
+    }
+    // Ingredients (array of strings, or whatever shape you expect)
+    if (ingredients != null) {
+      updateData.ingredients = ingredients;
+    }
+
+    // 4) Handle file uploads exactly like in createMenuItem:
+    //    If req.files exists and has length > 0, build a new images array
+    if (req.files && req.files.length > 0) {
+      const uploadedFiles = req.files.map((file) => ({
+        originalName: file.originalname,
+        savedFilename: file.filename,
+        mimeType: file.mimetype,
+        sizeBytes: file.size,
+        destinationPath: file.path,
+      }));
+      // Replace the entire images field with the newly uploaded set:
+      updateData.images = uploadedFiles;
+    }
+
+    // 5) Perform the update (only on the keys we put into updateData)
+    await menuItem.update(updateData);
+
+    // 6) After updating, transform the stored `images` (which might be an array of metadata objects)
+    //    into publicly‐accessible URLs, exactly as you do in your GET endpoints:
+    const processedItem = menuItem.toJSON(); // get plain object
+    if (!isArrayOfStrings(processedItem.images)) {
+      processedItem.images = processedItem.images.map((imgObj) => {
+        const fileName = imgObj.savedFilename;
+        return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
+      });
+    }
+
+    // 7) Send back the updated item
+    return res.status(200).json({
+      success: true,
+      message: "Menu item updated successfully",
+      data: processedItem,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("Error updating menu item:", err);
     return handleSequelizeError(err, res);
   }
 };

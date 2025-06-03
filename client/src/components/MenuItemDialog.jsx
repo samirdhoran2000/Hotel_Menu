@@ -43,6 +43,10 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("full");
   // const [isLiked, setIsLiked] = useState(false);
+  const ingredientsArray =
+    typeof item.ingredients === "string"
+      ? JSON.parse(item.ingredients)
+      : item.ingredients;
 
   // Parse the price string into a float once
   const basePrice = parseFloat(item.price) || 0;
@@ -273,11 +277,11 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
             </div>
 
             {/* Ingredients */}
-            {Array.isArray(item.ingredients) && item.ingredients.length > 0 && (
+            {Array.isArray(ingredientsArray) && ingredientsArray.length > 0 && (
               <div className="mb-6">
                 <h3 className="font-semibold mb-3">Ingredients</h3>
                 <div className="flex flex-wrap gap-2">
-                  {item.ingredients.map((ingredient) => (
+                  {ingredientsArray.map((ingredient) => (
                     <span
                       key={ingredient}
                       className="px-3 py-1 bg-gray-100 rounded-full text-sm"

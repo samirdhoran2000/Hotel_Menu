@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import { DashboardHome, Analytics, Orders, Reports, Settings } from "./components/DashboardComponents";
 import Users from "./components/dashboard/Users"; // Assuming you have a Users component
 import MenuItemForm from "./components/dashboard/MenuItem";
+import MenuManager from "../../temp/MenuManager";
 
 
 const App = () => {
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="users" element={<Users />} />
             <Route path="orders" element={<Orders />} />
             <Route path="menu" element={<MenuItemForm />} />
+            <Route path="menuform" element={<MenuManager />} />
             <Route path="settings" element={<Settings />} />
           </Route>
 

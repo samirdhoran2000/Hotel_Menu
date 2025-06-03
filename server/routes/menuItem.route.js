@@ -24,7 +24,7 @@ router.post("/", upload.array("files", 5), createMenuItem);
 
 // router.post("/", createMenuItem);
 router.get("/:id", getMenuItemById);
-router.put("/:id", updateMenuItem);
+router.put("/:id", upload.array("files", 5), updateMenuItem);
 router.delete("/:id", deleteMenuItem);
 
 export default router;

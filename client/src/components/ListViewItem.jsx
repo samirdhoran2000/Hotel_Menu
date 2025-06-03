@@ -7,6 +7,11 @@ const ListViewItem = ({ item }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
+  const ingredientsArray =
+    typeof item.ingredients === "string"
+      ? JSON.parse(item.ingredients)
+      : item.ingredients;
+
   useEffect(() => {
     const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
     setIsLiked(!!likedItems[item.name]);
@@ -122,11 +127,11 @@ const ListViewItem = ({ item }) => {
             </p>
 
             {/* Ingredients (up to first 3) */}
-            {Array.isArray(item.ingredients) && item.ingredients.length > 0 && (
+            {Array.isArray(ingredientsArray) && ingredientsArray.length > 0 && (
               <div className="text-xs text-gray-500 mb-2">
                 <span>Ingredients: </span>
-                {item.ingredients.slice(0, 3).join(", ")}
-                {item.ingredients.length > 3 && "…"}
+                {ingredientsArray.slice(0, 3).join(", ")}
+                {ingredientsArray.length > 3 && "…"}
               </div>
             )}
 
