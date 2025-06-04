@@ -3,8 +3,9 @@ import express from "express";
 import cors from "cors";
 import sequelize from "./models/index.js";
 import hotelRoutes from "./routes/hotel.route.js";
-import userRoutes from "./routes/user.route.js";
+// import userRoutes from "./routes/user.route.js";
 import menuRoutes from "./routes/menuItem.route.js";
+import tableRoutes from "./routes/table.route.js";
 
 
 const app = express();
@@ -20,8 +21,10 @@ app.use(express.json());
 
 
 app.use("/api/hotel", hotelRoutes);
-app.use("/api/user", userRoutes);
+// app.use("/api/user", userRoutes);
 app.use("/api/menu", menuRoutes);
+app.use("/api/table", tableRoutes);
+
 app.use("/api/public", express.static("uploads"));
 
 // Sync database

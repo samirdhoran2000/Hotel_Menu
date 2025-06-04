@@ -8,14 +8,14 @@ import {
   deleteMenuItem,
 } from "../controllers/menuItem.controller.js";
 import upload from '../service/file.upload.service.js'
-import { authenticateUserToken,authenticateHotelToken } from "../middleware/auth.js";
+import { authenticateHotelToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Public route to get all menu items (no authentication required)
 router.get("/", getMenuItems);
 
-router.use(authenticateUserToken);
+router.use(authenticateHotelToken);
 
 // All routes assume authentication middleware has populated req.user
 

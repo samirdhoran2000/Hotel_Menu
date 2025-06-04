@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 
-export const useDataManager = () => {
+export const useDataManager = ({id=null }) => {
   // --- raw data from API ---
   const [items, setItems] = useState([]); // the full list of fetched menuItems
   const [categories, setCategories] = useState([]); // ["all", "beverage", "main_course", …]
@@ -21,7 +21,7 @@ export const useDataManager = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/menu`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/menu?tableId=${id}`);
         const json = await res.json();
 
         // Assume API response shape: { success: true, data: { menuItems: [ … ] } }

@@ -1,6 +1,7 @@
 // import React from 'react'
 // import Header from '../components/Header';
 import { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom'
 
 import Header from '../components/Header';
 import MenuSection from '../components/MenuSection';
@@ -12,7 +13,13 @@ import Footer from '../components/Footer';
 const MenuPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const dataManager = useDataManager();
+  const params = useParams();
+  const dataManager = useDataManager({id:params?.id});
+
+  console.log(
+    'params is ', params
+  );
+  
 
   useEffect(() => {
     setTimeout(() => {

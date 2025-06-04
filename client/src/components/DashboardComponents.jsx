@@ -1,4 +1,24 @@
-import { BarChart3, X, User, Mail, Phone, Lock, UserCheck } from "lucide-react";
+import {
+  BarChart3,
+  X,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  UserCheck,
+  Plus,
+  Trash2,
+  Edit,
+
+  QrCode,
+  ExternalLink,
+  Calendar,
+  AlertCircle,
+  RefreshCw,
+  Search,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import TableForm from "../../temp/TableForm";
 
 const DashboardHome = () => {
   return (
@@ -176,23 +196,350 @@ const Reports = () => {
 // src/components/dashboard/Settings.jsx
 
 const Settings = () => {
+  const [table, setTable] = useState([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingItemId, setEditingItemId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+
+  async function fetchQrCodeDetails() {
+    setIsLoading(true);
+    setError(null);
+    console.log("Fetching QR Code details...");
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/table`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      console.log("Fetched menu items:", data);
+
+      if (res.ok) {
+        setTable(data);
+      } else {
+        setError(data.message || "Failed to fetch QR codes");
+        console.error("Failed to fetch menu items:", data.message);
+      }
+    } catch (err) {
+      setError("Network error. Please check your connection.");
+      console.error("Network error fetching menu items:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchQrCodeDetails();
+  }, []);
+
+  const openCreateModal = () => {
+    setEditingItemId(null);
+    setIsFormOpen(true);
+  };
+
+  const openEditModal = (id) => {
+    setEditingItemId(id);
+    setIsFormOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsFormOpen(false);
+    setEditingItemId(null);
+  };
+
+  const handleSaveSuccess = () => {
+    closeModal();
+    fetchQrCodeDetails();
+  };
+
+  const handleDelete = async (id) => {
+    if (deleteConfirm !== id) {
+      setDeleteConfirm(id);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/table/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        setTable((prev) => prev.filter((item) => item.id !== id));
+        setDeleteConfirm(null);
+      } else {
+        const data = await res.json();
+        setError(data.message || "Failed to delete QR code");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+      console.error("Delete error:", err);
+    }
+  };
+
+  const handleEdit = (tableObj) => {
+    openEditModal(tableObj.id);
+  };
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      // You could add a toast notification here
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  const filteredTables = table.filter(
+    (item) =>
+      item.tableNumber.toString().includes(searchTerm) ||
+      item.qrCodeLink.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const LoadingSpinner = () => (
+    <div className="flex items-center justify-center py-12">
+      <RefreshCw className="w-6 h-6 animate-spin text-blue-600" />
+      <span className="ml-2 text-gray-600">Loading QR codes...</span>
+    </div>
+  );
+
+  const ErrorMessage = () => (
+    <div className="flex items-center justify-center py-12">
+      <div className="text-center">
+        <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
+        <p className="text-red-600 font-medium">{error}</p>
+        <button
+          onClick={fetchQrCodeDetails}
+          className="mt-3 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+
+  const EmptyState = () => (
+    <div className="text-center py-12">
+      <QrCode className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+      <h3 className="text-lg font-medium text-gray-900 mb-2">
+        No QR Codes Yet
+      </h3>
+      <p className="text-gray-500 mb-6">
+        Create your first QR code to get started
+      </p>
+      <button
+        onClick={openCreateModal}
+        className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+      >
+        <Plus className="w-5 h-5" />
+        Create QR Code
+      </button>
+    </div>
+  );
+
   return (
-    <div className="max-w-full">
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Settings</h2>
-        <p className="text-gray-600">Configure your application settings.</p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
+        <p className="text-gray-600">
+          Manage your QR codes and table configurations
+        </p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          System Settings
-        </h3>
-        <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">
-            Settings configuration interface goes here
-          </p>
+      {/* Main Content Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Card Header */}
+        <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <QrCode className="w-6 h-6 text-blue-600" />
+              <h2 className="text-xl font-semibold text-gray-900">
+                QR Code Management
+              </h2>
+              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                {table.length} {table.length === 1 ? "code" : "codes"}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={fetchQrCodeDetails}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                title="Refresh"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+              <button
+                onClick={openCreateModal}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+              >
+                <Plus className="w-4 h-4" />
+                Add QR Code
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        {table.length > 0 && (
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by table number or QR link..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="p-6">
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : error ? (
+            <ErrorMessage />
+          ) : filteredTables.length === 0 ? (
+            searchTerm ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No QR codes match your search.</p>
+              </div>
+            ) : (
+              <EmptyState />
+            )
+          ) : (
+            <div className="grid gap-4">
+              {filteredTables.map((tableItem) => (
+                <div
+                  key={tableItem.id}
+                  className="bg-gray-50 border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between">
+                    {/* Table Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="bg-blue-100 p-2 rounded-lg">
+                          <QrCode className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            Table #{tableItem.tableNumber}
+                          </h3>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Calendar className="w-4 h-4" />
+                            Created{" "}
+                            {new Date(tableItem.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* QR Link */}
+                      <div className="bg-white rounded-lg p-3 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          QR Code Link
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={tableItem.qrCodeLink}
+                            readOnly
+                            className="flex-1 text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded px-3 py-2"
+                          />
+                          <button
+                            onClick={() =>
+                              copyToClipboard(tableItem.qrCodeLink)
+                            }
+                            className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded border border-gray-200 transition"
+                            title="Copy link"
+                          >
+                            Copy
+                          </button>
+                          <a
+                            href={tableItem.qrCodeLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition"
+                            title="Open link"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2 ml-4">
+                      <button
+                        onClick={() => handleEdit(tableItem)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        title="Edit QR Code"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(tableItem.id)}
+                        className={`p-2 rounded-lg transition ${
+                          deleteConfirm === tableItem.id
+                            ? "bg-red-100 text-red-700"
+                            : "text-red-600 hover:bg-red-50"
+                        }`}
+                        title={
+                          deleteConfirm === tableItem.id
+                            ? "Click again to confirm"
+                            : "Delete QR Code"
+                        }
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Delete Confirmation */}
+                  {deleteConfirm === tableItem.id && (
+                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-800 mb-2">
+                        Are you sure you want to delete this QR code? This
+                        action cannot be undone.
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleDelete(tableItem.id)}
+                          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirm(null)}
+                          className="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Modal */}
+      {isFormOpen && (
+        <TableForm
+          itemId={editingItemId}
+          onClose={closeModal}
+          onSuccess={handleSaveSuccess}
+        />
+      )}
     </div>
   );
 };

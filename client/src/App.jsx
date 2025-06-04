@@ -9,7 +9,7 @@ import HomePage from "./pages/HomePage";
 import { DashboardHome, Analytics, Orders, Reports, Settings } from "./components/DashboardComponents";
 import Users from "./components/dashboard/Users"; // Assuming you have a Users component
 import MenuItemForm from "./components/dashboard/MenuItem";
-import MenuManager from "../../temp/MenuManager";
+import MenuManager from "../temp/MenuManager";
 
 
 const App = () => {
@@ -27,10 +27,10 @@ const App = () => {
           <Route path="/hotel/dashboard/*" element={<HotelDashboard />}>
             <Route index element={<DashboardHome />} />
             <Route path="analytics" element={<Analytics />} />
-            <Route path="users" element={<Users />} />
+            {/* <Route path="users" element={<Users />} /> */}
             <Route path="orders" element={<Orders />} />
-            <Route path="menu" element={<MenuItemForm />} />
-            <Route path="menuform" element={<MenuManager />} />
+            {/* <Route path="menu" element={<MenuItemForm />} /> */}
+            <Route path="menu" element={<MenuManager />} />
             <Route path="settings" element={<Settings />} />
           </Route>
 

@@ -1,5 +1,5 @@
 // controllers/menuItemController.js
-import {MenuItem} from "../models/associations.js";
+import { MenuItem } from "../models/associations.js";
 import { Op } from "sequelize";
 
 // Helper to standardize error response
@@ -11,21 +11,18 @@ export const handleSequelizeError = (err, res) => {
       errors: err.errors.map((e) => ({ field: e.path, message: e.message })),
     });
   }
-  return res
-    .status(500)
-    .json({
-      success: false,
-      message: "Internal server error",
-      error: err.message,
-    });
+  return res.status(500).json({
+    success: false,
+    message: "Internal server error",
+    error: err.message,
+  });
 };
 
-
-    // Helper: true if every element in `arr` is a string
-    function isArrayOfStrings(arr) {
-      if (!Array.isArray(arr)) return false;
-      return arr.every((el) => typeof el === "string");
-    }
+// Helper: true if every element in `arr` is a string
+function isArrayOfStrings(arr) {
+  if (!Array.isArray(arr)) return false;
+  return arr.every((el) => typeof el === "string");
+}
 
 export const createMenuItem = async (req, res) => {
   try {
@@ -39,7 +36,8 @@ export const createMenuItem = async (req, res) => {
       original_price,
       ingredients,
     } = req.body;
-    const { id: userId, hotelId } = req.user;
+    const { id } = req.user;
+    console.log("req.user", req.user);
 
     console.log("Request body:", req.body);
 
@@ -82,8 +80,8 @@ export const createMenuItem = async (req, res) => {
       original_price: parseFloat(original_price),
       images, // <-- now this is defined
       ingredients,
-      hotelId,
-      userId,
+      hotelId: id,
+      // userId,
     });
 
     return res.status(201).json({
@@ -116,9 +114,8 @@ export const createMenuItem = async (req, res) => {
 //       ingredients,
 //     } = req.body;
 //       const { id: userId, hotelId } = req.user;
-      
+
 //       console.log(" req bocy is ", req.body);
-      
 
 //     // Basic validation
 //     if (!name || price == null || original_price == null) {
@@ -129,8 +126,6 @@ export const createMenuItem = async (req, res) => {
 //           message: "Name, price, and original_price are required",
 //         });
 //     }
-
-
 
 //     const menuItem = await MenuItem.create({
 //       name,
@@ -200,15 +195,12 @@ export const getMenuItems = async (req, res) => {
       order: [[sortBy, sortOrder.toUpperCase()]],
     });
 
-
     // Transform each row’s images if needed
     const processedRows = rows.map((item) => {
       // If images is not an array of strings, assume array of objects
       if (!isArrayOfStrings(item.images)) {
         // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
         item.images = item.images.map((imgObj) => {
-      
-          
           // replace `filename` with your actual key
           const fileName = imgObj.savedFilename;
           // build your URL however your server is configured:
@@ -245,11 +237,9 @@ export const getMenuItems = async (req, res) => {
 export const getMenuItemById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { hotelId } = req.user;
-    const { count, rows } = await MenuItem.findAndCountAll({ where: { id } });
-    
-    console.log("Fetching menu item with ID:", id, "for hotelId:", hotelId,"");
-    
+    const { id:hotelId } = req.user;
+    const { count, rows } = await MenuItem.findAndCountAll({ where: { id, hotelId } });
+ 
     if (!rows) {
       return res
         .status(404)
@@ -275,13 +265,50 @@ export const getMenuItemById = async (req, res) => {
     res.status(200).json({ success: true, data: processedRows });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Internal server error",
-        error: err.message,
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
+};
+// Get a single menu item by ID (ensuring it belongs to the user's hotel)
+export const getMenuItemByHotelId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id:hotelId } = req.user;
+    const { count, rows } = await MenuItem.findAndCountAll({ where: { id, hotelId } });
+ 
+    if (!rows) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Menu item not found" });
+    }
+
+    // Transform each row’s images if needed
+    const processedRows = rows.map((item) => {
+      // If images is not an array of strings, assume array of objects
+      if (!isArrayOfStrings(item.images)) {
+        // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
+        item.images = item.images.map((imgObj) => {
+          // replace `filename` with your actual key
+          const fileName = imgObj.savedFilename;
+          // build your URL however your server is configured:
+          // here we assume you have an endpoint like /api/public/:filename
+          return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
+        });
+      }
+      return item;
+    });
+
+    res.status(200).json({ success: true, data: processedRows });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
   }
 };
 
@@ -289,7 +316,7 @@ export const getMenuItemById = async (req, res) => {
 export const updateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
-    const { hotelId } = req.user;
+    const { id: hotelId } = req.user;
 
     // 1) Find the item by id + hotelId (so user can only update items in their own hotel)
     const menuItem = await MenuItem.findOne({
@@ -421,13 +448,10 @@ export const deleteMenuItem = async (req, res) => {
       .json({ success: true, message: "Menu item deleted successfully" });
   } catch (err) {
     console.error(err);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Internal server error",
-        error: err.message,
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
   }
 };
-

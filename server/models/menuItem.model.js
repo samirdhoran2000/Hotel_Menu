@@ -22,16 +22,16 @@ const MenuItem = sequelize.define(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    userId: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: true,
-      references: {
-        model: "users",
-        key: "id",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
-    },
+    // userId: {
+    //   type: DataTypes.INTEGER.UNSIGNED,
+    //   allowNull: true,
+    //   references: {
+    //     model: "users",
+    //     key: "id",
+    //   },
+    //   onUpdate: "CASCADE",
+    //   onDelete: "CASCADE",
+    // },
     name: {
       type: DataTypes.STRING(255),
       allowNull: false,
@@ -59,7 +59,7 @@ const MenuItem = sequelize.define(
         "other"
       ),
       allowNull: false,
-      defaultValue: "others",
+      defaultValue: "other",
     },
     isVegetarian: {
       type: DataTypes.BOOLEAN,

@@ -26,9 +26,9 @@ const Table = sequelize.define(
     },
     qrCodeLink: {
       type: DataTypes.STRING(512),
-      allowNull: false,
-      unique: true,
-      validate: { isUrl: true },
+      allowNull: true,
+      // unique: true,
+      // validate: { isUrl: true },
     },
   },
   {
