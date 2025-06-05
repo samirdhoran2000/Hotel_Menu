@@ -9,16 +9,18 @@ import {
   Plus,
   Trash2,
   Edit,
-
   QrCode,
   ExternalLink,
   Calendar,
   AlertCircle,
   RefreshCw,
   Search,
+  QrCodeIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import TableForm from "../../temp/TableForm";
+import TableForm from "./dashboard/TableForm";
+import { QRCodeCanvas } from "qrcode.react";
+// import TableForm from "../../temp/TableForm";
 
 const DashboardHome = () => {
   return (
@@ -442,36 +444,46 @@ const Settings = () => {
                       </div>
 
                       {/* QR Link */}
-                      <div className="bg-white rounded-lg p-3 border border-gray-200">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          QR Code Link
-                        </label>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={tableItem.qrCodeLink}
-                            readOnly
-                            className="flex-1 text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded px-3 py-2"
-                          />
-                          <button
-                            onClick={() =>
-                              copyToClipboard(tableItem.qrCodeLink)
-                            }
-                            className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded border border-gray-200 transition"
-                            title="Copy link"
-                          >
-                            Copy
-                          </button>
-                          <a
-                            href={tableItem.qrCodeLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition"
-                            title="Open link"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
+                      <div className="bg-white rounded-lg p-3 border border-gray-200 flex flex-row justify-between">
+                        <div className="w-full">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            QR Code Link
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={tableItem.qrCodeLink}
+                              readOnly
+                              className="flex-1 text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded px-3 py-2"
+                            />
+                            <button
+                              onClick={() =>
+                                copyToClipboard(tableItem.qrCodeLink)
+                              }
+                              className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded border border-gray-200 transition"
+                              title="Copy link"
+                            >
+                              Copy
+                            </button>
+                            <a
+                              href={tableItem.qrCodeLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition"
+                              title="Open link"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          </div>
                         </div>
+                        {/* <div className=""> */}
+                          <QRCodeCanvas
+                            value={tableItem.qrCodeLink}
+                            // height={20}
+                            // width={20}
+                            className="p-3 bg-blue-50 rounded-xl h-8 w-8"
+                          />
+                        {/* </div> */}
                       </div>
                     </div>
 

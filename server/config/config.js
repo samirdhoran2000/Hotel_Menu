@@ -18,6 +18,7 @@ export const config = {
       idle: 10000,
     },
   },
+  domain:process.env.DOMAIN || 'https://localhost:5173/hotel'
 };
 
 // export default config;

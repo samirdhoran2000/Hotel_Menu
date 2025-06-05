@@ -1,15 +1,30 @@
 // controllers/tableController.js
 
-import {Table} from "../models/associations.js";
+import { config } from "../config/config.js";
+import { Table } from "../models/associations.js";
+
+export const generateCode = (hotelId, TableId) => {
+  const rawString = `${hotelId}:${TableId}`;
+  return Buffer.from(rawString).toString("base64");
+};
+
+export const decodeCode = (code) => {
+  const decoded = Buffer.from(code, "base64").toString("utf-8");
+  const [hotelId, tableId] = decoded.split(":");
+  return {
+    hotelId: hotelId,
+    tableId: tableId,
+  };
+};
 
 // Create a new table
 export const createTable = async (req, res) => {
   try {
-      const {  tableNumber } = req.body;
-      const { id: hotelId } = req.user; // Assuming userId is available in req.user
+    const { tableNumber } = req.body;
+    const { id: hotelId } = req.user; // Assuming userId is available in req.user
 
     // Validate required fields
-    if (!hotelId || !tableNumber ) {
+    if (!hotelId || !tableNumber) {
       return res
         .status(400)
         .json({ message: "hotelId, tableNumber are required." });
@@ -18,7 +33,7 @@ export const createTable = async (req, res) => {
     const newTable = await Table.create({
       hotelId,
       tableNumber,
-      qrCodeLink:"https://localhost:3000",
+      qrCodeLink: `${config.domain}/${generateCode(hotelId, tableNumber)}`,
     });
 
     return res.status(201).json(newTable);
@@ -40,11 +55,13 @@ export const createTable = async (req, res) => {
 // Get all tables (optionally filter by hotelId)
 export const getAllTables = async (req, res) => {
   try {
-    const { hotelId } = req.query;
-    const whereClause = hotelId ? { hotelId } : {};
+    // const { hotelId } = req.query;
+    // const whereClause = hotelId ? { hotelId } : {};
+    const { id } = req.user;
+    console.log("get all table ", { id });
 
     const tables = await Table.findAll({
-      where: whereClause,
+      where: { hotelId: id },
       order: [["createdAt", "DESC"]],
     });
 

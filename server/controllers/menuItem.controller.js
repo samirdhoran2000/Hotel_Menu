@@ -1,6 +1,8 @@
 // controllers/menuItemController.js
-import { MenuItem } from "../models/associations.js";
+import { Hotel, MenuItem } from "../models/associations.js";
 import { Op } from "sequelize";
+import { decodeCode } from "./table.controller.js";
+import jwt from 'jsonwebtoken'
 
 // Helper to standardize error response
 export const handleSequelizeError = (err, res) => {
@@ -157,6 +159,85 @@ export const createMenuItem = async (req, res) => {
 // Get all menu items for the authenticated user's hotel, with optional filtering
 export const getMenuItems = async (req, res) => {
   try {
+    const { tableId } = req.query;
+
+    const authHeader = req.headers.authorization;
+    const token =
+      authHeader && authHeader.startsWith("Bearer ")
+        ? authHeader.split(" ")[1]
+        : req.query.token || req.body.token;
+    
+    if (!!token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await Hotel.findByPk(decoded.id);
+     
+      
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Build your where-clause if needed (uncomment / adjust if filtering by hotelId, etc.)
+      const whereClause = {};
+      if (user?.id) {
+        whereClause.hotelId = user?.id;
+      }
+      // if (search) {
+      //   whereClause.name = { [Op.iLike]: `%${search}%` };
+      // }
+      // if (category) {
+      //   whereClause.category = category;
+      // }
+      // if (minPrice != null && maxPrice != null) {
+      //   whereClause.price = { [Op.between]: [minPrice, maxPrice] };
+      // } else if (minPrice != null) {
+      //   whereClause.price = { [Op.gte]: minPrice };
+      // } else if (maxPrice != null) {
+      //   whereClause.price = { [Op.lte]: maxPrice };
+      // }
+
+      // const offset = (page - 1) * limit;
+      const { count, rows } = await MenuItem.findAndCountAll({
+        where: whereClause,
+        // limit: parseInt(limit, 10),
+        // offset: offset,
+        // order: [[sortBy, sortOrder.toUpperCase()]],
+      });
+
+      // Transform each row’s images if needed
+      const processedRows = rows.map((item) => {
+        // If images is not an array of strings, assume array of objects
+        if (!isArrayOfStrings(item.images)) {
+          // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
+          item.images = item.images.map((imgObj) => {
+            // replace `filename` with your actual key
+            const fileName = imgObj.savedFilename;
+            // build your URL however your server is configured:
+            // here we assume you have an endpoint like /api/public/:filename
+            return `${req.protocol}://${req.get(
+              "host"
+            )}/api/public/${fileName}`;
+          });
+        }
+        return item;
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          menuItems: processedRows,
+          pagination: {
+            // currentPage: parseInt(page, 10),
+            // totalPages: Math.ceil(count / limit),
+            // totalItems: count,
+            // itemsPerPage: parseInt(limit, 10),
+          },
+        },
+      });
+    }
+
+    console.log("req. user ", req.user);
+
     const {
       search,
       category,
@@ -168,11 +249,25 @@ export const getMenuItems = async (req, res) => {
       sortOrder = "DESC",
     } = req.query;
 
+    if (!tableId) {
+      return res.status(500).json({
+        success: false,
+        message: "Table id not found",
+        // error: err.message,
+      });
+    }
+
+    const { hotelId, tableId: tblId } = decodeCode(tableId);
+    // const decode = decodeCode(tableId);
+    // console.log(decode);
+
+    console.log("id is : ", hotelId, tblId);
+
     // Build your where-clause if needed (uncomment / adjust if filtering by hotelId, etc.)
     const whereClause = {};
-    // if (req.user?.hotelId) {
-    //   whereClause.hotelId = req.user.hotelId;
-    // }
+    if (hotelId) {
+      whereClause.hotelId = hotelId;
+    }
     if (search) {
       whereClause.name = { [Op.iLike]: `%${search}%` };
     }
@@ -237,9 +332,9 @@ export const getMenuItems = async (req, res) => {
 export const getMenuItemById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { id:hotelId } = req.user;
-    const { count, rows } = await MenuItem.findAndCountAll({ where: { id, hotelId } });
- 
+    const { id: hotelId } = req.user;
+    const { count, rows } = await MenuItem.findAndCountAll({ where: { id } });
+
     if (!rows) {
       return res
         .status(404)
@@ -276,9 +371,11 @@ export const getMenuItemById = async (req, res) => {
 export const getMenuItemByHotelId = async (req, res) => {
   try {
     const { id } = req.params;
-    const { id:hotelId } = req.user;
-    const { count, rows } = await MenuItem.findAndCountAll({ where: { id, hotelId } });
- 
+    const { id: hotelId } = req.user;
+    const { count, rows } = await MenuItem.findAndCountAll({
+      where: { id, hotelId },
+    });
+
     if (!rows) {
       return res
         .status(404)

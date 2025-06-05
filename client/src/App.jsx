@@ -9,7 +9,8 @@ import HomePage from "./pages/HomePage";
 import { DashboardHome, Analytics, Orders, Reports, Settings } from "./components/DashboardComponents";
 import Users from "./components/dashboard/Users"; // Assuming you have a Users component
 import MenuItemForm from "./components/dashboard/MenuItem";
-import MenuManager from "../temp/MenuManager";
+import MenuManager from "./components/dashboard/MenuManager";
+// import MenuManager from "/MenuManager";
 
 
 const App = () => {
