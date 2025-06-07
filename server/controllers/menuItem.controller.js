@@ -2,7 +2,7 @@
 import { Hotel, MenuItem } from "../models/associations.js";
 import { Op } from "sequelize";
 import { decodeCode } from "./table.controller.js";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 // Helper to standardize error response
 export const handleSequelizeError = (err, res) => {
@@ -156,88 +156,105 @@ export const createMenuItem = async (req, res) => {
 //   }
 // };
 
-// Get all menu items for the authenticated user's hotel, with optional filtering
+// Helper: transform each MenuItem.images into public URLs
+function buildImageUrls(items, req) {
+  return items.map((item) => {
+    if (!isArrayOfStrings(item.images)) {
+      item.images = item.images.map((imgObj) => {
+        const fileName = imgObj.savedFilename;
+        return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
+      });
+    }
+    return item;
+  });
+}
+
 export const getMenuItems = async (req, res) => {
   try {
-    const { tableId } = req.query;
+    let hotelId = null;
 
+    // 1) Check for auth token in header, body, and query parameters
     const authHeader = req.headers.authorization;
-    const token =
+    const tokenFromHeader =
       authHeader && authHeader.startsWith("Bearer ")
         ? authHeader.split(" ")[1]
-        : req.query.token || req.body.token;
-    
-    if (!!token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await Hotel.findByPk(decoded.id);
-     
-      
+        : null;
 
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
+    const tokenFromQuery = req.query.token || null;
+    const tokenFromBody = req.body.token || null;
 
-      // Build your where-clause if needed (uncomment / adjust if filtering by hotelId, etc.)
-      const whereClause = {};
-      if (user?.id) {
-        whereClause.hotelId = user?.id;
-      }
-      // if (search) {
-      //   whereClause.name = { [Op.iLike]: `%${search}%` };
-      // }
-      // if (category) {
-      //   whereClause.category = category;
-      // }
-      // if (minPrice != null && maxPrice != null) {
-      //   whereClause.price = { [Op.between]: [minPrice, maxPrice] };
-      // } else if (minPrice != null) {
-      //   whereClause.price = { [Op.gte]: minPrice };
-      // } else if (maxPrice != null) {
-      //   whereClause.price = { [Op.lte]: maxPrice };
-      // }
+    // Priority: Header > Query > Body
+    const rawToken = tokenFromHeader || tokenFromQuery || tokenFromBody;
 
-      // const offset = (page - 1) * limit;
-      const { count, rows } = await MenuItem.findAndCountAll({
-        where: whereClause,
-        // limit: parseInt(limit, 10),
-        // offset: offset,
-        // order: [[sortBy, sortOrder.toUpperCase()]],
-      });
+    // 2) If token is present, try to authenticate and get hotel ID
+    if (rawToken) {
+      try {
+        const decoded = jwt.verify(rawToken, process.env.JWT_SECRET);
+        const hotel = await Hotel.findByPk(decoded.id);
 
-      // Transform each row’s images if needed
-      const processedRows = rows.map((item) => {
-        // If images is not an array of strings, assume array of objects
-        if (!isArrayOfStrings(item.images)) {
-          // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
-          item.images = item.images.map((imgObj) => {
-            // replace `filename` with your actual key
-            const fileName = imgObj.savedFilename;
-            // build your URL however your server is configured:
-            // here we assume you have an endpoint like /api/public/:filename
-            return `${req.protocol}://${req.get(
-              "host"
-            )}/api/public/${fileName}`;
+        if (!hotel) {
+          return res.status(404).json({
+            success: false,
+            message: "Hotel not found for this token.",
           });
         }
-        return item;
-      });
 
-      return res.status(200).json({
-        success: true,
-        data: {
-          menuItems: processedRows,
-          pagination: {
-            // currentPage: parseInt(page, 10),
-            // totalPages: Math.ceil(count / limit),
-            // totalItems: count,
-            // itemsPerPage: parseInt(limit, 10),
-          },
-        },
+        hotelId = hotel.id;
+        console.log("Hotel ID from token:", hotelId);
+      } catch (jwtErr) {
+        console.log("JWT verification failed:", jwtErr.message);
+        // Don't return error here, fall through to tableId logic
+        hotelId = null;
+      }
+    }
+
+    // 3) If token is absent or invalid, get hotel ID from table ID
+    if (!hotelId) {
+      const { tableId } = req.query;
+
+      if (!tableId) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Either a valid authentication token or a tableId query parameter is required.",
+        });
+      }
+
+      // Decode the table ID to extract hotel ID and table ID combination
+      let decoded;
+      try {
+        decoded = decodeCode(tableId);
+        console.log("Decoded tableId data:", decoded);
+      } catch (decodeErr) {
+        console.error("TableId decode error:", decodeErr);
+        return res.status(400).json({
+          success: false,
+          message: "Invalid tableId format. Unable to decode.",
+          error: decodeErr.message,
+        });
+      }
+
+      // Extract hotel ID from decoded table data
+      if (!decoded.hotelId) {
+        return res.status(400).json({
+          success: false,
+          message: "Decoded tableId does not contain a valid hotelId.",
+        });
+      }
+
+      hotelId = decoded.hotelId;
+      console.log("Hotel ID from tableId:", hotelId);
+    }
+
+    // 4) Validate that we have a hotel ID at this point
+    if (!hotelId) {
+      return res.status(400).json({
+        success: false,
+        message: "Unable to determine hotel ID from provided authentication.",
       });
     }
 
-    console.log("req. user ", req.user);
-
+    // 5) Parse query parameters for filtering and pagination
     const {
       search,
       category,
@@ -249,85 +266,98 @@ export const getMenuItems = async (req, res) => {
       sortOrder = "DESC",
     } = req.query;
 
-    if (!tableId) {
-      return res.status(500).json({
+    // Validate pagination parameters
+    const pageNumber = parseInt(page, 10);
+    const pageSize = parseInt(limit, 10);
+
+    if (isNaN(pageNumber) || pageNumber < 1) {
+      return res.status(400).json({
         success: false,
-        message: "Table id not found",
-        // error: err.message,
+        message: "Page must be a positive integer.",
       });
     }
 
-    const { hotelId, tableId: tblId } = decodeCode(tableId);
-    // const decode = decodeCode(tableId);
-    // console.log(decode);
+    if (isNaN(pageSize) || pageSize < 1 || pageSize > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Limit must be a positive integer between 1 and 100.",
+      });
+    }
 
-    console.log("id is : ", hotelId, tblId);
+    // 6) Build WHERE clause for database query
+    const whereClause = { hotelId };
 
-    // Build your where-clause if needed (uncomment / adjust if filtering by hotelId, etc.)
-    const whereClause = {};
-    if (hotelId) {
-      whereClause.hotelId = hotelId;
+    // Add search filter
+    if (search && search.trim()) {
+      whereClause.name = { [Op.iLike]: `%${search.trim()}%` };
     }
-    if (search) {
-      whereClause.name = { [Op.iLike]: `%${search}%` };
+
+    // Add category filter
+    if (category && category.trim()) {
+      whereClause.category = category.trim();
     }
-    if (category) {
-      whereClause.category = category;
-    }
+
+    // Add price range filters
     if (minPrice != null && maxPrice != null) {
-      whereClause.price = { [Op.between]: [minPrice, maxPrice] };
+      const min = parseFloat(minPrice);
+      const max = parseFloat(maxPrice);
+
+      if (!isNaN(min) && !isNaN(max) && min <= max) {
+        whereClause.price = { [Op.between]: [min, max] };
+      }
     } else if (minPrice != null) {
-      whereClause.price = { [Op.gte]: minPrice };
+      const min = parseFloat(minPrice);
+      if (!isNaN(min)) {
+        whereClause.price = { [Op.gte]: min };
+      }
     } else if (maxPrice != null) {
-      whereClause.price = { [Op.lte]: maxPrice };
+      const max = parseFloat(maxPrice);
+      if (!isNaN(max)) {
+        whereClause.price = { [Op.lte]: max };
+      }
     }
 
-    const offset = (page - 1) * limit;
+    // 7) Query the database with pagination
+    const offset = (pageNumber - 1) * pageSize;
+    const validSortOrders = ["ASC", "DESC"];
+    const finalSortOrder = validSortOrders.includes(sortOrder.toUpperCase())
+      ? sortOrder.toUpperCase()
+      : "DESC";
+
     const { count, rows } = await MenuItem.findAndCountAll({
       where: whereClause,
-      // limit: parseInt(limit, 10),
-      offset: offset,
-      order: [[sortBy, sortOrder.toUpperCase()]],
+      limit: pageSize,
+      offset,
+      order: [[sortBy, finalSortOrder]],
     });
 
-    // Transform each row’s images if needed
-    const processedRows = rows.map((item) => {
-      // If images is not an array of strings, assume array of objects
-      if (!isArrayOfStrings(item.images)) {
-        // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
-        item.images = item.images.map((imgObj) => {
-          // replace `filename` with your actual key
-          const fileName = imgObj.savedFilename;
-          // build your URL however your server is configured:
-          // here we assume you have an endpoint like /api/public/:filename
-          return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
-        });
-      }
-      return item;
-    });
+    // 8) Process image URLs if needed
+    const processedRows = buildImageUrls(rows, req);
 
+    // 9) Send successful response
     return res.status(200).json({
       success: true,
       data: {
         menuItems: processedRows,
         pagination: {
-          currentPage: parseInt(page, 10),
-          totalPages: Math.ceil(count / limit),
+          currentPage: pageNumber,
+          totalPages: Math.ceil(count / pageSize),
           totalItems: count,
-          itemsPerPage: parseInt(limit, 10),
+          itemsPerPage: pageSize,
+          hasNextPage: pageNumber < Math.ceil(count / pageSize),
+          hasPreviousPage: pageNumber > 1,
         },
       },
     });
   } catch (err) {
-    console.error(err);
+    console.error("getMenuItems error:", err);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
-      error: err.message,
+      message: "Internal server error occurred while fetching menu items.",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 };
-
 // Get a single menu item by ID (ensuring it belongs to the user's hotel)
 export const getMenuItemById = async (req, res) => {
   try {
