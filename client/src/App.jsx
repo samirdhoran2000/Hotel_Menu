@@ -10,6 +10,7 @@ import { DashboardHome, Analytics, Orders, Reports, Settings } from "./component
 import Users from "./components/dashboard/Users"; // Assuming you have a Users component
 import MenuItemForm from "./components/dashboard/MenuItem";
 import MenuManager from "./components/dashboard/MenuManager";
+import ComingSoon from "./pages/ComingSoon";
 // import MenuManager from "/MenuManager";
 
 
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/hotel/login" element={<HotelLoginPage />} />
           <Route path="/user/login" element={<UserLoginPage />} />
           <Route path="/hotel/registration" element={<RegisterPage />} />
+          <Route path="/coming" element={<ComingSoon />} />
 
           {/* Dashboard with nested routes */}
           <Route path="/hotel/dashboard/*" element={<HotelDashboard />}>

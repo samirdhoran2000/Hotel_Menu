@@ -11,6 +11,7 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginHotel() {
   const [credentials, setCredentials] = useState({
@@ -20,6 +21,8 @@ export default function LoginHotel() {
   });
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,13 +45,34 @@ export default function LoginHotel() {
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      // Mock successful login
-      setErrorMsg("");
-      alert("Login successful! Welcome back to the future of hospitality.");
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/hotel/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: credentials.email.trim(),
+          password: credentials.password,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        // 401 = invalid credentials, etc.
+        setErrorMsg(data.message || "Invalid email or password");
+      } else {
+        // Successful login: store token & optionally redirect
+        localStorage.setItem("token", data.token);
+        // e.g. window.location.href = '/dashboard';
+        setErrorMsg("");
+
+        navigate("/hotel/dashboard");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setErrorMsg("Internal server error.");
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   return (
