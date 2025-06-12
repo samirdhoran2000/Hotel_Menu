@@ -179,10 +179,10 @@ const Contact = () => {
                     <div>
                       <p className="text-white/60 text-sm">Email us at</p>
                       <a
-                        href="mailto:support@menucard.com"
+                        href="mailto:support@easymenu.com"
                         className="text-white font-semibold hover:text-purple-300 transition-colors"
                       >
-                        support@menucard.com
+                        support@easymenu.com
                       </a>
                     </div>
                   </div>

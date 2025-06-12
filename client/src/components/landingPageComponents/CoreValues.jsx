@@ -73,7 +73,7 @@ const CoreValues = () => {
             </h2>
 
             <p className="text-2xl text-white/80 max-w-4xl mx-auto leading-relaxed font-light">
-              The principles that drive everything we do at MenuCard
+              The principles that drive everything we do at Easymenu
             </p>
           </div>
 

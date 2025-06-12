@@ -15,7 +15,7 @@ const caseStudies = [
     challenge:
       "Struggled with frequent menu updates for seasonal specials and managing high printing costs for paper menus.",
     solution:
-      "Implemented MenuCard's digital QR menus, allowing instant updates to specials and eliminating printing expenses.",
+      "Implemented Easymenu's digital QR menus, allowing instant updates to specials and eliminating printing expenses.",
     outcomes: [
       "Reduced annual printing costs by over $1,200.",
       "Improved customer experience with always up-to-date menus.",
@@ -35,7 +35,7 @@ const caseStudies = [
     challenge:
       "Wanted to provide a more hygienic, contactless menu solution post-pandemic, and reduce staff time spent on sanitizing physical menus.",
     solution:
-      "Adopted MenuCard for a fully digital menu accessible via QR codes on each table.",
+      "Adopted Easymenu for a fully digital menu accessible via QR codes on each table.",
     outcomes: [
       "Enhanced guest safety and satisfaction with contactless menus.",
       "Freed up staff time previously spent on menu cleaning.",
@@ -96,7 +96,7 @@ const CaseStudies = () => {
             </h2>
 
             <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-              Real restaurants, real results. See how MenuCard transforms dining
+              Real restaurants, real results. See how Easymenu transforms dining
               experiences.
             </p>
           </div>
@@ -171,7 +171,7 @@ const CaseStudies = () => {
                   <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-6 border border-purple-500/30">
                     <div className="text-4xl text-purple-300 mb-2">"</div>
                     <p className="text-white/90 text-lg leading-relaxed italic">
-                      MenuCard transformed our operations completely. The ease
+                      Easymenu transformed our operations completely. The ease
                       of updates and cost savings exceeded our expectations.
                     </p>
                     <div className="mt-4 flex items-center">

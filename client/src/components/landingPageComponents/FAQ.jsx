@@ -3,7 +3,7 @@ import { ChevronDown, HelpCircle, Sparkles } from "lucide-react";
 
 const faqs = [
   {
-    question: "Is MenuCard really free? How do you make money?",
+    question: "Is Easymenu really free? How do you make money?",
     answer:
       "Yes, our core digital menu service is completely free for restaurant owners. We generate revenue through unobtrusive ads displayed on the menu. We also offer premium ad-free options and advanced features for a subscription fee.",
   },
@@ -20,7 +20,7 @@ const faqs = [
   {
     question: "What kind of customer support do you provide?",
     answer:
-      "We offer email support for all users. Premium subscribers have access to priority support, including live chat options. We also have a comprehensive knowledge base and tutorials to help you get started and make the most of MenuCard.",
+      "We offer email support for all users. Premium subscribers have access to priority support, including live chat options. We also have a comprehensive knowledge base and tutorials to help you get started and make the most of Easymenu.",
   },
   {
     question: "As a customer, do I need to download an app to view the menu?",
@@ -83,7 +83,7 @@ const FAQ = () => {
             </h2>
 
             <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-              Everything you need to know about MenuCard and how it can
+              Everything you need to know about Easymenu and how it can
               transform your restaurant's digital presence.
             </p>
           </div>
@@ -173,7 +173,7 @@ const FAQ = () => {
                 Still have questions?
               </h3>
               <p className="text-white/70 mb-6">
-                Our support team is ready to help you get started with MenuCard
+                Our support team is ready to help you get started with Easymenu
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300">

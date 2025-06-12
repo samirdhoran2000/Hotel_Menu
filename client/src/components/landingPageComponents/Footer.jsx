@@ -36,7 +36,7 @@ const Footer = () => {
                   <BarChart3 className="w-7 h-7 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                  MenuCard
+                  Easymenu
                 </h2>
               </div>
               <nav className="flex flex-wrap justify-center items-center gap-4 md:gap-6 text-sm">
@@ -64,7 +64,7 @@ const Footer = () => {
             <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
 
             <p className="text-center text-sm text-white/60">
-              © 2024 MenuCard. All rights reserved.
+              © 2024 Easymenu. All rights reserved.
             </p>
           </div>
         </div>

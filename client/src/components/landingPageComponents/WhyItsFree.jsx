@@ -174,7 +174,7 @@ const WhyItsFree = () => {
               </h3>
 
               <p className="text-xl text-white/80 mb-8 leading-relaxed">
-                Upgrade to MenuCard Pro for an completely ad-free experience
+                Upgrade to Easymenu Pro for an completely ad-free experience
                 with additional premium features and priority support.
               </p>
 
