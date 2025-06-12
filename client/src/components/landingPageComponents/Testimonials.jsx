@@ -4,15 +4,15 @@ import { Quote, Star, Users } from "lucide-react";
 const testimonials = [
   {
     quote:
-      "MenuCard has revolutionized how we present our menu. It's incredibly easy to use and our customers love the convenience!",
-    author: "Maria Rodriguez",
-    position: "Owner, The Cozy Corner Cafe",
+      "EasyMenu has revolutionized how we present our menu. It's incredibly easy to use and our customers love the convenience!",
+    author: "Amol Chopade",
+    position: "Owner, Changbhale Cafe",
   },
   {
     quote:
-      "Switching to MenuCard was a game-changer. Updating specials is now a breeze, and the cost savings on printing are significant.",
-    author: "David Chen",
-    position: "Manager, Urban Bites Restaurant",
+      "Switching to EasyMenu was a game-changer. Updating specials is now a breeze, and the cost savings on printing are significant.",
+    author: "Gaurav Wankhede",
+    position: "Manager, Sarthi International",
   },
 ];
 
@@ -64,8 +64,8 @@ const Testimonials = () => {
             </h2>
 
             <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-              Real experiences from restaurant owners who've transformed their
-              business with MenuCard
+              Real experiences from restaurant owners who&apos;ve transformed their
+              business with EasyMenu
             </p>
           </div>
 
@@ -132,7 +132,7 @@ const Testimonials = () => {
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             {[
-              { number: "10K+", label: "Happy Restaurants" },
+              { number: "1K+", label: "Happy Restaurants" },
               { number: "98%", label: "Customer Satisfaction" },
               { number: "24/7", label: "Support Available" },
             ].map((stat, index) => (
@@ -155,7 +155,7 @@ const Testimonials = () => {
                 Join thousands of satisfied restaurant owners
               </h3>
               <p className="text-white/70 mb-6 max-w-2xl mx-auto">
-                Experience the MenuCard difference and see why restaurants
+                Experience the EasyMenu difference and see why restaurants
                 worldwide trust us with their digital menu needs
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
