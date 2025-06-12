@@ -18,7 +18,7 @@ const milestones = [
   },
   {
     icon: <Users className="w-6 h-6" />,
-    title: "5K Menus Live",
+    title: "1K+ Menus Live",
     description: "Celebrated 5,000 active digital menus.",
     color: "from-blue-500 to-cyan-500",
     status: "completed",
