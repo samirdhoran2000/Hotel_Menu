@@ -540,8 +540,8 @@ export default function RegisterHotel() {
           {/* Floating stats */}
           <div className="flex justify-center gap-4 mt-12">
             {[
-              { number: "50K+", label: "Hotels", icon: Hotel },
-              { number: "2M+", label: "QR Scans", icon: Star },
+              { number: "1K+", label: "Hotels", icon: Hotel },
+              { number: "10K+", label: "QR Scans", icon: Star },
               { number: "99%", label: "Uptime", icon: Sparkles },
             ].map((stat, i) => (
               <div

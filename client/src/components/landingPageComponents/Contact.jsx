@@ -224,7 +224,7 @@ const Contact = () => {
               {/* Trust Indicators */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 text-center">
-                  <div className="text-2xl font-bold text-white mb-1">50K+</div>
+                  <div className="text-2xl font-bold text-white mb-1">1K+</div>
                   <div className="text-white/60 text-sm">Happy Restaurants</div>
                 </div>
                 <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 text-center">
