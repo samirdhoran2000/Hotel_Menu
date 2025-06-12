@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BarChart3, Menu, X, User, ChevronDown, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from '../../assets/logo.png'; 
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -63,13 +64,20 @@ const Header = () => {
             className="flex items-center gap-3 group"
           >
             <div className="relative">
-              <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300 group-hover:scale-110">
-                <BarChart3 className="w-6 h-6 text-white" />
+              <div className="p-2 bg-gradient-to-r from-slate-900 to-purple-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300 group-hover:scale-110">
+                {/* <BarChart3 className="w-6 h-6 text-white" /> */}
+                <img
+                  src={logo}
+                  alt="Logo"
+                  width={50}
+                  height={50}
+                  className=""
+                />
               </div>
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-md"></div>
             </div>
             <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-              MenuCard
+              EasyMenu
             </h1>
           </button>
 
@@ -96,7 +104,10 @@ const Header = () => {
           </nav>
 
           {/* Desktop Actions */}
-          <Link to={'/hotel/login'} className="hidden md:flex items-center gap-4">
+          <Link
+            to={"/hotel/login"}
+            className="hidden md:flex items-center gap-4"
+          >
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
               <button className="relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-semibold rounded-2xl transition-all duration-300 shadow-xl group-hover:scale-105 flex items-center gap-2">
