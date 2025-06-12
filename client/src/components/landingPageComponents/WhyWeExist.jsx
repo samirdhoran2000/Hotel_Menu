@@ -143,7 +143,7 @@ const WhyWeExist = () => {
               {/* Trust indicators */}
               <div className="flex justify-center gap-8 mt-12 opacity-60">
                 {[
-                  "Trusted by 50K+ restaurants",
+                  "Trusted by 1K+ restaurants",
                   "99.9% uptime guarantee",
                   "24/7 support",
                 ].map((text, i) => (
