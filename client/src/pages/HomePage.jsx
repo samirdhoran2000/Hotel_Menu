@@ -35,14 +35,13 @@ import FAQ from "../components/landingPageComponents/FAQ";
 import Milestones from "../components/landingPageComponents/Milestones";
 import CaseStudies from "../components/landingPageComponents/CaseStudies";
 import Header from "../components/landingPageComponents/Header";
+import Blogs from "../components/landingPageComponents/Blogs";
 
 const MenuCardAbout = () => {
-
   return (
     <div className="min-h-screen bg-orange-50 font-sans">
       {/* Header */}
       <Header />
- 
 
       {/* Hero Section */}
       <Hero />
@@ -52,40 +51,36 @@ const MenuCardAbout = () => {
 
       {/* Core Values */}
       <CoreValues />
-     
 
       {/* Team */}
       {/* <Team /> */}
-     
 
       {/* Testimonials */}
       <Testimonials />
- 
 
       {/* Case Studies */}
       <CaseStudies />
-      
 
       {/* Milestones */}
       <Milestones />
-     
+
+      {/* Why It's Free */}
+      <WhyItsFree />
+
+      {/* Blogs */}
+      <Blogs />
 
       {/* FAQ */}
       <FAQ />
-   
-
-      {/* Why It's Free */}
-    <WhyItsFree/>
-   
 
       {/* Contact */}
-    <Contact/>
+      <Contact />
 
       {/* CTA */}
-    <CTA/>
+      <CTA />
 
       {/* Footer */}
-    <Footer/>
+      <Footer />
     </div>
   );
 };
