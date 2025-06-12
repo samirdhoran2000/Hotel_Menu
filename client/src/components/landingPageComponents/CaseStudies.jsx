@@ -9,46 +9,47 @@ import {
 
 const caseStudies = [
   {
-    name: "Luigi's Trattoria",
-    subtitle: "Authentic Italian Dining",
-    logo: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=80&h=80&fit=crop",
+    name: "Sharma's Dhaba",
+    subtitle: "Authentic North Indian Cuisine",
+    logo: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=80&h=80&fit=crop",
     challenge:
-      "Struggled with frequent menu updates for seasonal specials and managing high printing costs for paper menus.",
+      "Struggled with frequent menu updates for daily specials and high printing costs for paper menus.",
     solution:
-      "Implemented Easymenu's digital QR menus, allowing instant updates to specials and eliminating printing expenses.",
+      "Implemented Easymenu's digital QR menus, enabling instant updates and eliminating printing expenses.",
     outcomes: [
-      "Reduced annual printing costs by over $1,200.",
-      "Improved customer experience with always up-to-date menus.",
-      "Increased flexibility in offering daily and weekly specials.",
+      "Saved over ₹1,000 annually on printing costs.",
+      "Enhanced customer experience with always up-to-date menus.",
+      "Increased flexibility to offer daily and weekly specials.",
     ],
     metrics: {
-      savings: "$1,200+",
+      savings: "₹1,000+",
       efficiency: "90%",
       satisfaction: "4.8/5",
     },
     color: "from-orange-500 to-red-500",
   },
   {
-    name: "The Corner Bistro",
-    subtitle: "Modern Cafe & Eatery",
+    name: "Cafe Bengaluru",
+    subtitle: "Modern Café & Eatery",
     logo: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=80&h=80&fit=crop",
     challenge:
-      "Wanted to provide a more hygienic, contactless menu solution post-pandemic, and reduce staff time spent on sanitizing physical menus.",
+      "Needed a hygienic, contactless menu solution post-pandemic and wanted to reduce staff time spent sanitizing physical menus.",
     solution:
-      "Adopted Easymenu for a fully digital menu accessible via QR codes on each table.",
+      "Adopted Easymenu's fully digital menu via QR codes on each table.",
     outcomes: [
-      "Enhanced guest safety and satisfaction with contactless menus.",
-      "Freed up staff time previously spent on menu cleaning.",
-      "Positive customer feedback on the ease of use and modern approach.",
+      "Improved guest safety and satisfaction with contactless menus.",
+      "Saved 3 hours per day previously spent on menu cleaning.",
+      "Received positive feedback on ease of use and modern approach.",
     ],
     metrics: {
-      savings: "3hrs/day",
+      savings: "1 hours/day",
       efficiency: "95%",
       satisfaction: "4.9/5",
     },
     color: "from-blue-500 to-purple-500",
   },
 ];
+
 
 const CaseStudies = () => {
   const [activeStudy, setActiveStudy] = useState(0);
