@@ -38,11 +38,9 @@ const Hero = () => {
                 {/* Placeholder for image with glassmorphism effect */}
                 <div className="aspect-square bg-white/5 backdrop-blur-md rounded-3xl border border-white/20 p-8 hover:bg-white/10 transition-all duration-500 group">
                   {/* Image placeholder content */}
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <img src={heroImage} alt="Hero Image" />
-                    </div>
-                  </div>
+             
+                      <img src={heroImage} alt="Hero Image" className="rounded-2xl"/>
+                    
                 </div>
 
                 {/* Decorative elements around image */}
@@ -134,8 +132,8 @@ const Hero = () => {
               {/* Floating stats */}
               <div className="flex flex-wrap gap-4 lg:gap-6 animate-fade-in-delay-2">
                 {[
-                  { number: "50K+", label: "Restaurants" },
-                  { number: "2M+", label: "QR Scans" },
+                  { number: "1K+", label: "Restaurants" },
+                  { number: "10K+", label: "QR Scans" },
                   { number: "99%", label: "Uptime" },
                 ].map((stat, i) => (
                   <div
