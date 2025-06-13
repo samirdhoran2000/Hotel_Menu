@@ -1,0 +1,43 @@
+// server/models/activityLog.model.js
+
+import { DataTypes } from "sequelize";
+import sequelize from "./index.js";
+
+const ActivityLog = sequelize.define(
+  "ActivityLog",
+  {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    tableId: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      references: { model: "tables", key: "id" },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
+    },
+    deviceId: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    duration: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+    },
+    itemClicked: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "activity_logs",
+    timestamps: true,
+    createdAt: "createdAt",
+    updatedAt: "updatedAt",
+  }
+);
+
+export default ActivityLog;

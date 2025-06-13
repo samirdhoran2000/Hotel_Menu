@@ -4,13 +4,11 @@ import sequelize from "./index.js";
 import Hotel from "./hotel.model.js";
 import MenuItem from "./menuItem.model.js";
 import Table from "./table.model.js";
-// import Order from "./order.model.js";
-// import User from "./user.model.js";
+import ActivityLog from "./activityLog.model.js";
 
-// A hotel has many menu items, tables, users
+// A hotel has many menu items and tables
 Hotel.hasMany(MenuItem, { foreignKey: "hotelId", onDelete: "CASCADE" });
 Hotel.hasMany(Table, { foreignKey: "hotelId", onDelete: "CASCADE" });
-// Hotel.hasMany(User, { foreignKey: "hotelId", onDelete: "SET NULL" });
 
 // A MenuItem belongs to a Hotel
 MenuItem.belongsTo(Hotel, { foreignKey: "hotelId" });
@@ -18,12 +16,11 @@ MenuItem.belongsTo(Hotel, { foreignKey: "hotelId" });
 // A Table belongs to a Hotel
 Table.belongsTo(Hotel, { foreignKey: "hotelId" });
 
-// An Order belongs to a Table
-// Order.belongsTo(Table, { foreignKey: "tableId" });
+// A Table has many ActivityLogs
+Table.hasMany(ActivityLog, { foreignKey: "tableId", onDelete: "CASCADE" });
 
-// A User belongs to a Hotel
-// User.belongsTo(Hotel, { foreignKey: "hotelId" });
+// An ActivityLog belongs to a Table
+ActivityLog.belongsTo(Table, { foreignKey: "tableId", onDelete: "CASCADE" });
 
-// Export all of them
-// export { sequelize, Hotel, MenuItem, Table, Order, User };
-export { sequelize, Hotel, MenuItem, Table };
+// don’t forget to export ActivityLog
+export { sequelize, Hotel, MenuItem, Table, ActivityLog };
