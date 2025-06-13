@@ -1,5 +1,4 @@
-import { BarChart3 } from "lucide-react";
-import React from "react";
+import logo from "../../assets/Logo.png"
 
 const Footer = () => {
   return (
@@ -32,9 +31,16 @@ const Footer = () => {
           <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 shadow-2xl">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-6 text-center md:text-left">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-lg">
-                  <BarChart3 className="w-7 h-7 text-white" />
-                </div>
+                <div className="p-2 bg-gradient-to-r from-slate-900 to-purple-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300 group-hover:scale-110">
+                                {/* <BarChart3 className="w-6 h-6 text-white" /> */}
+                                <img
+                                  src={logo}
+                                  alt="Logo"
+                                  width={50}
+                                  height={50}
+                                  className=""
+                                />
+                              </div>
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
                   Easymenu
                 </h2>
@@ -64,7 +70,7 @@ const Footer = () => {
             <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
 
             <p className="text-center text-sm text-white/60">
-              © 2024 Easymenu. All rights reserved.
+              &copy; {new Date().getFullYear()} Easymenu. All rights reserved.
             </p>
           </div>
         </div>
