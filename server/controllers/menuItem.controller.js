@@ -101,61 +101,6 @@ export const createMenuItem = async (req, res) => {
   }
 };
 
-// // Create a new menu item
-// export const createMenuItem = async (req, res) => {
-//   try {
-//     const {
-//       name,
-//       description,
-//       price,
-//       category,
-//       isVegetarian,
-//       available,
-//       original_price,
-//       // images,
-//       ingredients,
-//     } = req.body;
-//       const { id: userId, hotelId } = req.user;
-
-//       console.log(" req bocy is ", req.body);
-
-//     // Basic validation
-//     if (!name || price == null || original_price == null) {
-//       return res
-//         .status(400)
-//         .json({
-//           success: false,
-//           message: "Name, price, and original_price are required",
-//         });
-//     }
-
-//     const menuItem = await MenuItem.create({
-//       name,
-//       description,
-//       price,
-//       category,
-//       isVegetarian,
-//       available,
-//       original_price,
-//       images,
-//       ingredients,
-//       hotelId,
-//       userId,
-//     });
-
-//     res
-//       .status(201)
-//       .json({
-//         success: true,
-//         message: "Menu item created successfully",
-//         data: menuItem,
-//       });
-//   } catch (err) {
-//     console.error("something went wrong in create menu controller ",err);
-//     return handleSequelizeError(err, res);
-//   }
-// };
-
 // Helper: transform each MenuItem.images into public URLs
 function buildImageUrls(items, req) {
   return items.map((item) => {
