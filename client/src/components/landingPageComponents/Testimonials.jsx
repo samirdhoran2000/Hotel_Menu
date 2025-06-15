@@ -1,5 +1,6 @@
 import React from "react";
 import { Quote, Star, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const testimonials = [
   {
@@ -64,8 +65,8 @@ const Testimonials = () => {
             </h2>
 
             <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-              Real experiences from restaurant owners who&apos;ve transformed their
-              business with EasyMenu
+              Real experiences from restaurant owners who&apos;ve transformed
+              their business with EasyMenu
             </p>
           </div>
 
@@ -159,13 +160,19 @@ const Testimonials = () => {
                 worldwide trust us with their digital menu needs
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300">
+                <Link
+                  to={"/hotel/registration"}
+                  className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300"
+                >
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
                   <span className="relative">Start Your Free Menu</span>
-                </button>
-                <button className="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300">
+                </Link>
+                <a
+                  href="/#contact"
+                  className="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300"
+                >
                   View More Reviews
-                </button>
+                </a>
               </div>
             </div>
           </div>

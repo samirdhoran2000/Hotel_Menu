@@ -3,7 +3,10 @@ import { Heart, Zap, Shield, Crown, Gift, Users } from "lucide-react";
 
 const WhyItsFree = () => {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-cyan-900 overflow-hidden">
+    <div
+      className="relative min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-cyan-900 overflow-hidden"
+      id="why-its-free"
+    >
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-10 right-10 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -32,7 +35,7 @@ const WhyItsFree = () => {
 
             <h2 className="text-5xl md:text-7xl font-black mb-6">
               <span className="bg-gradient-to-r from-white via-emerald-200 to-teal-200 bg-clip-text text-transparent">
-                Why It's
+                Why It&apos;s
               </span>
               <br />
               <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
@@ -179,17 +182,23 @@ const WhyItsFree = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300 overflow-hidden shadow-xl">
+                <a
+                  href="/#contact"
+                  className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300 overflow-hidden shadow-xl"
+                >
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <span className="relative flex items-center gap-2">
                     <Crown className="w-5 h-5" />
                     Upgrade to Pro
                   </span>
-                </button>
+                </a>
 
-                <button className="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <a
+                  href="/#contact"
+                  className="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300"
+                >
                   Learn More About Pro
-                </button>
+                </a>
               </div>
 
               {/* Pro Features Preview */}

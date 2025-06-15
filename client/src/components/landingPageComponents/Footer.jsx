@@ -1,6 +1,14 @@
+import { Link } from "react-router-dom";
 import logo from "../../assets/Logo.png"
 
 const Footer = () => {
+
+  const navLinks = [
+    
+    { name: "Terms of Service", path: "/coming" },
+    { name: "Privacy Policy", path: "/coming" },
+    { name: "Contact Us", path: "/#contact" },
+  ];
   return (
     <>
       <footer className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden">
@@ -42,16 +50,28 @@ const Footer = () => {
                                 />
                               </div>
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                  Easymenu
+                  EasyMenu
                 </h2>
               </div>
               <nav className="flex flex-wrap justify-center items-center gap-4 md:gap-6 text-sm">
-                <a
-                  href="#"
+
+                {
+                  navLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      className="text-white/70 hover:text-white font-medium transition-all duration-300 px-4 py-2 rounded-xl hover:bg-white/10 backdrop-blur-sm"
+                    >
+                      {link.name}
+                    </Link>
+                  ))
+                }
+                {/* <Link
+                  to={"/coming"}
                   className="text-white/70 hover:text-white font-medium transition-all duration-300 px-4 py-2 rounded-xl hover:bg-white/10 backdrop-blur-sm"
                 >
                   Terms of Service
-                </a>
+                </Link>
                 <a
                   href="#"
                   className="text-white/70 hover:text-white font-medium transition-all duration-300 px-4 py-2 rounded-xl hover:bg-white/10 backdrop-blur-sm"
@@ -63,14 +83,19 @@ const Footer = () => {
                   className="text-white/70 hover:text-white font-medium transition-all duration-300 px-4 py-2 rounded-xl hover:bg-white/10 backdrop-blur-sm"
                 >
                   Contact Us
-                </a>
+                </a> */}
               </nav>
             </div>
 
             <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
 
             <p className="text-center text-sm text-white/60">
-              &copy; {new Date().getFullYear()} Easymenu. All rights reserved.
+              &copy; {new Date().getFullYear()} 
+              <Link to={"/"} className="text-white hover:text-purple-300 transition-colors duration-300">
+                { " "} EasyMenu
+              </Link>
+              
+              . All rights reserved.
             </p>
           </div>
         </div>

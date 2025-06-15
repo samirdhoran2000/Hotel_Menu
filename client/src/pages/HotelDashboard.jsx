@@ -25,6 +25,11 @@ const Dashboard = () => {
     // { icon: ShoppingCart, label: "Orders", path: "/hotel/dashboard/orders" },
     { icon: FileText, label: "Menu", path: "/hotel/dashboard/menu" },
     { icon: Settings, label: "Settings", path: "/hotel/dashboard/settings" },
+    { icon: Settings, label: "temp1", path: "/hotel/dashboard/temp1" },
+    { icon: Settings, label: "temp2", path: "/hotel/dashboard/temp2" },
+    { icon: Settings, label: "temp3", path: "/hotel/dashboard/temp3" },
+    { icon: Settings, label: "temp4", path: "/hotel/dashboard/temp4" },
+    { icon: Settings, label: "temp5", path: "/hotel/dashboard/temp5" },
   ];
 
   const isActive = (path, exact = false) => {
@@ -88,6 +93,26 @@ const Dashboard = () => {
               <h1 className="text-2xl font-semibold text-gray-800">
                 Dashboard
               </h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link
+                to="/hotel/dashboard"
+                className="px-3 py-1 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/hotel/dashboard/menu"
+                className="px-3 py-1 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+              >
+                Menu
+              </Link>
+              <Link
+                to="/hotel/dashboard/qrcodes"
+                className="px-3 py-1 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+              >
+                QR Codes
+              </Link>
             </div>
 
             {/* Search and Actions */}

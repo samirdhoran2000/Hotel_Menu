@@ -12,7 +12,7 @@ import Footer from '../components/Footer';
 
 const MenuPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const params = useParams();
   const dataManager = useDataManager({id:params?.id});
 
@@ -21,19 +21,19 @@ const MenuPage = () => {
   );
   
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 500);
+  // }, []);
 
-  if (isLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-black"></div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="h-screen w-full flex items-center justify-center">
+  //       <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-black"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div

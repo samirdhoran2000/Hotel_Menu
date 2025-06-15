@@ -21,42 +21,85 @@ import { useEffect, useState } from "react";
 import TableForm from "./dashboard/TableForm";
 import { QRCodeCanvas } from "qrcode.react";
 // import TableForm from "../../temp/TableForm";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+} from "recharts";
+
+
+// Sample data for the chart
+const data = [
+  { name: 'Sun', views: 250, pv: 2400, amt: 2400 },
+  { name: 'Mon', views: 70, pv: 1398, amt: 2210 },
+  { name: 'Tue', views: 170, pv: 9800, amt: 2290 },
+  { name: 'Wed', views: 100, pv: 3908, amt: 2000 },
+  { name: 'Thu', views: 110, pv: 4800, amt: 2181 },
+  { name: 'Fri', views: 60, pv: 3800, amt: 2500 },
+  { name: 'Sat', views: 200, pv: 4300, amt: 2100 },
+  // { name: 'Aug', uv: 3000, pv: 2800, amt: 2400 },
+  // { name: 'Sep', uv: 2000, pv: 9600, amt: 2290 },
+  // { name: 'Oct', uv: 2780, pv: 3200, amt: 2000 },
+  // { name: 'Nov', uv: 1890, pv: 4500, amt: 2181 },
+  // { name: 'Dec', uv: 3490, pv: 5000, amt: 2100 },
+];
 
 const DashboardHome = () => {
   return (
     <div className="max-w-full">
       {/* Page Title */}
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome to Dashboard
-        </h2>
-        <p className="text-gray-600">This is your main dashboard overview.</p>
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome to Dashboard
+          </h2>
+          <p className="text-gray-600">This is your main dashboard overview.</p>
+        </div>
+        <div className="flex gap-3">
+          <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 shadow-sm font-medium">
+            <Plus size={16} />
+            Add Menu
+          </button>
+          <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm font-medium">
+            <QrCode size={16} />
+            Create QR
+          </button>
+        </div>
       </div>
 
       {/* Sample Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
           {
-            title: "Total Users",
-            value: "12,543",
-            change: "+12%",
+            title: "Total/ Active Menu's",
+            totalValue: "127",
+            activeValue: "115",
+            change: "-12%",
             color: "bg-blue-500",
           },
           {
-            title: "Revenue",
-            value: "$45,678",
-            change: "+8%",
+            title: "Total/ Active QR ",
+            totalValue: "37",
+            activeValue: "35",
+            change: "-8%",
             color: "bg-green-500",
           },
           {
-            title: "Orders",
-            value: "1,234",
+            title: "Total Scan Today",
+            totalValue: "1,234",
             change: "+15%",
             color: "bg-purple-500",
           },
           {
-            title: "Growth",
-            value: "23%",
+            title: "Most Scan Table",
+            totalValue: "A22",
             change: "+3%",
             color: "bg-orange-500",
           },
@@ -71,7 +114,8 @@ const DashboardHome = () => {
                   {stat.title}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {stat.value}
+                  {stat?.totalValue}
+                  {stat.activeValue && " /"} {stat?.activeValue}
                 </p>
                 <p className="text-sm text-green-600 mt-1">
                   {stat.change} from last month
@@ -90,17 +134,77 @@ const DashboardHome = () => {
       {/* Large Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          {/* <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Analytics Overview
-          </h3>
-          <div className="h-80 bg-gray-50 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500">Chart or main content goes here</p>
+          </h3> */}
+          {/* <div className="h-80 bg-gray-50 rounded-lg flex items-center justify-center"> */}
+          <div className=" bg-gray-100 flex items-center justify-center  font-sans">
+            <div className="bg-white rounded-lg w-full max-w-4xl">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
+                Menu Visited Trend
+              </h2>
+              {/* ResponsiveContainer ensures the chart scales with its parent */}
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart
+                  data={data}
+                  margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
+                  {/* Define the gradient */}
+                  <defs>
+                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                      {/* Stop 1: Top of the gradient (e.g., a darker blue) */}
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                      {/* Stop 2: Bottom of the gradient (e.g., a lighter blue/transparent) */}
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                  <XAxis dataKey="name" stroke="#6b7280" />
+                  <YAxis stroke="#6b7280" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "rgba(255,255,255,0.9)",
+                      borderRadius: "8px",
+                      border: "1px solid #e0e0e0",
+                      padding: "10px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    }}
+                    labelStyle={{ color: "#374151", fontWeight: "bold" }}
+                    itemStyle={{ color: "#4b5563" }} 
+                  />
+                  <Legend wrapperStyle={{ paddingTop: "20px" }} />
+                  {/* Area component to draw the gradient-filled area */}
+                  <Area
+                    type="monotone"
+                    dataKey="views"
+                    stroke="#8884d8"
+                    fillOpacity={1}
+                    fill="url(#colorUv)" // Reference the defined linear gradient
+                    strokeWidth={2}
+                  />
+                  {/* Line component to draw the actual line on top of the area */}
+                  <Line
+                    type="monotone"
+                    dataKey="views"
+                    stroke="#8884d8"
+                    activeDot={{ r: 8 }}
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            {/* </div> */}
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Recent Activity
+            Most Viewed Menu
           </h3>
           <div className="space-y-4">
             {[
@@ -477,12 +581,12 @@ const Settings = () => {
                           </div>
                         </div>
                         {/* <div className=""> */}
-                          <QRCodeCanvas
-                            value={tableItem.qrCodeLink}
-                            // height={20}
-                            // width={20}
-                            className="p-3 bg-blue-50 rounded-xl h-8 w-8"
-                          />
+                        <QRCodeCanvas
+                          value={tableItem.qrCodeLink}
+                          // height={20}
+                          // width={20}
+                          className="p-3 bg-blue-50 rounded-xl h-8 w-8"
+                        />
                         {/* </div> */}
                       </div>
                     </div>

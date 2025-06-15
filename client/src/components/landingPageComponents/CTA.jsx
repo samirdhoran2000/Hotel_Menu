@@ -1,5 +1,6 @@
 import React from "react";
 import { QrCode, Sparkles, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const CTA = () => {
   return (
@@ -53,13 +54,16 @@ const CTA = () => {
             {/* Enhanced CTA Button */}
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-              <button className="relative px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl font-bold rounded-2xl transition-all duration-300 flex items-center gap-3 mx-auto group-hover:scale-105 shadow-2xl">
+              <Link
+                to={"/hotel/registration"}
+                className="relative px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xl font-bold rounded-2xl transition-all duration-300 flex items-center gap-3 mx-auto group-hover:scale-105 shadow-2xl"
+              >
                 <div className="p-2 bg-white/20 rounded-xl">
                   <QrCode className="w-6 h-6" />
                 </div>
                 <span>Generate Your Free QR Menu</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-              </button>
+              </Link>
             </div>
 
             {/* Additional Info */}

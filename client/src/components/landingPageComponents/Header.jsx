@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { BarChart3, Menu, X, User, ChevronDown, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
-import logo from '../../assets/logo.png'; 
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("/");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,13 +24,14 @@ const Header = () => {
     setActiveLink(path);
     setIsMobileMenuOpen(false);
     console.log(`Navigating to: ${path}`);
+   
   };
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Features", path: "/features" },
-    { name: "Pricing", path: "/pricing" },
-    { name: "About Us", path: "/about" },
+    { name: "Home", path: "/#" },
+    { name: "Features", path: "/#why-we-exist" },
+    { name: "Free", path: "/#why-its-free" },
+    { name: "Contact Us", path: "/#contact" },
   ];
 
   return (
@@ -64,7 +67,7 @@ const Header = () => {
             className="flex items-center gap-3 group"
           >
             <div className="relative">
-              <div className="p-2 bg-gradient-to-r from-slate-900 to-purple-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300 group-hover:scale-110">
+              <div className="p-2 md:m-1 bg-gradient-to-r from-slate-900 to-purple-600 rounded-xl shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300 group-hover:scale-110">
                 {/* <BarChart3 className="w-6 h-6 text-white" /> */}
                 <img
                   src={logo}
@@ -84,9 +87,10 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <button
+              <a
                 key={link.name}
                 onClick={() => handleLinkClick(link.path)}
+                href={link.path}
                 className={`relative font-medium text-sm lg:text-base transition-all duration-300 group px-4 py-2 rounded-xl ${
                   activeLink === link.path
                     ? "text-purple-300 bg-white/10 backdrop-blur-sm"
@@ -99,7 +103,7 @@ const Header = () => {
                     activeLink === link.path ? "w-8" : "w-0 group-hover:w-8"
                   }`}
                 ></span>
-              </button>
+              </a>
             ))}
           </nav>
 
@@ -136,7 +140,8 @@ const Header = () => {
         <div className="md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-purple-500/20">
           <div className="px-4 py-6 space-y-4">
             {navLinks.map((link) => (
-              <button
+              <a
+                href={link.path}
                 key={link.name}
                 onClick={() => handleLinkClick(link.path)}
                 className={`block w-full text-left py-4 px-6 rounded-2xl font-medium transition-all duration-300 ${
@@ -146,16 +151,18 @@ const Header = () => {
                 }`}
               >
                 {link.name}
-              </button>
+              </a>
             ))}
 
             <div className="pt-4 space-y-3">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-75"></div>
-                <button className="relative w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2">
+                <Link to={'/hotel/login'} onClick={() => {
+                  setIsMobileMenuOpen(false);
+                }} className="relative w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2">
                   <Sparkles className="w-4 h-4" />
                   <span>Generate Free QR</span>
-                </button>
+                </Link>
               </div>
             </div>
           </div>

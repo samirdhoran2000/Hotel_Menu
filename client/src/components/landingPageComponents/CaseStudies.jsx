@@ -6,6 +6,7 @@ import {
   DollarSign,
   Star,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const caseStudies = [
   {
@@ -170,7 +171,7 @@ const CaseStudies = () => {
 
                   {/* Quote */}
                   <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-6 border border-purple-500/30">
-                    <div className="text-4xl text-purple-300 mb-2">"</div>
+                    <div className="text-4xl text-purple-300 mb-2">&ldquo;</div>
                     <p className="text-white/90 text-lg leading-relaxed italic">
                       Easymenu transformed our operations completely. The ease
                       of updates and cost savings exceeded our expectations.
@@ -258,9 +259,12 @@ const CaseStudies = () => {
                 Join hundreds of restaurants already transforming their
                 operations
               </p>
-              <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-4 rounded-2xl transform hover:scale-105 transition-all duration-300 shadow-xl">
+              <Link
+                to={"/hotel/registration"}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-4 rounded-2xl transform hover:scale-105 transition-all duration-300 shadow-xl"
+              >
                 Start Your Transformation
-              </button>
+              </Link>
             </div>
           </div>
         </div>

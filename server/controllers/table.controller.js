@@ -3,20 +3,6 @@
 import { config } from "../config/config.js";
 import { Table } from "../models/associations.js";
 
-export const generateCode = (hotelId, TableId) => {
-  const rawString = `${hotelId}:${TableId}`;
-  return Buffer.from(rawString).toString("base64");
-};
-
-export const decodeCode = (code) => {
-  const decoded = Buffer.from(code, "base64").toString("utf-8");
-  const [hotelId, tableId] = decoded.split(":");
-  return {
-    hotelId: hotelId,
-    tableId: tableId,
-  };
-};
-
 // Create a new table
 export const createTable = async (req, res) => {
   try {

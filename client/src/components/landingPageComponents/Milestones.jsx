@@ -7,6 +7,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import React from "react";
+import { Link } from "react-router-dom";
 
 const milestones = [
   {
@@ -81,16 +82,16 @@ const Milestones = () => {
             </h2>
 
             <p className="text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
-              From launch to innovation, see how we're transforming the digital
-              dining experience
+              From launch to innovation, see how we&apos;re transforming the
+              digital dining experience
             </p>
           </div>
 
           {/* Timeline */}
           <div className="relative">
             {/* Animated timeline line */}
-            <div className="absolute left-8 top-0 w-1 h-full bg-gradient-to-b from-purple-500 via-blue-500 via-cyan-500 to-pink-500 rounded-full shadow-lg"></div>
-            <div className="absolute left-8 top-0 w-1 h-full bg-gradient-to-b from-purple-400 via-blue-400 via-cyan-400 to-pink-400 rounded-full animate-pulse blur-sm"></div>
+            <div className="absolute left-8 top-0 w-1 h-full bg-gradient-to-b from-purple-500  via-cyan-500 to-pink-500 rounded-full shadow-lg"></div>
+            <div className="absolute left-8 top-0 w-1 h-full bg-gradient-to-b from-purple-400 via-cyan-400 to-pink-400 rounded-full animate-pulse blur-sm"></div>
 
             {milestones.map((milestone, index) => (
               <div key={index} className="mb-12 ml-20 relative group">
@@ -152,9 +153,12 @@ const Milestones = () => {
                 Join thousands of restaurants already on the cutting edge of
                 digital dining
               </p>
-              <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-3 rounded-2xl transform hover:scale-105 transition-all duration-300 shadow-xl">
+              <Link
+                to={"/hotel/registration"}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-3 rounded-2xl transform hover:scale-105 transition-all duration-300 shadow-xl"
+              >
                 Start Your Digital Transformation
-              </button>
+              </Link>
             </div>
           </div>
         </div>

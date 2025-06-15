@@ -84,7 +84,7 @@ const FAQ = () => {
 
             <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
               Everything you need to know about Easymenu and how it can
-              transform your restaurant's digital presence.
+              transform your restaurant&apos;s digital presence.
             </p>
           </div>
 
@@ -176,13 +176,19 @@ const FAQ = () => {
                 Our support team is ready to help you get started with Easymenu
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300">
+                <a
+                  href="/#contact"
+                  className="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300"
+                >
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
                   <span className="relative">Contact Support</span>
-                </button>
-                <button className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300">
-                  View Documentation
-                </button>
+                </a>
+                <a
+                  href="/#contact"
+                  className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300"
+                >
+                  Brochure
+                </a>
               </div>
             </div>
           </div>

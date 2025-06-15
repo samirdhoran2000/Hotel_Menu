@@ -41,7 +41,7 @@ const MenuCardAbout = () => {
   return (
     <div className="min-h-screen bg-orange-50 font-sans">
       {/* Header */}
-      <Header />
+      {/* <Header /> */}
 
       {/* Hero Section */}
       <Hero />
@@ -80,7 +80,7 @@ const MenuCardAbout = () => {
       <CTA />
 
       {/* Footer */}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

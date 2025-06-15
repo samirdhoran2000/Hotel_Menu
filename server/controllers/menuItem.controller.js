@@ -1,8 +1,8 @@
 // controllers/menuItemController.js
 import { Hotel, MenuItem } from "../models/associations.js";
 import { Op } from "sequelize";
-import { decodeCode } from "./table.controller.js";
 import jwt from "jsonwebtoken";
+import { decodeCode, buildImageUrls } from "../utils/codeDecode.utils.js";
 
 // Helper to standardize error response
 export const handleSequelizeError = (err, res) => {
@@ -19,12 +19,6 @@ export const handleSequelizeError = (err, res) => {
     error: err.message,
   });
 };
-
-// Helper: true if every element in `arr` is a string
-function isArrayOfStrings(arr) {
-  if (!Array.isArray(arr)) return false;
-  return arr.every((el) => typeof el === "string");
-}
 
 export const createMenuItem = async (req, res) => {
   try {
@@ -101,104 +95,10 @@ export const createMenuItem = async (req, res) => {
   }
 };
 
-// Helper: transform each MenuItem.images into public URLs
-function buildImageUrls(items, req) {
-  return items.map((item) => {
-    if (!isArrayOfStrings(item.images)) {
-      item.images = item.images.map((imgObj) => {
-        const fileName = imgObj.savedFilename;
-        return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
-      });
-    }
-    return item;
-  });
-}
-
 export const getMenuItems = async (req, res) => {
   try {
-    let hotelId = null;
-
-    // 1) Check for auth token in header, body, and query parameters
-    const authHeader = req.headers.authorization;
-    const tokenFromHeader =
-      authHeader && authHeader.startsWith("Bearer ")
-        ? authHeader.split(" ")[1]
-        : null;
-
-    const tokenFromQuery = req.query.token || null;
-    const tokenFromBody = req.body.token || null;
-
-    // Priority: Header > Query > Body
-    const rawToken = tokenFromHeader || tokenFromQuery || tokenFromBody;
-
-    // 2) If token is present, try to authenticate and get hotel ID
-    if (rawToken) {
-      try {
-        const decoded = jwt.verify(rawToken, process.env.JWT_SECRET);
-        const hotel = await Hotel.findByPk(decoded.id);
-
-        if (!hotel) {
-          return res.status(404).json({
-            success: false,
-            message: "Hotel not found for this token.",
-          });
-        }
-
-        hotelId = hotel.id;
-        console.log("Hotel ID from token:", hotelId);
-      } catch (jwtErr) {
-        console.log("JWT verification failed:", jwtErr.message);
-        // Don't return error here, fall through to tableId logic
-        hotelId = null;
-      }
-    }
-
-    // 3) If token is absent or invalid, get hotel ID from table ID
-    if (!hotelId) {
-      const { tableId } = req.query;
-
-      if (!tableId) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Either a valid authentication token or a tableId query parameter is required.",
-        });
-      }
-
-      // Decode the table ID to extract hotel ID and table ID combination
-      let decoded;
-      try {
-        decoded = decodeCode(tableId);
-        console.log("Decoded tableId data:", decoded);
-      } catch (decodeErr) {
-        console.error("TableId decode error:", decodeErr);
-        return res.status(400).json({
-          success: false,
-          message: "Invalid tableId format. Unable to decode.",
-          error: decodeErr.message,
-        });
-      }
-
-      // Extract hotel ID from decoded table data
-      if (!decoded.hotelId) {
-        return res.status(400).json({
-          success: false,
-          message: "Decoded tableId does not contain a valid hotelId.",
-        });
-      }
-
-      hotelId = decoded.hotelId;
-      console.log("Hotel ID from tableId:", hotelId);
-    }
-
-    // 4) Validate that we have a hotel ID at this point
-    if (!hotelId) {
-      return res.status(400).json({
-        success: false,
-        message: "Unable to determine hotel ID from provided authentication.",
-      });
-    }
-
+    const { id: hotelId } = req.user;
+    
     // 5) Parse query parameters for filtering and pagination
     const {
       search,

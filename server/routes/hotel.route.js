@@ -6,11 +6,21 @@ import {
   getHotelById,
   createHotel,
   updateHotel,
-  deleteHotel,loginHotel
+  deleteHotel,loginHotel,getMenuItemsbyHotel
   // searchHotels,
 } from "../controllers/hotel.controller.js";
+import { authenticateHotelToken } from "../middleware/auth.js";
+
 
 const router = express.Router();
+
+// POST /api/hotels - Create new hotel
+router.post("/", createHotel);
+router.post("/login", loginHotel);
+
+router.get("/:tableCode", getMenuItemsbyHotel);
+
+router.use(authenticateHotelToken);
 
 // GET /api/hotels - Get all hotels with optional pagination and filtering
 router.get("/", getAllHotels);
@@ -20,10 +30,6 @@ router.get("/", getAllHotels);
 
 // GET /api/hotels/:id - Get single hotel by ID
 router.get("/:id", getHotelById);
-
-// POST /api/hotels - Create new hotel
-router.post("/", createHotel);
-router.post("/login", loginHotel);
 
 // PUT /api/hotels/:id - Update hotel by ID
 router.put("/:id", updateHotel);

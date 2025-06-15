@@ -12,10 +12,10 @@ import { authenticateHotelToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
+router.use(authenticateHotelToken);
 // Public route to get all menu items (no authentication required)
 router.get("/", getMenuItems);
 
-router.use(authenticateHotelToken);
 
 // All routes assume authentication middleware has populated req.user
 

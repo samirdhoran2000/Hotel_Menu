@@ -35,7 +35,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-black overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-black overflow-hidden" >
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -70,7 +70,7 @@ const Contact = () => {
 
             <h2 className="text-5xl md:text-7xl font-black mb-6">
               <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                Let's Start a
+                Let&apos;s Start a
               </span>
               <br />
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
@@ -79,14 +79,14 @@ const Contact = () => {
             </h2>
 
             <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-              Ready to transform your restaurant's dining experience? We're here
+              Ready to transform your restaurant&apos;s dining experience? We&apos;re here
               to help you every step of the way.
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             {/* Contact Form */}
-            <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 lg:p-12">
+            <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-8 lg:p-12" id="contact">
               <div className="space-y-8">
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-white/90 mb-3">
@@ -197,7 +197,7 @@ const Contact = () => {
                         href="tel:+1234567890"
                         className="text-white font-semibold hover:text-blue-300 transition-colors"
                       >
-                        +1 (234) 567-890
+                        +91 8888 634041
                       </a>
                     </div>
                   </div>

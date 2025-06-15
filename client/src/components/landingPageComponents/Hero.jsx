@@ -1,6 +1,7 @@
 import React from "react";
 
 import heroImage from "../../assets/Hero_Image.webp";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -94,7 +95,7 @@ const Hero = () => {
               {/* CTA Button with hover effects */}
               <div className="relative group mb-8">
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
-                <button className="relative px-8 py-4 lg:px-12 lg:py-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl leading-none flex items-center divide-x divide-gray-600 hover:scale-105 transform transition-all duration-300">
+                <Link to={'/hotel/registration'} className="relative px-8 py-4 lg:px-12 lg:py-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl leading-none flex items-center divide-x divide-gray-600 hover:scale-105 transform transition-all duration-300">
                   <span className="flex items-center space-x-3">
                     <svg
                       className="w-5 h-5 lg:w-6 lg:h-6 text-white"
@@ -126,7 +127,7 @@ const Hero = () => {
                       />
                     </svg>
                   </span>
-                </button>
+                </Link>
               </div>
 
               {/* Floating stats */}

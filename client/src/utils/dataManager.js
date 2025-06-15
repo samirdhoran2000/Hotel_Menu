@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-
-export const useDataManager = ({id=null }) => {
+export const useDataManager = ({ id = null }) => {
   // --- raw data from API ---
   const [items, setItems] = useState([]); // the full list of fetched menuItems
   const [categories, setCategories] = useState([]); // ["all", "beverage", "main_course", …]
@@ -14,38 +13,45 @@ export const useDataManager = ({id=null }) => {
   const [sortOption, setSortOption] = useState("featured"); // e.g. "featured" | "price-asc" | "price-desc" | ...
   const [viewMode, setViewMode] = useState("grid"); // e.g. "grid" or "list"
 
-  // --- filtered + sorted items exposed to UI ---
   const [filteredItems, setFilteredItems] = useState([]);
 
-  // ──────────── 1. FETCH DATA + BUILD UNIQUE CATEGORY LIST ────────────
   useEffect(() => {
+    if (!id) return;
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     async function fetchData() {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/menu?tableId=${id}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/hotel/${id}`, {
+          signal,
+        });
         const json = await res.json();
-
-        // Assume API response shape: { success: true, data: { menuItems: [ … ] } }
         const fetchedItems = json?.data?.menuItems || [];
         setItems(fetchedItems);
 
-        // Build a Set of distinct categories
         const distinctCats = new Set(
           fetchedItems.map((it) => it.category || "")
         );
-        // Turn into an array, filter out any empty strings or null; then prepend "all"
-        const uniqueCatsArray = [
+        setCategories([
           "all",
           ...Array.from(distinctCats).filter((c) => c !== ""),
-        ];
-        setCategories(uniqueCatsArray);
+        ]);
       } catch (err) {
-        console.error("Error fetching menu items:", err);
+        // ignore aborts, log others
+        if (err.name !== "AbortError") {
+          console.log("Error fetching menu items:", err);
+        }
       }
     }
-    fetchData();
-  }, []); // run once on mount
 
-  // ──────────── 2. COMPUTE FILTERED + SORTED RESULTS ────────────
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
+  }, [id]);
+
   useEffect(() => {
     // Start from the full items array
     let result = Array.isArray(items) ? [...items] : [];

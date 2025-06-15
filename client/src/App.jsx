@@ -2,29 +2,40 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MenuPage from "./pages/MenuPage";
 import HotelLoginPage from "./pages/HotelLoginPage";
-import UserLoginPage from "./pages/UserLoginPage";
-import RegisterPage from "./pages/RegisterPage";
+import RegisterPage from "./pages/HotelRegisterPage";
 import HotelDashboard from "./pages/HotelDashboard";
 import HomePage from "./pages/HomePage";
-import { DashboardHome, Analytics, Orders, Reports, Settings } from "./components/DashboardComponents";
-import Users from "./components/dashboard/Users"; // Assuming you have a Users component
-import MenuItemForm from "./components/dashboard/MenuItem";
+import {
+  DashboardHome,
+  Analytics,
+  Orders,
+  Reports,
+  Settings,
+} from "./components/DashboardComponents";
 import MenuManager from "./components/dashboard/MenuManager";
 import ComingSoon from "./pages/ComingSoon";
-// import MenuManager from "/MenuManager";
-
+import HotelDashboard2 from "./components/dashboard/temp/Overview";
+import QRCodeManagement from "./components/dashboard/temp/QRCodeManagement";
+import HotelierMenuManager from "./components/dashboard/temp/HotelierMenuManager";
+import Temp4 from "./components/dashboard/temp/Temp4";
+import Temp5 from "./components/dashboard/temp/Temp5";
+import HomePageLayout from "./pages/HomePageLayout";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   return (
     <>
       <Router>
+        <ScrollToTop />
+
         <Routes>
-          <Route path="/" element={<HomePage />} />
           <Route path="/hotel/:id" element={<MenuPage />} />
-          <Route path="/hotel/login" element={<HotelLoginPage />} />
-          <Route path="/user/login" element={<UserLoginPage />} />
-          <Route path="/hotel/registration" element={<RegisterPage />} />
-          <Route path="/coming" element={<ComingSoon />} />
+          <Route path="/" element={<HomePageLayout />}>
+            <Route path="/" index element={<HomePage />} />
+            <Route path="/hotel/login" element={<HotelLoginPage />} />
+            <Route path="/hotel/registration" element={<RegisterPage />} />
+            <Route path="/coming" element={<ComingSoon />} />
+          </Route>
 
           {/* Dashboard with nested routes */}
           <Route path="/hotel/dashboard/*" element={<HotelDashboard />}>
@@ -35,6 +46,12 @@ const App = () => {
             {/* <Route path="menu" element={<MenuItemForm />} /> */}
             <Route path="menu" element={<MenuManager />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="temp1" element={<HotelDashboard2 />} />
+            <Route path="temp2" element={<QRCodeManagement />} />
+            <Route path="temp3" element={<HotelierMenuManager />} />
+            <Route path="temp4" element={<Temp4 />} />
+            <Route path="temp5" element={<Temp5 />} />
+            <Route path="qrcodes" element={<Settings />} />
           </Route>
 
           {/* Add other routes here as needed */}

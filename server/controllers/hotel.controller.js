@@ -1,9 +1,11 @@
 // server/controllers/hotelController.js
 
-import { Hotel } from "../models/associations.js";
+import { Hotel, MenuItem } from "../models/associations.js";
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { decodeCode, buildImageUrls } from "../utils/codeDecode.utils.js";
+
 
 // Helper to filter out password from responses
 const sanitizeHotel = (hotel) => {
@@ -13,6 +15,7 @@ const sanitizeHotel = (hotel) => {
 
 // Get all hotels with optional filtering and pagination
 export const getAllHotels = async (req, res) => {
+  
   try {
     const {
       page = 1,
@@ -253,6 +256,118 @@ export const loginHotel = async (req, res) => {
       success: false,
       message: "Internal server error",
       error: error.message,
+    });
+  }
+};
+
+export const getMenuItemsbyHotel = async (req, res) => {
+  console.log("function called by table code ");
+
+  try {
+    const { tableCode } = req.params;
+    const { tableId, hotelId } = decodeCode(tableCode);
+
+    // 5) Parse query parameters for filtering and pagination
+    const {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 10,
+      sortBy = "created_at",
+      sortOrder = "DESC",
+    } = req.query;
+
+    // Validate pagination parameters
+    const pageNumber = parseInt(page, 10);
+    const pageSize = parseInt(limit, 10);
+
+    if (isNaN(pageNumber) || pageNumber < 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Page must be a positive integer.",
+      });
+    }
+
+    if (isNaN(pageSize) || pageSize < 1 || pageSize > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Limit must be a positive integer between 1 and 100.",
+      });
+    }
+
+    // 6) Build WHERE clause for database query
+    const whereClause = { hotelId };
+
+    // Add search filter
+    if (search && search.trim()) {
+      whereClause.name = { [Op.iLike]: `%${search.trim()}%` };
+    }
+
+    // Add category filter
+    if (category && category.trim()) {
+      whereClause.category = category.trim();
+    }
+
+    // Add price range filters
+    if (minPrice != null && maxPrice != null) {
+      const min = parseFloat(minPrice);
+      const max = parseFloat(maxPrice);
+
+      if (!isNaN(min) && !isNaN(max) && min <= max) {
+        whereClause.price = { [Op.between]: [min, max] };
+      }
+    } else if (minPrice != null) {
+      const min = parseFloat(minPrice);
+      if (!isNaN(min)) {
+        whereClause.price = { [Op.gte]: min };
+      }
+    } else if (maxPrice != null) {
+      const max = parseFloat(maxPrice);
+      if (!isNaN(max)) {
+        whereClause.price = { [Op.lte]: max };
+      }
+    }
+
+    // 7) Query the database with pagination
+    const offset = (pageNumber - 1) * pageSize;
+    const validSortOrders = ["ASC", "DESC"];
+    const finalSortOrder = validSortOrders.includes(sortOrder.toUpperCase())
+      ? sortOrder.toUpperCase()
+      : "DESC";
+
+    const { count, rows } = await MenuItem.findAndCountAll({
+      where: whereClause,
+      limit: pageSize,
+      offset,
+      order: [[sortBy, finalSortOrder]],
+    });
+
+    // 8) Process image URLs if needed
+    const processedRows = buildImageUrls(rows, req);
+
+    // 9) Send successful response
+    return res.status(200).json({
+      success: true,
+      data: {
+        menuItems: processedRows,
+        pagination: {
+          currentPage: pageNumber,
+          totalPages: Math.ceil(count / pageSize),
+          totalItems: count,
+          itemsPerPage: pageSize,
+          hasNextPage: pageNumber < Math.ceil(count / pageSize),
+          hasPreviousPage: pageNumber > 1,
+        },
+      },
+    });
+  } catch (err) {
+    console.error("getMenuItems error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error occurred while fetching menu items.",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 };

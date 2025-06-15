@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
 
 
 const WhyWeExist = () => {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
-    
+    <div
+      className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden"
+      id="why-we-exist"
+    >
       {/* Modern Features Section */}
       <div className="relative bg-gradient-to-b from-slate-900 to-black py-32 overflow-hidden">
         {/* Background decorative elements */}
@@ -100,7 +103,10 @@ const WhyWeExist = () => {
 
               {/* Demo buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300 overflow-hidden">
+                <a
+                  href="/#contact"
+                  className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl font-semibold text-white hover:scale-105 transform transition-all duration-300 overflow-hidden"
+                >
                   <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <span className="relative flex items-center gap-2">
                     <svg
@@ -118,9 +124,12 @@ const WhyWeExist = () => {
                     </svg>
                     View Live Demo
                   </span>
-                </button>
+                </a>
 
-                <button className="group px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <a
+                  href="/#contact"
+                  className="group px-8 py-4 bg-white/10 backdrop-blur-sm rounded-2xl font-semibold text-white border border-white/20 hover:bg-white/20 transition-all duration-300"
+                >
                   <span className="flex items-center gap-2">
                     <svg
                       className="w-5 h-5"
@@ -137,7 +146,7 @@ const WhyWeExist = () => {
                     </svg>
                     Talk to Sales
                   </span>
-                </button>
+                </a>
               </div>
 
               {/* Trust indicators */}
