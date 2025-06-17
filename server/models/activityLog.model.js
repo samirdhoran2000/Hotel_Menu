@@ -19,9 +19,9 @@ const ActivityLog = sequelize.define(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    deviceId: {
+    deviceName: {
       type: DataTypes.STRING(50),
-      allowNull: false,
+      allowNull: true,
     },
     duration: {
       type: DataTypes.INTEGER.UNSIGNED,

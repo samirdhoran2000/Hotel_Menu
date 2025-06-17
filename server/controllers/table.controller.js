@@ -124,3 +124,23 @@ export const deleteTable = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+export const getTableIdByHotelIdAndTableNumber = async (hotelId, tableNumber) => { 
+  
+
+  try {
+    const table = await Table.findOne({
+      where: { hotelId, tableNumber },
+      attributes: ["id"],
+    });
+
+    if (!table) {
+      throw new Error("Table not found for the given hotelId and tableNumber.");
+    }
+
+    return table.id;
+  } catch (error) {
+    console.log("Error fetching table ID:", error);
+    // throw error; // Propagate the error to be handled by the caller
+  }
+};

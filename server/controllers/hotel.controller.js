@@ -5,6 +5,8 @@ import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { decodeCode, buildImageUrls } from "../utils/codeDecode.utils.js";
+import { createActivityLog } from "../service/activityLog.service.js";
+import { getTableIdByHotelIdAndTableNumber } from "./table.controller.js";
 
 
 // Helper to filter out password from responses
@@ -278,6 +280,9 @@ export const getMenuItemsbyHotel = async (req, res) => {
       sortBy = "created_at",
       sortOrder = "DESC",
     } = req.query;
+
+    const tableid = await getTableIdByHotelIdAndTableNumber(hotelId,tableId);
+     createActivityLog(tableid);
 
     // Validate pagination parameters
     const pageNumber = parseInt(page, 10);
