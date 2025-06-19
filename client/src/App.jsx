@@ -14,7 +14,6 @@ import {
 } from "./components/dashboard/DashboardComponents";
 import MenuManager from "./components/dashboard/MenuManager";
 import ComingSoon from "./pages/ComingSoon";
-import HotelDashboard2 from "./components/dashboard/temp/Overview";
 import QRCodeManagement from "./components/dashboard/temp/QRCodeManagement";
 import HotelierMenuManager from "./components/dashboard/temp/HotelierMenuManager";
 import Temp4 from "./components/dashboard/temp/Temp4";
@@ -46,7 +45,6 @@ const App = () => {
             {/* <Route path="menu" element={<MenuItemForm />} /> */}
             <Route path="menu" element={<MenuManager />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="temp1" element={<HotelDashboard2 />} />
             <Route path="temp2" element={<QRCodeManagement />} />
             <Route path="temp3" element={<HotelierMenuManager />} />
             <Route path="temp4" element={<Temp4 />} />
