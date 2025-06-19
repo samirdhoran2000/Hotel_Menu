@@ -2,6 +2,7 @@
 
 import { config } from "../config/config.js";
 import { Table } from "../models/associations.js";
+import { generateCode } from "../utils/codeDecode.utils.js";
 
 // Create a new table
 export const createTable = async (req, res) => {
