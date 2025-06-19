@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Upload, X, Plus, DollarSign, AlertCircle, Check } from "lucide-react";
+import {
+  Upload,
+  X,
+  Plus,
+  DollarSign,
+  AlertCircle,
+  Check,
+  Eye,
+  ZoomIn,
+} from "lucide-react";
 
 import categories from "../../constant/category";
 
@@ -26,9 +35,14 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [value, setValue] = useState(""); // for ingredient text input
 
+  // New state for image preview dialog
+  const [imagePreview, setImagePreview] = useState({
+    isOpen: false,
+    imageUrl: "",
+    imageName: "",
+  });
 
-
-  // 1️⃣ If editing, fetch the item’s details on mount:
+  // 1️⃣ If editing, fetch the item's details on mount:
   useEffect(() => {
     if (!isEditing) return;
 
@@ -40,8 +54,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const responce = await res.json();
-        
-        
+
         const result = responce.data[0];
         if (res.ok) {
           // Populate formData
@@ -58,7 +71,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
             available: result.available || false,
           });
 
-          // Keep track of “existingImages” so we display them for preview/edit
+          // Keep track of "existingImages" so we display them for preview/edit
           setExistingImages(Array.isArray(result.images) ? result.images : []);
         } else {
           console.error("Failed to fetch item:", result.message);
@@ -74,12 +87,16 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   // 2️⃣ Close modal on Escape:
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === "Escape" && isOpen) {
-        setIsOpen(false);
-        onClose();
+      if (e.key === "Escape") {
+        if (imagePreview.isOpen) {
+          setImagePreview({ isOpen: false, imageUrl: "", imageName: "" });
+        } else if (isOpen) {
+          setIsOpen(false);
+          onClose();
+        }
       }
     };
-    if (isOpen) {
+    if (isOpen || imagePreview.isOpen) {
       document.addEventListener("keydown", handleEscape);
       document.body.style.overflow = "hidden";
     }
@@ -87,7 +104,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, imagePreview.isOpen, onClose]);
 
   // 3️⃣ Handle comma/enter for ingredients:
   const handleKeyDown = (e) => {
@@ -109,6 +126,14 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
       }
       setValue("");
     }
+  };
+
+  // 🆕 Remove ingredient chip functionality
+  const removeIngredient = (indexToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      ingredients: prev.ingredients.filter((_, idx) => idx !== indexToRemove),
+    }));
   };
 
   const handleInputChange = (e) => {
@@ -180,6 +205,24 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   // Remove an existing image (only when editing):
   const removeExistingImage = (urlToRemove) => {
     setExistingImages((prev) => prev.filter((url) => url !== urlToRemove));
+  };
+
+  // 🆕 Open image preview dialog
+  const openImagePreview = (imageUrl, imageName = "Image") => {
+    setImagePreview({
+      isOpen: true,
+      imageUrl,
+      imageName,
+    });
+  };
+
+  // 🆕 Close image preview dialog
+  const closeImagePreview = () => {
+    setImagePreview({
+      isOpen: false,
+      imageUrl: "",
+      imageName: "",
+    });
   };
 
   // 5️⃣ Validate before submit:
@@ -262,7 +305,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
             ? "Menu item updated successfully!"
             : "Menu item created successfully!",
         });
-        // Brief delay so user sees “success”
+        // Brief delay so user sees "success"
         setTimeout(() => {
           setIsSubmitting(false);
           onSuccess();
@@ -292,7 +335,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
 
   return (
     <>
-      {/* Modal Overlay */}
+      {/* Main Modal Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           {/* Backdrop */}
@@ -355,18 +398,42 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
 
                   {/* Show existing images (if editing) */}
                   {isEditing && existingImages.length > 0 && (
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                      {existingImages.map((url) => (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                      {existingImages.map((url, index) => (
                         <div key={url} className="relative group">
-                          <img
-                            src={url}
-                            alt="Existing"
-                            className="w-full h-24 object-cover rounded-lg border"
-                          />
+                          <div className="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                            <img
+                              src={url}
+                              alt={`Existing image ${index + 1}`}
+                              className="w-full h-32 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() =>
+                                openImagePreview(
+                                  url,
+                                  `Existing Image ${index + 1}`
+                                )
+                              }
+                            />
+                            {/* View button overlay */}
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  openImagePreview(
+                                    url,
+                                    `Existing Image ${index + 1}`
+                                  )
+                                }
+                                className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 transition-all duration-200"
+                              >
+                                <ZoomIn className="w-4 h-4 text-gray-700" />
+                              </button>
+                            </div>
+                          </div>
+                          {/* Remove button */}
                           <button
                             type="button"
                             onClick={() => removeExistingImage(url)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -405,18 +472,36 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
 
                   {/* Preview of newly selected files */}
                   {previews.length > 0 && (
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {previews.map((preview, idx) => (
                         <div key={preview.id} className="relative group">
-                          <img
-                            src={preview.url}
-                            alt={preview.name}
-                            className="w-full h-24 object-cover rounded-lg border"
-                          />
+                          <div className="relative overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                            <img
+                              src={preview.url}
+                              alt={preview.name}
+                              className="w-full h-32 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() =>
+                                openImagePreview(preview.url, preview.name)
+                              }
+                            />
+                            {/* View button overlay */}
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  openImagePreview(preview.url, preview.name)
+                                }
+                                className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 transition-all duration-200"
+                              >
+                                <ZoomIn className="w-4 h-4 text-gray-700" />
+                              </button>
+                            </div>
+                          </div>
+                          {/* Remove button */}
                           <button
                             type="button"
                             onClick={() => removeFile(idx)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -550,7 +635,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     htmlFor="comma-input"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Ingredients (press “,” or Enter to add)
+                    Ingredients (press "," or Enter to add)
                   </label>
                   <textarea
                     id="comma-input"
@@ -565,9 +650,16 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                       {formData.ingredients.map((item, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                          className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full group hover:bg-blue-200 transition-colors"
                         >
                           {item}
+                          <button
+                            type="button"
+                            onClick={() => removeIngredient(idx)}
+                            className="ml-2 text-blue-600 hover:text-blue-800 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
                         </span>
                       ))}
                     </div>
@@ -631,6 +723,47 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     </>
                   )}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 Image Preview Dialog */}
+      {imagePreview.isOpen && (
+        <div className="fixed inset-0 z-[60] overflow-hidden">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-75 transition-opacity"
+            onClick={closeImagePreview}
+          ></div>
+
+          {/* Image Dialog */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div
+              className="relative bg-white rounded-lg shadow-2xl max-w-4xl max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Dialog Header */}
+              <div className="flex justify-between items-center p-4 border-b">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {imagePreview.imageName}
+                </h3>
+                <button
+                  onClick={closeImagePreview}
+                  className="p-2 hover:bg-gray-100 rounded-full transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Image Container */}
+              <div className="p-4">
+                <img
+                  src={imagePreview.imageUrl}
+                  alt={imagePreview.imageName}
+                  className="max-w-full max-h-[70vh] object-contain mx-auto rounded-lg"
+                />
               </div>
             </div>
           </div>
