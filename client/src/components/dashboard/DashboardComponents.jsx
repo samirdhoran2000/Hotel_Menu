@@ -18,7 +18,7 @@ import {
   QrCodeIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import TableForm from "./dashboard/TableForm";
+import TableForm from "./TableForm";
 import { QRCodeCanvas } from "qrcode.react";
 // import TableForm from "../../temp/TableForm";
 import {
@@ -33,25 +33,121 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-
-
-// Sample data for the chart
-const data = [
-  { name: 'Sun', views: 250, pv: 2400, amt: 2400 },
-  { name: 'Mon', views: 70, pv: 1398, amt: 2210 },
-  { name: 'Tue', views: 170, pv: 9800, amt: 2290 },
-  { name: 'Wed', views: 100, pv: 3908, amt: 2000 },
-  { name: 'Thu', views: 110, pv: 4800, amt: 2181 },
-  { name: 'Fri', views: 60, pv: 3800, amt: 2500 },
-  { name: 'Sat', views: 200, pv: 4300, amt: 2100 },
-  // { name: 'Aug', uv: 3000, pv: 2800, amt: 2400 },
-  // { name: 'Sep', uv: 2000, pv: 9600, amt: 2290 },
-  // { name: 'Oct', uv: 2780, pv: 3200, amt: 2000 },
-  // { name: 'Nov', uv: 1890, pv: 4500, amt: 2181 },
-  // { name: 'Dec', uv: 3490, pv: 5000, amt: 2100 },
-];
+import MenuItemForm from "./MenuItemForm";
+import Chart from "./Chart"; // Assuming you have a Chart component for the area chart
 
 const DashboardHome = () => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingItemId, setEditingItemId] = useState(null);
+  const [isTableFormOpen, setIsTableFormOpen] = useState(false);
+  const [tableEditingItemId, setTableEditingItemId] = useState(null);
+
+  const [totalScan, setTotalScan] = useState(0);
+  const [mostScanTable, setMostScanTable] = useState({});
+
+  const [rawLogs, setRawLogs] = useState([]);
+  const [chartData, setChartData] = useState([]);
+
+  // 1) Fetch the last 7 days of logs
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/activity-log`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const payload = await res.json();
+        console.log("Fetched activity logs:", payload);
+
+        if (payload.success) {
+          setRawLogs(payload.data);
+          setMostScanTable(payload?.analytics?.topTable[0]);
+          setTotalScan(payload?.analytics?.todayCount);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    load();
+  }, []);
+
+  // 2) Re‑compute chartData whenever rawLogs changes
+  useEffect(() => {
+    // build the last 7 dates & init counts
+    const counts = {};
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const name = d.toLocaleDateString("en-US", { weekday: "short" });
+      days.push(name);
+      counts[name] = 0;
+    }
+
+    // tally
+    rawLogs.forEach((log) => {
+      const dayName = new Date(log.createdAt).toLocaleDateString("en-US", {
+        weekday: "short",
+      });
+      if (counts[dayName] != null) counts[dayName]++;
+    });
+
+    // format for Recharts
+    setChartData(
+      days.map((name) => ({
+        name,
+        views: counts[name],
+      }))
+    );
+  }, [rawLogs]);
+
+  const openCreateModal = () => {
+    setEditingItemId(null);
+    setIsFormOpen(true);
+  };
+
+  const openEditModal = (id) => {
+    setEditingItemId(id);
+    setIsFormOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsFormOpen(false);
+    setEditingItemId(null);
+  };
+
+  // After creating or updating, re-fetch the list
+  const handleSaveSuccess = () => {
+    closeModal();
+    // fetchMenuItems();
+  };
+
+  const openCreateTableModal = () => {
+    setTableEditingItemId(null);
+    setIsTableFormOpen(true);
+  };
+
+  const openEditTableModal = (id) => {
+    setTableEditingItemId(id);
+    setIsTableFormOpen(true);
+  };
+
+  const closeTableModal = () => {
+    setIsTableFormOpen(false);
+    setTableEditingItemId(null);
+  };
+
+  const handleTableSaveSuccess = () => {
+    closeTableModal();
+    fetchQrCodeDetails();
+  };
+
   return (
     <div className="max-w-full">
       {/* Page Title */}
@@ -60,14 +156,24 @@ const DashboardHome = () => {
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
             Welcome to Dashboard
           </h2>
-          <p className="text-gray-600">This is your main dashboard overview.</p>
+          {/* <p className="text-gray-600">This is your main dashboard overview.</p> */}
         </div>
         <div className="flex gap-3">
-          <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 shadow-sm font-medium">
+          <button
+            onClick={() => {
+              openCreateModal();
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 shadow-sm font-medium"
+          >
             <Plus size={16} />
             Add Menu
           </button>
-          <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm font-medium">
+          <button
+            onClick={() => {
+              openCreateTableModal();
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm font-medium"
+          >
             <QrCode size={16} />
             Create QR
           </button>
@@ -93,15 +199,16 @@ const DashboardHome = () => {
           },
           {
             title: "Total Scan Today",
-            totalValue: "1,234",
+            totalValue: totalScan,
             change: "+15%",
             color: "bg-purple-500",
           },
           {
             title: "Most Scan Table",
-            totalValue: "A22",
-            change: "+3%",
+            totalValue: mostScanTable?.Table?.tableNumber,
+            change: mostScanTable?.count,
             color: "bg-orange-500",
+            from: "last 7 days",
           },
         ].map((stat, index) => (
           <div
@@ -118,7 +225,7 @@ const DashboardHome = () => {
                   {stat.activeValue && " /"} {stat?.activeValue}
                 </p>
                 <p className="text-sm text-green-600 mt-1">
-                  {stat.change} from last month
+                  {stat.change} {stat?.from ? stat?.from : "From last week"}
                 </p>
               </div>
               <div
@@ -138,68 +245,8 @@ const DashboardHome = () => {
             Analytics Overview
           </h3> */}
           {/* <div className="h-80 bg-gray-50 rounded-lg flex items-center justify-center"> */}
-          <div className=" bg-gray-100 flex items-center justify-center  font-sans">
-            <div className="bg-white rounded-lg w-full max-w-4xl">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
-                Menu Visited Trend
-              </h2>
-              {/* ResponsiveContainer ensures the chart scales with its parent */}
-              <ResponsiveContainer width="100%" height={400}>
-                <AreaChart
-                  data={data}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                  }}
-                >
-                  {/* Define the gradient */}
-                  <defs>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                      {/* Stop 1: Top of the gradient (e.g., a darker blue) */}
-                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                      {/* Stop 2: Bottom of the gradient (e.g., a lighter blue/transparent) */}
-                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                  <XAxis dataKey="name" stroke="#6b7280" />
-                  <YAxis stroke="#6b7280" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "rgba(255,255,255,0.9)",
-                      borderRadius: "8px",
-                      border: "1px solid #e0e0e0",
-                      padding: "10px",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    }}
-                    labelStyle={{ color: "#374151", fontWeight: "bold" }}
-                    itemStyle={{ color: "#4b5563" }} 
-                  />
-                  <Legend wrapperStyle={{ paddingTop: "20px" }} />
-                  {/* Area component to draw the gradient-filled area */}
-                  <Area
-                    type="monotone"
-                    dataKey="views"
-                    stroke="#8884d8"
-                    fillOpacity={1}
-                    fill="url(#colorUv)" // Reference the defined linear gradient
-                    strokeWidth={2}
-                  />
-                  {/* Line component to draw the actual line on top of the area */}
-                  <Line
-                    type="monotone"
-                    dataKey="views"
-                    stroke="#8884d8"
-                    activeDot={{ r: 8 }}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-            {/* </div> */}
-          </div>
+
+          <Chart data={chartData} />
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
@@ -208,11 +255,15 @@ const DashboardHome = () => {
           </h3>
           <div className="space-y-4">
             {[
-              "New user registered",
-              "Order #1234 completed",
-              "Payment processed",
-              "Report generated",
-              "System backup completed",
+              "Paneer Tikka Masala",
+              "Chicken Biryani",
+              "Veg Fried Rice",
+              "Caesar Salad",
+              "Chocolate Lava Cake",
+              "Spaghetti Carbonara",
+              "Margherita Pizza",
+              // "Grilled Salmon with Asparagus",
+              // "Beef Tacos with Guacamole",
             ].map((activity, index) => (
               <div
                 key={index}
@@ -225,6 +276,22 @@ const DashboardHome = () => {
           </div>
         </div>
       </div>
+      {isFormOpen && (
+        <MenuItemForm
+          itemId={editingItemId} // if null, treat as "create"
+          onClose={closeModal}
+          onSuccess={handleSaveSuccess} // called after successful create/update
+        />
+      )}
+
+      {/* Modal */}
+      {isTableFormOpen && (
+        <TableForm
+          itemId={tableEditingItemId}
+          onClose={closeTableModal}
+          onSuccess={handleTableSaveSuccess}
+        />
+      )}
     </div>
   );
 };
@@ -303,8 +370,8 @@ const Reports = () => {
 
 const Settings = () => {
   const [table, setTable] = useState([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingItemId, setEditingItemId] = useState(null);
+  const [isTableFormOpen, setIsTableFormOpen] = useState(false);
+  const [tableEditingItemId, setTableEditingItemId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -341,23 +408,23 @@ const Settings = () => {
     fetchQrCodeDetails();
   }, []);
 
-  const openCreateModal = () => {
-    setEditingItemId(null);
-    setIsFormOpen(true);
+  const openCreateTableModal = () => {
+    setTableEditingItemId(null);
+    setIsTableFormOpen(true);
   };
 
-  const openEditModal = (id) => {
-    setEditingItemId(id);
-    setIsFormOpen(true);
+  const openEditTableModal = (id) => {
+    setTableEditingItemId(id);
+    setIsTableFormOpen(true);
   };
 
-  const closeModal = () => {
-    setIsFormOpen(false);
-    setEditingItemId(null);
+  const closeTableModal = () => {
+    setIsTableFormOpen(false);
+    setTableEditingItemId(null);
   };
 
-  const handleSaveSuccess = () => {
-    closeModal();
+  const handleTableSaveSuccess = () => {
+    closeTableModal();
     fetchQrCodeDetails();
   };
 
@@ -388,7 +455,7 @@ const Settings = () => {
   };
 
   const handleEdit = (tableObj) => {
-    openEditModal(tableObj.id);
+    openEditTableModal(tableObj.id);
   };
 
   const copyToClipboard = async (text) => {
@@ -438,7 +505,7 @@ const Settings = () => {
         Create your first QR code to get started
       </p>
       <button
-        onClick={openCreateModal}
+        onClick={openCreateTableModal}
         className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
       >
         <Plus className="w-5 h-5" />
@@ -481,7 +548,7 @@ const Settings = () => {
                 <RefreshCw className="w-4 h-4" />
               </button>
               <button
-                onClick={openCreateModal}
+                onClick={openCreateTableModal}
                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
               >
                 <Plus className="w-4 h-4" />
@@ -649,11 +716,11 @@ const Settings = () => {
       </div>
 
       {/* Modal */}
-      {isFormOpen && (
+      {isTableFormOpen && (
         <TableForm
-          itemId={editingItemId}
-          onClose={closeModal}
-          onSuccess={handleSaveSuccess}
+          itemId={tableEditingItemId}
+          onClose={closeTableModal}
+          onSuccess={handleTableSaveSuccess}
         />
       )}
     </div>

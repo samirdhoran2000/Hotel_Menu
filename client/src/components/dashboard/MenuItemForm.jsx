@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Upload, X, Plus, DollarSign, AlertCircle, Check } from "lucide-react";
 
+import categories from "../../constant/category";
+
 const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   const isEditing = Boolean(itemId);
 
@@ -24,17 +26,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [value, setValue] = useState(""); // for ingredient text input
 
-  // CATEGORY OPTIONS:
-  const categories = [
-    { name: "appetizer", label: "Appetizers" },
-    { name: "main_course", label: "Main Course" },
-    { name: "dessert", label: "Desserts" },
-    { name: "beverage", label: "Beverages" },
-    { name: "snack", label: "Snacks" },
-    { name: "salad", label: "Salads" },
-    { name: "soup", label: "Soups" },
-    { name: "other", label: "Others" },
-  ];
+
 
   // 1️⃣ If editing, fetch the item’s details on mount:
   useEffect(() => {

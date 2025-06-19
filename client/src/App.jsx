@@ -11,7 +11,7 @@ import {
   Orders,
   Reports,
   Settings,
-} from "./components/DashboardComponents";
+} from "./components/dashboard/DashboardComponents";
 import MenuManager from "./components/dashboard/MenuManager";
 import ComingSoon from "./pages/ComingSoon";
 import HotelDashboard2 from "./components/dashboard/temp/Overview";
