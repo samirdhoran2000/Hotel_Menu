@@ -59,7 +59,9 @@ const ListViewItem = ({ item }) => {
         {/* If not available, show a "Sold Out" banner */}
         {!item.available && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
-            <span className="text-white text-lg font-semibold">Sold Out</span>
+            <span className="text-white text-lg font-semibold">
+              Unavailable
+            </span>
           </div>
         )}
 

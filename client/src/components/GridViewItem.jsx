@@ -67,7 +67,7 @@ const GridViewItem = ({ item }) => {
           {/* If item is not available, show "Sold Out" overlay */}
           {!item.available && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white text-lg font-semibold">Sold Out</span>
+              <span className="text-white text-lg font-semibold">Unavailable</span>
             </div>
           )}
 

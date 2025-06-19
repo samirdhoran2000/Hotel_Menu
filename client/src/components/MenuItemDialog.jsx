@@ -140,7 +140,7 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
           {/* Sold Out Overlay */}
           {!item.available && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white text-lg font-semibold">Sold Out</span>
+              <span className="text-white text-lg font-semibold">Unavailable</span>
             </div>
           )}
 
