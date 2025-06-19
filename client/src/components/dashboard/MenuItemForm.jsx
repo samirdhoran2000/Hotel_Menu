@@ -40,7 +40,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const responce = await res.json();
-        console.log("Fetched item details:", responce);
+        
         
         const result = responce.data[0];
         if (res.ok) {

@@ -69,11 +69,7 @@ export default function LoginHotel() {
       // Simulate API call for demo purposes
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Mock successful login
-      console.log("Login successful:", {
-        email: credentials.email.trim(),
-        rememberMe: credentials.rememberMe,
-      });
+      
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/hotel/login`, {
         method: "POST",

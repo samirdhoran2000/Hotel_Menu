@@ -63,7 +63,7 @@ const DashboardHome = () => {
           }
         );
         const payload = await res.json();
-        console.log("Fetched activity logs:", payload);
+       
 
         if (payload.success) {
           setRawLogs(payload.data);
@@ -380,7 +380,7 @@ const Settings = () => {
   async function fetchQrCodeDetails() {
     setIsLoading(true);
     setError(null);
-    console.log("Fetching QR Code details...");
+
 
     try {
       const token = localStorage.getItem("token");
@@ -388,7 +388,7 @@ const Settings = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      console.log("Fetched menu items:", data);
+     
 
       if (res.ok) {
         setTable(data);

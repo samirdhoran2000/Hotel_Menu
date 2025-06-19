@@ -23,7 +23,7 @@ const Header = () => {
   const handleLinkClick = (path) => {
     setActiveLink(path);
     setIsMobileMenuOpen(false);
-    console.log(`Navigating to: ${path}`);
+   
    
   };
 

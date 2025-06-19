@@ -15,7 +15,7 @@ const MenuManager = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
         const data = await res.json();
-        console.log("Fetched menu items:", data);
+        
         
       if (res.ok) {
         setMenuItems(data?.data?.menuItems);
