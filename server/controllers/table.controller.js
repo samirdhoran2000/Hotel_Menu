@@ -45,7 +45,7 @@ export const getAllTables = async (req, res) => {
     // const { hotelId } = req.query;
     // const whereClause = hotelId ? { hotelId } : {};
     const { id } = req.user;
-    console.log("get all table ", { id });
+
 
     const tables = await Table.findAll({
       where: { hotelId: id },

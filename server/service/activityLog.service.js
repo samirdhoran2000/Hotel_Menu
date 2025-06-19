@@ -6,13 +6,6 @@ const createActivityLog = async (
   itemClicked = [],
   duration = null
 ) => {
-    console.log("Creating activity log with data: ", {
-      tableId,
-      devieName,
-      itemClicked,
-      duration,
-    });
-    
   try {
     const result = await ActivityLog.create({
       tableId,
@@ -22,9 +15,10 @@ const createActivityLog = async (
     });
 
       
-    console.log("activity log result : ", result);
+    
   } catch (error) {
     console.log("something happened while creating a log ", error);
+    throw new Error("Failed to create activity log: " + error.message);
   }
 };
 

@@ -263,8 +263,6 @@ export const loginHotel = async (req, res) => {
 };
 
 export const getMenuItemsbyHotel = async (req, res) => {
-  console.log("function called by table code ");
-
   try {
     const { tableCode } = req.params;
     const { tableId, hotelId } = decodeCode(tableCode);

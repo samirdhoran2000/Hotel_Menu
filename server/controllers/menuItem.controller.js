@@ -33,10 +33,6 @@ export const createMenuItem = async (req, res) => {
       ingredients,
     } = req.body;
     const { id } = req.user;
-    console.log("req.user", req.user);
-
-    console.log("Request body:", req.body);
-
     // Basic validation
     if (!name || price == null || original_price == null) {
       return res.status(400).json({
@@ -58,7 +54,7 @@ export const createMenuItem = async (req, res) => {
       sizeBytes: file.size,
       destinationPath: file.path,
     }));
-    console.log("Uploaded files:", uploadedFiles);
+   
 
     // If you want to save the full metadata array in your DB:
     const images = uploadedFiles;
