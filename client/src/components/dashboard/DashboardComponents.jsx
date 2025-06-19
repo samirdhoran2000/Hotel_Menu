@@ -199,14 +199,14 @@ const DashboardHome = () => {
           },
           {
             title: "Total Scan Today",
-            totalValue: totalScan,
+            totalValue: totalScan || 0,
             change: "+15%",
             color: "bg-purple-500",
           },
           {
             title: "Most Scan Table",
-            totalValue: mostScanTable?.Table?.tableNumber,
-            change: mostScanTable?.count,
+            totalValue: mostScanTable?.Table?.tableNumber || "N/A",
+            change: mostScanTable?.count || 0,
             color: "bg-orange-500",
             from: "last 7 days",
           },
