@@ -2,7 +2,7 @@
 import { Hotel, MenuItem } from "../models/associations.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
-import { decodeCode, buildImageUrls } from "../utils/codeDecode.utils.js";
+import { decodeCode, buildImageUrls, isArrayOfStrings } from "../utils/codeDecode.utils.js";
 
 // Helper to standardize error response
 export const handleSequelizeError = (err, res) => {

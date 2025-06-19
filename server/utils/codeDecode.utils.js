@@ -12,7 +12,7 @@ export const decodeCode = (code) => {
   };
 };
 // Helper: true if every element in `arr` is a string
-function isArrayOfStrings(arr) {
+export function isArrayOfStrings(arr) {
   if (!Array.isArray(arr)) return false;
   return arr.every((el) => typeof el === "string");
 }
