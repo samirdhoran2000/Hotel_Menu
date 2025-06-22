@@ -40,7 +40,14 @@ const MenuItem = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    price: {
+    half_price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0,
+      },
+    },
+    full_price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       validate: {
@@ -71,7 +78,14 @@ const MenuItem = sequelize.define(
       allowNull: false,
       defaultValue: true,
     },
-    original_price: {
+    original_half_price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0,
+      },
+    },
+    original_full_price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       validate: {

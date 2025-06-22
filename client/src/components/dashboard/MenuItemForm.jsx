@@ -8,6 +8,7 @@ import {
   Check,
   Eye,
   ZoomIn,
+  IndianRupee,
 } from "lucide-react";
 
 import categories from "../../constant/category";
@@ -19,8 +20,10 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    price: "",
-    original_price: "",
+    half_price: "",
+    original_half_price: "",
+    full_price: "",
+    original_full_price: "",
     category: "",
     ingredients: [],
     isVegetarian: false,
@@ -61,8 +64,10 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
           setFormData({
             name: result.name || "",
             description: result.description || "",
-            price: result.price || "",
-            original_price: result.original_price || "",
+            half_price: result.half_price || "",
+            original_half_price: result.half_price || "",
+            full_price: result.half_price || "",
+            original_full_price: result.half_price || "",
             category: result.category || "",
             ingredients: Array.isArray(result.ingredients)
               ? result.ingredients
@@ -230,18 +235,32 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (
-      !formData.price ||
-      isNaN(formData.price) ||
-      parseFloat(formData.price) <= 0
+      !formData.half_price ||
+      isNaN(formData.half_price) ||
+      parseFloat(formData.half_price) <= 0
     ) {
-      newErrors.price = "Valid price is required";
+      newErrors.half_price = "Valid price is required";
     }
     if (
-      !formData.original_price ||
-      isNaN(formData.original_price) ||
-      parseFloat(formData.original_price) <= 0
+      !formData.full_price ||
+      isNaN(formData.full_price) ||
+      parseFloat(formData.full_price) <= 0
     ) {
-      newErrors.original_price = "Valid original price is required";
+      newErrors.full_price = "Valid price is required";
+    }
+    if (
+      !formData.original_half_price ||
+      isNaN(formData.original_half_price) ||
+      parseFloat(formData.original_half_price) <= 0
+    ) {
+      newErrors.original_half_price = "Valid original price is required";
+    }
+    if (
+      !formData.original_full_price ||
+      isNaN(formData.original_full_price) ||
+      parseFloat(formData.original_full_price) <= 0
+    ) {
+      newErrors.original_full_price = "Valid original price is required";
     }
     // If creating → require at least one file. If editing → allow existingImages to count.
     const totalImagesCount = existingImages.length + files.length;
@@ -555,60 +574,124 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                   </div>
                 </div>
 
-                {/* — Pricing — */}
+                {/* — Half Pricing — */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Price <span className="text-red-500">*</span>
+                      Half Price <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <input
                         type="number"
-                        name="price"
-                        value={formData.price}
+                        name="half_price"
+                        value={formData.half_price}
                         onChange={handleInputChange}
-                        step="0.01"
+                        step="1"
                         min="0"
                         className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          errors.price ? "border-red-500" : "border-gray-300"
-                        }`}
-                        placeholder="0.00"
-                      />
-                    </div>
-                    {errors.price && (
-                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.price}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Original Price <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                      <input
-                        type="number"
-                        name="original_price"
-                        value={formData.original_price}
-                        onChange={handleInputChange}
-                        step="0.01"
-                        min="0"
-                        className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          errors.original_price
+                          errors.half_price
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
                         placeholder="0.00"
                       />
                     </div>
-                    {errors.original_price && (
+                    {errors.half_price && (
                       <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
                         <AlertCircle className="w-4 h-4" />
-                        {errors.original_price}
+                        {errors.half_price}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Original Half Price{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="number"
+                        name="original_half_price"
+                        value={formData.original_half_price}
+                        onChange={handleInputChange}
+                        step="1"
+                        min="0"
+                        className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.original_half_price
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="0.00"
+                      />
+                    </div>
+                    {errors.original_half_price && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.original_half_price}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {/* — Full Pricing — */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Price <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="number"
+                        name="full_price"
+                        value={formData.full_price}
+                        onChange={handleInputChange}
+                        step="1"
+                        min="0"
+                        className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.full_price
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="0.00"
+                      />
+                    </div>
+                    {errors.full_price && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.full_price}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Original Full Price{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="number"
+                        name="original_full_price"
+                        value={formData.original_full_price}
+                        onChange={handleInputChange}
+                        step="1"
+                        min="0"
+                        className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          errors.original_full_price
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="0.00"
+                      />
+                    </div>
+                    {errors.original_full_price && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.original_full_price}
                       </p>
                     )}
                   </div>

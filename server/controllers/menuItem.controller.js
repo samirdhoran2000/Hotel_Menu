@@ -25,19 +25,27 @@ export const createMenuItem = async (req, res) => {
     const {
       name,
       description,
-      price,
+      half_price,
+      original_half_price,
+      full_price,
+      original_full_price,
       category,
       isVegetarian,
       available,
-      original_price,
       ingredients,
     } = req.body;
     const { id } = req.user;
     // Basic validation
-    if (!name || price == null || original_price == null) {
+    if (
+      !name ||
+      half_price == null ||
+      original_half_price == null ||
+      full_price == null ||
+      original_full_price == null
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Name, price, and original_price are required",
+        message: "Name, half_price, full_price, original_full_price and original_half_price are required",
       });
     }
 
@@ -65,12 +73,14 @@ export const createMenuItem = async (req, res) => {
     const menuItem = await MenuItem.create({
       name,
       description,
-      price: parseFloat(price),
+      half_price: parseFloat(half_price),
+      full_price: parseFloat(full_price),
       category,
       isVegetarian: isVegetarian === "true" || isVegetarian === true,
       available: available === "true" || available === true,
-      original_price: parseFloat(original_price),
-      images, // <-- now this is defined
+      original_half_price: parseFloat(original_half_price),
+      original_full_price: parseFloat(original_full_price),
+      images, 
       ingredients,
       hotelId: id,
       // userId,
@@ -302,11 +312,13 @@ export const updateMenuItem = async (req, res) => {
     const {
       name,
       description,
-      price,
+      half_price,
+      original_half_price,
+      full_price,
+      original_full_price,
       category,
       isVegetarian,
       available,
-      original_price,
       ingredients,
     } = req.body;
 
@@ -322,26 +334,37 @@ export const updateMenuItem = async (req, res) => {
       updateData.description = description;
     }
     // If price is provided (could be "0"), parse it to float
-    if (price != null) {
-      const parsedPrice = parseFloat(price);
-      if (isNaN(parsedPrice)) {
+    if (half_price != null) {
+      const parsedHalfPrice = parseFloat(half_price);
+      if (isNaN(parsedHalfPrice)) {
         return res.status(400).json({
           success: false,
-          message: "Invalid value for price",
+          message: "Invalid value for half price",
         });
       }
-      updateData.price = parsedPrice;
+      updateData.half_price = parsedHalfPrice;
     }
-    // If original_price is provided, parse to float
-    if (original_price != null) {
-      const parsedOrig = parseFloat(original_price);
-      if (isNaN(parsedOrig)) {
+    // If price is provided (could be "0"), parse it to float
+    if (full_price != null) {
+      const parsedFullPrice = parseFloat(full_price);
+      if (isNaN(parsedFullPrice)) {
         return res.status(400).json({
           success: false,
-          message: "Invalid value for original_price",
+          message: "Invalid value for full price",
         });
       }
-      updateData.original_price = parsedOrig;
+      updateData.full_full = parsedFullPrice;
+    }
+    // If original_half_price is provided, parse to float
+    if (original_half_price != null) {
+      const parsedOriginalHalfPrice = parseFloat(original_half_price);
+      if (isNaN(parsedOriginalHalfPrice)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid value for original half price",
+        });
+      }
+      updateData.original_half_price = parsedOriginalHalfPrice;
     }
     // Category
     if (typeof category === "string") {
@@ -375,7 +398,10 @@ export const updateMenuItem = async (req, res) => {
     }
 
     // 5) Perform the update (only on the keys we put into updateData)
-    await menuItem.update(updateData);
+    const result = await menuItem.update(updateData);
+    if (!result) {
+      throw new Error("something went wrong while updating menu")
+    }
 
     // 6) After updating, transform the stored `images` (which might be an array of metadata objects)
     //    into publicly‐accessible URLs, exactly as you do in your GET endpoints:
