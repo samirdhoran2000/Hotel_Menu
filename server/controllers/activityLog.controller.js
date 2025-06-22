@@ -2,6 +2,7 @@
 import { Op, fn, col } from "sequelize";
 import ActivityLog from "../models/activityLog.model.js";
 import Table from "../models/table.model.js";
+import MenuItem from "../models/menuItem.model.js";
 
 export const getActivitySummaryByHotel = async (req, res) => {
   try {
@@ -60,10 +61,47 @@ export const getActivitySummaryByHotel = async (req, res) => {
       ],
     });
 
+    const [totalMenus, activeMenus] = await Promise.all([
+      MenuItem.count({
+        where: { hotelId },
+      }),
+      MenuItem.count({
+        where: {
+          hotelId,
+          available: 1,
+        },
+      }),
+    ]);
+
+    const [totalTables, activeTables] = await Promise.all([
+      Table.count({
+        where: { hotelId },
+      }),
+      Table.count({
+        where: {
+          hotelId,
+          active: true,
+        },
+      }),
+    ]);
+
+    console.log("total menus:", totalMenus);
+    console.log("active menus:", activeMenus);
+    console.log("total tables", totalTables);
+    console.log("active tables", activeTables);
+
     return res.json({
       success: true,
       data: logs,
-      analytics: { topTable, todayCount },
+      analytics: {
+        topTable,
+        todayCount,
+        menus: { totalMenus, activeMenus },
+        tables: {
+          totalTables,
+          activeTables,
+        },
+      },
     });
   } catch (err) {
     console.error(err);

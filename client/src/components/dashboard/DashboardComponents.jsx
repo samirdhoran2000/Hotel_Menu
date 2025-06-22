@@ -44,6 +44,8 @@ const DashboardHome = () => {
 
   const [totalScan, setTotalScan] = useState(0);
   const [mostScanTable, setMostScanTable] = useState({});
+  const [menuCounts, setMenuCounts] = useState({});
+  const [tableCounts, setTableCounts] = useState({})
 
   const [rawLogs, setRawLogs] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -69,6 +71,8 @@ const DashboardHome = () => {
           setRawLogs(payload.data);
           setMostScanTable(payload?.analytics?.topTable[0]);
           setTotalScan(payload?.analytics?.todayCount);
+          setMenuCounts(payload?.analytics?.menus)
+          setTableCounts(payload?.analytics?.tables)
         }
       } catch (err) {
         console.error(err);
@@ -185,16 +189,16 @@ const DashboardHome = () => {
         {[
           {
             title: "Total/ Active Menu's",
-            totalValue: "127",
-            activeValue: "115",
-            change: "-12%",
+            totalValue: menuCounts?.totalMenus,
+            activeValue: menuCounts?.activeMenus,
+            // change: "-12%",
             color: "bg-blue-500",
           },
           {
             title: "Total/ Active QR ",
-            totalValue: "37",
-            activeValue: "35",
-            change: "-8%",
+            totalValue: tableCounts?.totalTables,
+            activeValue: tableCounts?.activeTables,
+            // change: "-8%",
             color: "bg-green-500",
           },
           {
