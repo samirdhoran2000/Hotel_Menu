@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit2 } from "lucide-react";
+import { Plus, Edit2, IndianRupee } from "lucide-react";
 import MenuItemForm from "./MenuItemForm"; // we’ll adapt this in the next section
 
 const MenuManager = () => {
@@ -94,12 +94,12 @@ const MenuManager = () => {
                 </p>
                 <div className="mt-2">
                   <span className="text-xl font-semibold text-gray-800">
-                    ${item.price}
+                    <IndianRupee className="w-4 h-4"/>{item.half_price}
                   </span>
-                  {item.original_price &&
-                    item.original_price !== item.price && (
+                  {item.original_half_price &&
+                    item.original_half_price !== item.half_price && (
                       <span className="text-sm text-gray-500 line-through ml-2">
-                        ${item.original_price}
+                        ${item.original_half_price}
                       </span>
                     )}
                 </div>

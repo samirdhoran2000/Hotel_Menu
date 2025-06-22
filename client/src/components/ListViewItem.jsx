@@ -41,9 +41,9 @@ const ListViewItem = ({ item }) => {
   };
 
   // Parse prices into numbers for consistency
-  const basePrice = parseFloat(item.price) || 0;
-  const originalPrice = item.original_price
-    ? parseFloat(item.original_price)
+  const basePrice = parseFloat(item.half_price) || 0;
+  const originalPrice = item.original_full_price
+    ? parseFloat(item.original_full_price)
     : null;
 
   return (

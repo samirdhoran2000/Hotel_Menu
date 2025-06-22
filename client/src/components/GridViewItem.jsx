@@ -124,11 +124,11 @@ const GridViewItem = ({ item }) => {
           <div className="flex justify-between items-center">
             <div>
               <span className="text-2xl font-bold text-gray-900">
-                ₹{item.price}
+                ₹{item.half_price}
               </span>
-              {item.original_price && (
+              {item.original_full_price && (
                 <span className="text-sm text-gray-500 line-through ml-2">
-                  ₹{item.original_price}
+                  ₹{item.original_full_price}
                 </span>
               )}
             </div>

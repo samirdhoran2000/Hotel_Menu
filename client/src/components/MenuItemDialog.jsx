@@ -43,26 +43,32 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("full");
   // const [isLiked, setIsLiked] = useState(false);
+
   const ingredientsArray =
     typeof item.ingredients === "string"
       ? JSON.parse(item.ingredients)
       : item.ingredients;
 
-  // Parse the price string into a float once
-  const basePrice = parseFloat(item.price) || 0;
-  const originalPrice = parseFloat(item.original_price) || null;
+  // Parse the price strings into floats once
+  const baseHalfPrice = parseFloat(item.half_price) || 0;
+  const originalHalfPrice = parseFloat(item.original_half_price) || 0;
 
-  // Compute sizes dynamically, using parsed price
+  const baseFullPrice = parseFloat(item.full_price) || 0;
+  const originalFullPrice = parseFloat(item.original_full_price) || 0;
+
+  // Build sizes array including both sale and original prices
   const sizes = [
     {
       id: "half",
       name: "Half",
-      price: (basePrice * 0.8).toFixed(2),
+      price: baseHalfPrice.toFixed(2),
+      originalPrice: originalHalfPrice.toFixed(2),
     },
     {
       id: "full",
       name: "Full",
-      price: basePrice.toFixed(2),
+      price: baseFullPrice.toFixed(2),
+      originalPrice: originalFullPrice.toFixed(2),
     },
   ];
 
@@ -140,7 +146,9 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
           {/* Sold Out Overlay */}
           {!item.available && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white text-lg font-semibold">Unavailable</span>
+              <span className="text-white text-lg font-semibold">
+                Unavailable
+              </span>
             </div>
           )}
 
@@ -254,25 +262,36 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
             <div className="mb-6">
               <h3 className="font-semibold mb-3">Choose Size</h3>
               <div className="flex space-x-4">
-                {sizes.map((size) => (
-                  <button
-                    key={size.id}
-                    onClick={() => setSelectedSize(size.id)}
-                    className={`
-                      flex-1 py-3 px-4 rounded-lg border-2 transition-all 
-                      ${
-                        selectedSize === size.id
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 hover:border-gray-300"
-                      } 
-                      ${!item.available ? "opacity-50 cursor-not-allowed" : ""}
-                    `}
-                    disabled={!item.available}
-                  >
-                    <div className="text-sm">{size.name}</div>
-                    <div className="font-semibold">₹{size.price}</div>
-                  </button>
-                ))}
+                {sizes.map((size) => {
+                  const isDiscounted =
+                    parseFloat(size.originalPrice) > parseFloat(size.price);
+                  return (
+                    <button
+                      key={size.id}
+                      onClick={() => setSelectedSize(size.id)}
+                      className={`
+            flex-1 py-3 px-4 rounded-lg border-2 transition-all
+            ${
+              selectedSize === size.id
+                ? "border-black bg-black text-white"
+                : "border-gray-200 hover:border-gray-300"
+            }
+            ${!item.available ? "opacity-50 cursor-not-allowed" : ""}
+          `}
+                      disabled={!item.available}
+                    >
+                      <div className="text-sm">{size.name}</div>
+                      <div className="flex items-baseline space-x-2">
+                        <span className="font-semibold">₹{size.price}</span>
+                        {isDiscounted && (
+                          <span className="text-sm line-through text-gray-500">
+                            ₹{size.originalPrice}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -294,16 +313,16 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
             )}
 
             {/* Price & Original Price */}
-            <div className="mt-auto pt-4 border-t border-gray-200">
+            {/* <div className="mt-auto pt-4 border-t border-gray-200">
               <h3 className="font-semibold mb-2">Price Details</h3>
               <div className="flex items-center space-x-4">
                 <div>
                   <span className="text-2xl font-bold text-gray-900">
-                    ₹{basePrice.toFixed(2)}
+                    ₹{baseHalfPrice.toFixed(2)}
                   </span>
-                  {originalPrice && (
+                  {originalHalfPrice && (
                     <span className="text-sm text-gray-500 line-through ml-2">
-                      ₹{originalPrice.toFixed(2)}
+                      ₹{originalHalfPrice.toFixed(2)}
                     </span>
                   )}
                 </div>
@@ -313,7 +332,7 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
                   </span>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
