@@ -1,6 +1,6 @@
-// MenuItemDialog.js
 import React, { useState, useRef, useEffect } from "react";
 import { X, Heart, Star, ChevronLeft, ChevronRight, Leaf } from "lucide-react";
+import promotionalVideo from '../../src/assets/promotional_video.mp4'
 
 const Modal = ({ isOpen, onClose, children }) => {
   const modalRef = useRef();
@@ -39,24 +39,23 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
-const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
+const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("full");
-  // const [isLiked, setIsLiked] = useState(false);
+  const [selectedMediaTab, setSelectedMediaTab] = useState("photos");
 
+  // Parse ingredients
   const ingredientsArray =
     typeof item.ingredients === "string"
       ? JSON.parse(item.ingredients)
       : item.ingredients;
 
-  // Parse the price strings into floats once
+  // Parse prices
   const baseHalfPrice = parseFloat(item.half_price) || 0;
   const originalHalfPrice = parseFloat(item.original_half_price) || 0;
-
   const baseFullPrice = parseFloat(item.full_price) || 0;
   const originalFullPrice = parseFloat(item.original_full_price) || 0;
 
-  // Build sizes array including both sale and original prices
   const sizes = [
     {
       id: "half",
@@ -72,27 +71,13 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
     },
   ];
 
-  // When dialog opens/closes, reset image index
+  // Reset on open
   useEffect(() => {
     if (isOpen) {
       setCurrentImageIndex(0);
-      // Initialize liked state from localStorage
-      // const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
-      // setIsLiked(!!likedItems[item.name]);
+      setSelectedMediaTab("photos");
     }
   }, [isOpen]);
-
-  // const handleLikeToggle = () => {
-  //   const newLikedState = !isLiked;
-  //   setIsLiked(newLikedState);
-  //   const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
-  //   if (newLikedState) {
-  //     likedItems[item.name] = true;
-  //   } else {
-  //     delete likedItems[item.name];
-  //   }
-  //   localStorage.setItem("likedItems", JSON.stringify(likedItems));
-  // };
 
   const nextImage = () => {
     if (!Array.isArray(item.images) || item.images.length === 0) return;
@@ -106,7 +91,6 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
     );
   };
 
-  // Utility to turn "main_course" → "Main Course"
   const humanizeCategory = (str) => {
     if (!str) return "";
     return str
@@ -118,28 +102,102 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col md:flex-row h-[80vh] md:h-[600px]">
-        {/* Left side – Image Gallery */}
+        {/* Left – Media Gallery */}
         <div className="relative w-full md:w-1/2 h-1/2 md:h-full bg-gray-100">
-          <button
-            onClick={onClose}
-            className="md:hidden absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-all"
-          >
-            <X
-              className="w-8 h-8 text-white p-1 bg-black"
-              style={{ borderRadius: "50%", opacity: 0.5 }}
-            />
-          </button>
+          {/* Media Tabs */}
+          {item?.video && <div className="absolute top-4 left-4 flex space-x-2 bg-white/80 rounded-full shadow-lg p-1 z-20">
+            <button
+              onClick={() => setSelectedMediaTab("photos")}
+              className={`px-4 py-1 rounded-full transition-all ${
+                selectedMediaTab === "photos"
+                  ? "bg-black text-white"
+                  : "text-gray-600"
+              }`}
+            >
+              Photos
+            </button>
+            <button
+              onClick={() => setSelectedMediaTab("videos")}
+              className={`px-4 py-1 rounded-full transition-all ${
+                selectedMediaTab === "videos"
+                  ? "bg-black text-white"
+                  : "text-gray-600"
+              }`}
+            >
+              Videos
+            </button>
+          </div>}
 
-          {Array.isArray(item.images) && item.images.length > 0 ? (
-            <img
-              src={item.images[currentImageIndex]}
-              loading="lazy"
-              alt={item.name}
-              className="w-full h-full object-cover"
-            />
+          {selectedMediaTab === "photos" ? (
+            Array.isArray(item.images) && item.images.length > 0 ? (
+              <>
+                <img
+                  src={item.images[currentImageIndex]}
+                  loading="lazy"
+                  alt={item.name}
+                  className="w-full h-full object-cover"
+                />
+                {/* Navigation */}
+                {item.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all"
+                      disabled={!item.available}
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all"
+                      disabled={!item.available}
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+                {/* Indicators */}
+                {item.images.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                    {item.images.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          idx === currentImageIndex
+                            ? "bg-white w-4"
+                            : "bg-white/50"
+                        }`}
+                        disabled={!item.available}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <span className="text-gray-500">No Image Available</span>
+              </div>
+            )
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              <span className="text-gray-500">No Image Available</span>
+            <div className="w-full h-full flex items-center justify-center bg-black">
+              {Array.isArray(item.videos) && item.videos.length > 0 ? (
+                <video
+                  src={
+                    "https://youtube.com/shorts/SR4_mQPk0ss?si=gst3Inxyn7UBAirc"
+                  }
+                  controls
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <video
+                  src={promotionalVideo}
+                  controls
+                  className="w-full h-full object-contain"
+                  autoPlay
+                />
+                // <span className="text-white">No Video Available</span>
+              )}
             </div>
           )}
 
@@ -151,64 +209,23 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
               </span>
             </div>
           )}
-
-          {/* Arrows (only if multiple images) */}
-          {Array.isArray(item.images) && item.images.length > 1 && (
-            <>
-              <button
-                onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all"
-                disabled={!item.available}
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all"
-                disabled={!item.available}
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </>
-          )}
-
-          {/* Image Indicators */}
-          {Array.isArray(item.images) && item.images.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-              {item.images.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentImageIndex(idx)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    idx === currentImageIndex ? "bg-white w-4" : "bg-white/50"
-                  }`}
-                  disabled={!item.available}
-                />
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Right side – Content */}
+        {/* Right – Details */}
         <div className="relative flex-1 flex flex-col max-h-[50vh] md:max-h-full overflow-y-auto">
-          {/* Close button (desktop) */}
           <button
             onClick={onClose}
             className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-all"
           >
             <X className="w-8 h-8" />
           </button>
-
           <div className="p-6">
-            {/* Header (Name, Rating, Veg badge, Like button) */}
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
                   {item.name}
                 </h2>
-
                 <div className="flex items-center space-x-4">
-                  {/* Veg Badge */}
                   {item.isVegetarian && (
                     <div className="flex items-center bg-green-100 px-2 py-1 rounded-full">
                       <Leaf className="w-4 h-4 text-green-600" />
@@ -217,9 +234,7 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
                       </span>
                     </div>
                   )}
-
-                  {/* Rating (if provided) */}
-                  {item.rating !== undefined && item.rating !== null && (
+                  {item.rating != null && (
                     <div className="flex items-center">
                       <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                       <span className="ml-1 font-medium">{item.rating}</span>
@@ -227,8 +242,6 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
                   )}
                 </div>
               </div>
-
-              {/* Like Button */}
               <div className="flex space-x-2 pr-10">
                 <button
                   onClick={(e) => {
@@ -248,10 +261,7 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
               </div>
             </div>
 
-            {/* Description */}
             <p className="text-gray-600 mb-6">{item.description}</p>
-
-            {/* Category */}
             {item.category && (
               <p className="text-sm text-gray-500 mb-4">
                 Category: {humanizeCategory(item.category)}
@@ -269,15 +279,13 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
                     <button
                       key={size.id}
                       onClick={() => setSelectedSize(size.id)}
-                      className={`
-            flex-1 py-3 px-4 rounded-lg border-2 transition-all
-            ${
-              selectedSize === size.id
-                ? "border-black bg-black text-white"
-                : "border-gray-200 hover:border-gray-300"
-            }
-            ${!item.available ? "opacity-50 cursor-not-allowed" : ""}
-          `}
+                      className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all ${
+                        selectedSize === size.id
+                          ? "border-black bg-black text-white"
+                          : "border-gray-200 hover:border-gray-300"
+                      } ${
+                        !item.available ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                       disabled={!item.available}
                     >
                       <div className="text-sm">{size.name}</div>
@@ -311,28 +319,6 @@ const MenuItemDialog = ({ item, isOpen,isLiked, onLikeToggle, onClose }) => {
                 </div>
               </div>
             )}
-
-            {/* Price & Original Price */}
-            {/* <div className="mt-auto pt-4 border-t border-gray-200">
-              <h3 className="font-semibold mb-2">Price Details</h3>
-              <div className="flex items-center space-x-4">
-                <div>
-                  <span className="text-2xl font-bold text-gray-900">
-                    ₹{baseHalfPrice.toFixed(2)}
-                  </span>
-                  {originalHalfPrice && (
-                    <span className="text-sm text-gray-500 line-through ml-2">
-                      ₹{originalHalfPrice.toFixed(2)}
-                    </span>
-                  )}
-                </div>
-                {!item.available && (
-                  <span className="text-red-600 font-semibold">
-                    Unavailable
-                  </span>
-                )}
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
