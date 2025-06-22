@@ -16,7 +16,7 @@ export default function MenuVisitedTrend({data: chartData}) {
 
   return (
     <div className="bg-gray-100 flex items-center justify-center font-sans">
-      <div className="bg-white rounded-lg w-full max-w-4xl">
+      <div className="bg-white rounded-lg w-full max-w-6xl">
         <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
           Menu Visited Trend
         </h2>

@@ -85,11 +85,6 @@ export const getActivitySummaryByHotel = async (req, res) => {
       }),
     ]);
 
-    console.log("total menus:", totalMenus);
-    console.log("active menus:", activeMenus);
-    console.log("total tables", totalTables);
-    console.log("active tables", activeTables);
-
     return res.json({
       success: true,
       data: logs,

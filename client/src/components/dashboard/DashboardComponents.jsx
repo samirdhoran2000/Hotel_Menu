@@ -35,6 +35,7 @@ import {
 } from "recharts";
 import MenuItemForm from "./MenuItemForm";
 import Chart from "./Chart"; // Assuming you have a Chart component for the area chart
+import MenuVisitedTrend from "./Chart";
 
 const DashboardHome = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -45,7 +46,7 @@ const DashboardHome = () => {
   const [totalScan, setTotalScan] = useState(0);
   const [mostScanTable, setMostScanTable] = useState({});
   const [menuCounts, setMenuCounts] = useState({});
-  const [tableCounts, setTableCounts] = useState({})
+  const [tableCounts, setTableCounts] = useState({});
 
   const [rawLogs, setRawLogs] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -65,14 +66,13 @@ const DashboardHome = () => {
           }
         );
         const payload = await res.json();
-       
 
         if (payload.success) {
           setRawLogs(payload.data);
           setMostScanTable(payload?.analytics?.topTable[0]);
           setTotalScan(payload?.analytics?.todayCount);
-          setMenuCounts(payload?.analytics?.menus)
-          setTableCounts(payload?.analytics?.tables)
+          setMenuCounts(payload?.analytics?.menus);
+          setTableCounts(payload?.analytics?.tables);
         }
       } catch (err) {
         console.error(err);
@@ -303,6 +303,67 @@ const DashboardHome = () => {
 // src/components/dashboard/Analytics.jsx
 
 const Analytics = () => {
+  const [rawLogs, setRawLogs] = useState([]);
+  const [chartData, setChartData] = useState([]);
+
+   useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/activity-log`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const payload = await res.json();
+
+        if (payload.success) {
+          setRawLogs(payload.data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    load();
+   }, []);
+  
+  
+   // 2) Re‑compute chartData whenever rawLogs changes
+  useEffect(() => {
+    // build the last 7 dates & init counts
+    const counts = {};
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const name = d.toLocaleDateString("en-US", { weekday: "short" });
+      days.push(name);
+      counts[name] = 0;
+    }
+
+    // tally
+    rawLogs.forEach((log) => {
+      const dayName = new Date(log.createdAt).toLocaleDateString("en-US", {
+        weekday: "short",
+      });
+      if (counts[dayName] != null) counts[dayName]++;
+    });
+
+    // format for Recharts
+    setChartData(
+      days.map((name) => ({
+        name,
+        views: counts[name],
+      }))
+    );
+  }, [rawLogs]);
+
+  
+  
   return (
     <div className="max-w-full">
       <div className="mb-6">
@@ -310,16 +371,7 @@ const Analytics = () => {
         <p className="text-gray-600">Detailed analytics and reports.</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Analytics Dashboard
-        </h3>
-        <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">
-            Analytics charts and data visualization goes here
-          </p>
-        </div>
-      </div>
+      <MenuVisitedTrend data={chartData}/>
     </div>
   );
 };
@@ -385,14 +437,12 @@ const Settings = () => {
     setIsLoading(true);
     setError(null);
 
-
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/table`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-     
 
       if (res.ok) {
         setTable(data);
