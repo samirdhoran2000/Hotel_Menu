@@ -56,7 +56,7 @@ const MenuItem = sequelize.define(
     },
     category: {
       type: DataTypes.ENUM(
-        "appetizer", 
+        "appetizer",
         "main_course",
         "dessert",
         "beverage",
@@ -97,6 +97,10 @@ const MenuItem = sequelize.define(
       type: DataTypes.JSON,
       allowNull: true,
       // JSON allows storing an array of strings
+    },
+    video: {
+      type: DataTypes.JSON,
+      allowNull: true,
     },
     ingredients: {
       // Array of ingredients, e.g. ["Wheat Flour", "Potatoes", …]
