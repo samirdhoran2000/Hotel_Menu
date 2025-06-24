@@ -13,6 +13,8 @@ import {
 
 export default function MenuVisitedTrend({data: chartData}) {
   
+  console.log('chart data ', chartData);
+  
 
   return (
     <div className="bg-gray-100 flex items-center justify-center font-sans">

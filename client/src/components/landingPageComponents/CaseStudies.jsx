@@ -5,6 +5,7 @@ import {
   Users,
   DollarSign,
   Star,
+  IndianRupee,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -147,7 +148,7 @@ const CaseStudies = () => {
                   {/* Metrics Cards */}
                   <div className="grid grid-cols-3 gap-4 mb-8">
                     <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-white/20">
-                      <DollarSign className="w-6 h-6 text-green-400 mx-auto mb-2" />
+                      <IndianRupee className="w-6 h-6 text-green-400 mx-auto mb-2" />
                       <div className="text-2xl font-bold text-white">
                         {caseStudies[activeStudy].metrics.savings}
                       </div>

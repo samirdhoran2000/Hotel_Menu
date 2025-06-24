@@ -429,7 +429,7 @@ export const updateMenuItem = async (req, res) => {
 export const deleteMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
-    const { hotelId } = req.user;
+    const { id:hotelId } = req.user;
     const menuItem = await MenuItem.findOne({ where: { id, hotelId } });
     if (!menuItem) {
       return res

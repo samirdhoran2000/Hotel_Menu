@@ -1,22 +1,21 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit2, IndianRupee } from "lucide-react";
-import MenuItemForm from "./MenuItemForm"; // we’ll adapt this in the next section
+import { Plus, Edit2, IndianRupee, Trash2 } from "lucide-react";
+import MenuItemForm from "./MenuItemForm"; // we'll adapt this in the next section
 
 const MenuManager = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItemId, setEditingItemId] = useState(null);
 
+  const token = localStorage.getItem("token");
   // Fetch all menu items on mount (or whenever you want to re-load)
   const fetchMenuItems = async () => {
     try {
-      const token = localStorage.getItem("token");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/menu`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-        const data = await res.json();
-        
-        
+      const data = await res.json();
+
       if (res.ok) {
         setMenuItems(data?.data?.menuItems);
       } else {
@@ -24,6 +23,35 @@ const MenuManager = () => {
       }
     } catch (err) {
       console.error("Network error fetching menu items:", err);
+    }
+  };
+
+  const deleteMenuById = async (id) => {
+    // Add confirmation dialog
+    if (!window.confirm("Are you sure you want to delete this menu item?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/menu/${id}`, {
+        method: "DELETE", // Add DELETE method
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      console.log(data);
+
+      if (res.ok) {
+        alert("Menu item deleted successfully.");
+        // Refresh the menu items list after successful deletion
+        fetchMenuItems();
+      } else {
+        alert(
+          "Failed to delete menu item: " + (data.message || "Unknown error")
+        );
+      }
+    } catch (error) {
+      console.log("Something went wrong deleting the menu:", error);
+      alert("Network error occurred while deleting the menu item.");
     }
   };
 
@@ -93,26 +121,36 @@ const MenuManager = () => {
                   {item.category.replace("_", " ")}
                 </p>
                 <div className="mt-2">
-                  <span className="text-xl font-semibold text-gray-800">
-                    <IndianRupee className="w-4 h-4"/>{item.half_price}
+                  <span className="text-xl font-semibold text-gray-800 flex items-center">
+                    <IndianRupee className="w-4 h-4" />
+                    {item.half_price}
                   </span>
                   {item.original_half_price &&
                     item.original_half_price !== item.half_price && (
                       <span className="text-sm text-gray-500 line-through ml-2">
-                        ${item.original_half_price}
+                        ₹{item.original_half_price}
                       </span>
                     )}
                 </div>
               </div>
 
               <div className="mt-4 flex justify-between items-center">
-                <button
-                  onClick={() => openEditModal(item.id)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  Edit
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => openEditModal(item.id)}
+                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteMenuById(item.id)}
+                    className="flex items-center gap-1 text-red-600 hover:text-red-800 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </button>
+                </div>
                 {item.available ? (
                   <span className="text-green-600 text-sm">Available</span>
                 ) : (

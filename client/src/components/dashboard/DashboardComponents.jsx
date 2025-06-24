@@ -83,33 +83,43 @@ const DashboardHome = () => {
 
   // 2) Re‑compute chartData whenever rawLogs changes
   useEffect(() => {
-    // build the last 7 dates & init counts
-    const counts = {};
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
+    // 1) Build an array of the last 7 dates (with both isoKey & label)
+    const today = new Date();
+    const days = Array.from({ length: 7 }).map((_, i) => {
       const d = new Date();
-      d.setDate(d.getDate() - i);
-      const name = d.toLocaleDateString("en-US", { weekday: "short" });
-      days.push(name);
-      counts[name] = 0;
-    }
-
-    // tally
-    rawLogs.forEach((log) => {
-      const dayName = new Date(log.createdAt).toLocaleDateString("en-US", {
+      d.setDate(today.getDate() - (6 - i));
+      const isoKey = d.toISOString().slice(0, 10); // "YYYY-MM-DD"
+      const label = d.toLocaleDateString("en-US", {
+        // "Mon", "Tue", …
         weekday: "short",
       });
-      if (counts[dayName] != null) counts[dayName]++;
+      return { isoKey, label };
     });
 
-    // format for Recharts
+    // 2) Initialize counts for each date
+    const counts = days.reduce((acc, { isoKey }) => {
+      acc[isoKey] = 0;
+      return acc;
+    }, {});
+
+    // 3) Filter & tally only logs whose date-key is in our 7-day window
+    rawLogs.forEach((log) => {
+      const logDate = new Date(log.createdAt);
+      const key = logDate.toISOString().slice(0, 10);
+      if (counts[key] != null) {
+        counts[key]++;
+      }
+    });
+
+    // 4) Build final chart data in the right order
     setChartData(
-      days.map((name) => ({
-        name,
-        views: counts[name],
+      days.map(({ isoKey, label }) => ({
+        name: label,
+        views: counts[isoKey],
       }))
     );
   }, [rawLogs]);
+  
 
   const openCreateModal = () => {
     setEditingItemId(null);
@@ -149,7 +159,7 @@ const DashboardHome = () => {
 
   const handleTableSaveSuccess = () => {
     closeTableModal();
-    fetchQrCodeDetails();
+    // fetchQrCodeDetails();
   };
 
   return (
@@ -204,7 +214,8 @@ const DashboardHome = () => {
           {
             title: "Total Scan Today",
             totalValue: totalScan || 0,
-            change: "+15%",
+            // change: "+15%",
+            from:"From last 24 hours",
             color: "bg-purple-500",
           },
           {
@@ -229,7 +240,7 @@ const DashboardHome = () => {
                   {stat.activeValue && " /"} {stat?.activeValue}
                 </p>
                 <p className="text-sm text-green-600 mt-1">
-                  {stat.change} {stat?.from ? stat?.from : "From last week"}
+                  {stat.change} - {stat?.from ? stat?.from : "From last week"}
                 </p>
               </div>
               <div
@@ -333,34 +344,44 @@ const Analytics = () => {
   
   
    // 2) Re‑compute chartData whenever rawLogs changes
-  useEffect(() => {
-    // build the last 7 dates & init counts
-    const counts = {};
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const name = d.toLocaleDateString("en-US", { weekday: "short" });
-      days.push(name);
-      counts[name] = 0;
-    }
+   useEffect(() => {
+     // 1) Build an array of the last 7 dates (with both isoKey & label)
+     const today = new Date();
+     const days = Array.from({ length: 7 }).map((_, i) => {
+       const d = new Date();
+       d.setDate(today.getDate() - (6 - i));
+       const isoKey = d.toISOString().slice(0, 10); // "YYYY-MM-DD"
+       const label = d.toLocaleDateString("en-US", {
+         // "Mon", "Tue", …
+         weekday: "short",
+       });
+       return { isoKey, label };
+     });
 
-    // tally
-    rawLogs.forEach((log) => {
-      const dayName = new Date(log.createdAt).toLocaleDateString("en-US", {
-        weekday: "short",
-      });
-      if (counts[dayName] != null) counts[dayName]++;
-    });
+     // 2) Initialize counts for each date
+     const counts = days.reduce((acc, { isoKey }) => {
+       acc[isoKey] = 0;
+       return acc;
+     }, {});
 
-    // format for Recharts
-    setChartData(
-      days.map((name) => ({
-        name,
-        views: counts[name],
-      }))
-    );
-  }, [rawLogs]);
+     // 3) Filter & tally only logs whose date-key is in our 7-day window
+     rawLogs.forEach((log) => {
+       const logDate = new Date(log.createdAt);
+       const key = logDate.toISOString().slice(0, 10);
+       if (counts[key] != null) {
+         counts[key]++;
+       }
+     });
+
+     // 4) Build final chart data in the right order
+     setChartData(
+       days.map(({ isoKey, label }) => ({
+         name: label,
+         views: counts[isoKey],
+       }))
+     );
+   }, [rawLogs]);
+  
 
   
   
