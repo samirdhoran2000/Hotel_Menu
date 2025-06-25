@@ -2,7 +2,7 @@
 import { Hotel, MenuItem } from "../models/associations.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
-import { decodeCode, buildImageUrls, isArrayOfStrings } from "../utils/codeDecode.utils.js";
+import {  buildImageUrls,  } from "../utils/codeDecode.utils.js";
 
 // Helper to standardize error response
 export const handleSequelizeError = (err, res) => {
@@ -223,20 +223,8 @@ export const getMenuItemById = async (req, res) => {
     }
 
     // Transform each row’s images if needed
-    const processedRows = rows.map((item) => {
-      // If images is not an array of strings, assume array of objects
-      if (!isArrayOfStrings(item.images)) {
-        // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
-        item.images = item.images.map((imgObj) => {
-          // replace `filename` with your actual key
-          const fileName = imgObj.savedFilename;
-          // build your URL however your server is configured:
-          // here we assume you have an endpoint like /api/public/:filename
-          return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
-        });
-      }
-      return item;
-    });
+    const processedRows = buildImageUrls(rows, req);
+
 
     res.status(200).json({ success: true, data: processedRows });
   } catch (err) {
@@ -264,20 +252,7 @@ export const getMenuItemByHotelId = async (req, res) => {
     }
 
     // Transform each row’s images if needed
-    const processedRows = rows.map((item) => {
-      // If images is not an array of strings, assume array of objects
-      if (!isArrayOfStrings(item.images)) {
-        // e.g. item.images = [{ filename: "foo.jpg", size: 12345, ... }, …]
-        item.images = item.images.map((imgObj) => {
-          // replace `filename` with your actual key
-          const fileName = imgObj.savedFilename;
-          // build your URL however your server is configured:
-          // here we assume you have an endpoint like /api/public/:filename
-          return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
-        });
-      }
-      return item;
-    });
+    const processedRows = buildImageUrls(rows, req)
 
     res.status(200).json({ success: true, data: processedRows });
   } catch (err) {
@@ -406,14 +381,7 @@ export const updateMenuItem = async (req, res) => {
     // 6) After updating, transform the stored `images` (which might be an array of metadata objects)
     //    into publicly‐accessible URLs, exactly as you do in your GET endpoints:
     const processedItem = menuItem.toJSON(); // get plain object
-    if (!isArrayOfStrings(processedItem.images)) {
-      processedItem.images = processedItem.images.map((imgObj) => {
-        const fileName = imgObj.savedFilename;
-        return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
-      });
-    }
 
-    // 7) Send back the updated item
     return res.status(200).json({
       success: true,
       message: "Menu item updated successfully",

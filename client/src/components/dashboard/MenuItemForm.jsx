@@ -69,9 +69,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
             full_price: result.half_price || "",
             original_full_price: result.half_price || "",
             category: result.category || "",
-            ingredients: Array.isArray(result.ingredients)
-              ? result.ingredients
-              : JSON.parse(result.ingredients || "[]"),
+            ingredients: (JSON.parse(result?.ingredients || "[]")),
             isVegetarian: result.isVegetarian || false,
             available: result.available || false,
           });
