@@ -29,6 +29,10 @@ app.use("/api/activity-log", activityRoutes);
 
 app.use("/api/public", express.static("uploads"));
 
+app.get("/", (req, res) => {
+  res.send("response from server hotel menu")
+})
+
 // Sync database
 sequelize
   .sync()

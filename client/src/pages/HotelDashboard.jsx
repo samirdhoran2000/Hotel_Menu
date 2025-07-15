@@ -11,6 +11,7 @@ import {
   User,
   FileText,
   ShoppingCart,
+  QrCode
 } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 
@@ -24,12 +25,13 @@ const Dashboard = () => {
     { icon: BarChart3, label: "Analytics", path: "/hotel/dashboard/analytics" },
     // { icon: ShoppingCart, label: "Orders", path: "/hotel/dashboard/orders" },
     { icon: FileText, label: "Menu", path: "/hotel/dashboard/menu" },
-    { icon: Settings, label: "Settings", path: "/hotel/dashboard/settings" },
+    { icon: QrCode, label: "QR Codes", path: "/hotel/dashboard/settings" },
+    // { icon: Settings, label: "Settings", path: "/hotel/dashboard/settings" },
     // { icon: Settings, label: "temp1", path: "/hotel/dashboard/temp1" },
-    { icon: Settings, label: "temp2", path: "/hotel/dashboard/temp2" },
-    { icon: Settings, label: "temp3", path: "/hotel/dashboard/temp3" },
-    { icon: Settings, label: "temp4", path: "/hotel/dashboard/temp4" },
-    { icon: Settings, label: "temp5", path: "/hotel/dashboard/temp5" },
+    // { icon: Settings, label: "temp2", path: "/hotel/dashboard/temp2" },
+    // { icon: Settings, label: "temp3", path: "/hotel/dashboard/temp3" },
+    // { icon: Settings, label: "temp4", path: "/hotel/dashboard/temp4" },
+    // { icon: Settings, label: "temp5", path: "/hotel/dashboard/temp5" },
   ];
 
   const isActive = (path, exact = false) => {
