@@ -65,9 +65,9 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
             name: result.name || "",
             description: result.description || "",
             half_price: result.half_price || "",
-            original_half_price: result.half_price || "",
-            full_price: result.half_price || "",
-            original_full_price: result.half_price || "",
+            original_half_price: result.original_half_price || "",
+            full_price: result.full_price || "",
+            original_full_price: result.original_full_price || "",
             category: result.category || "",
             ingredients: (JSON.parse(result?.ingredients || "[]")),
             isVegetarian: result.isVegetarian || false,
@@ -716,7 +716,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     htmlFor="comma-input"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Ingredients (press "," or Enter to add)
+                    Ingredients (press &ldquo;,&ldquo; or Enter to add)
                   </label>
                   <textarea
                     id="comma-input"
