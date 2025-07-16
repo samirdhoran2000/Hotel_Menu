@@ -271,10 +271,8 @@ export const updateMenuItem = async (req, res) => {
     const { id } = req.params;
     const { id: hotelId } = req.user;
 
-    // 1) Find the item by id + hotelId (so user can only update items in their own hotel)
-    const menuItem = await MenuItem.findOne({
-      where: { id, hotelId },
-    });
+    // 1) Find the item by id + hotelId
+    const menuItem = await MenuItem.findOne({ where: { id, hotelId } });
     if (!menuItem) {
       return res.status(404).json({
         success: false,
@@ -282,8 +280,7 @@ export const updateMenuItem = async (req, res) => {
       });
     }
 
-    // 2) Extract incoming fields from req.body
-    //    Only update those fields if they are provided:
+    // 2) Extract incoming fields
     const {
       name,
       description,
@@ -297,69 +294,79 @@ export const updateMenuItem = async (req, res) => {
       ingredients,
     } = req.body;
 
-    // 3) Build an updateData object that includes only the fields that exist in the request
+    // 3) Basic validation (if you want to enforce presence on update)
+    if (
+      name !== undefined && (typeof name !== "string" || name.trim() === "")
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "If provided, name must be a non-empty string",
+      });
+    }
+
+    // 4) Build updateData only for provided fields
     const updateData = {};
 
-    // If the client sent a new name, update it
-    if (typeof name === "string" && name.trim().length > 0) {
+    if (name) {
       updateData.name = name.trim();
     }
-    // Description can be an empty string, but if it's provided, update
-    if (typeof description === "string") {
+    if (description !== undefined) {
       updateData.description = description;
     }
-    // If price is provided (could be "0"), parse it to float
     if (half_price != null) {
-      const parsedHalfPrice = parseFloat(half_price);
-      if (isNaN(parsedHalfPrice)) {
+      const parsed = parseFloat(half_price);
+      if (isNaN(parsed)) {
         return res.status(400).json({
           success: false,
-          message: "Invalid value for half price",
+          message: "Invalid value for half_price",
         });
       }
-      updateData.half_price = parsedHalfPrice;
+      updateData.half_price = parsed;
     }
-    // If price is provided (could be "0"), parse it to float
-    if (full_price != null) {
-      const parsedFullPrice = parseFloat(full_price);
-      if (isNaN(parsedFullPrice)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid value for full price",
-        });
-      }
-      updateData.full_full = parsedFullPrice;
-    }
-    // If original_half_price is provided, parse to float
     if (original_half_price != null) {
-      const parsedOriginalHalfPrice = parseFloat(original_half_price);
-      if (isNaN(parsedOriginalHalfPrice)) {
+      const parsed = parseFloat(original_half_price);
+      if (isNaN(parsed)) {
         return res.status(400).json({
           success: false,
-          message: "Invalid value for original half price",
+          message: "Invalid value for original_half_price",
         });
       }
-      updateData.original_half_price = parsedOriginalHalfPrice;
+      updateData.original_half_price = parsed;
     }
-    // Category
-    if (typeof category === "string") {
+    if (full_price != null) {
+      const parsed = parseFloat(full_price);
+      if (isNaN(parsed)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid value for full_price",
+        });
+      }
+      updateData.full_price = parsed;         // FIXED: was full_full
+    }
+    if (original_full_price != null) {
+      const parsed = parseFloat(original_full_price);
+      if (isNaN(parsed)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid value for original_full_price",
+        });
+      }
+      updateData.original_full_price = parsed;
+    }
+    if (category !== undefined) {
       updateData.category = category;
     }
-    // Boolean fields: they might come in as strings ("true"/"false") or booleans
     if (isVegetarian != null) {
-      updateData.isVegetarian =
-        isVegetarian === "true" || isVegetarian === true;
+      updateData.isVegetarian = isVegetarian === "true" || isVegetarian === true;
     }
     if (available != null) {
       updateData.available = available === "true" || available === true;
     }
-    // Ingredients (array of strings, or whatever shape you expect)
     if (ingredients != null) {
       updateData.ingredients = ingredients;
     }
 
-    // 4) Handle file uploads exactly like in createMenuItem:
-    //    If req.files exists and has length > 0, build a new images array
+    // 5) Handle new image uploads
     if (req.files && req.files.length > 0) {
       const uploadedFiles = req.files.map((file) => ({
         originalName: file.originalname,
@@ -368,20 +375,14 @@ export const updateMenuItem = async (req, res) => {
         sizeBytes: file.size,
         destinationPath: file.path,
       }));
-      // Replace the entire images field with the newly uploaded set:
       updateData.images = uploadedFiles;
     }
 
-    // 5) Perform the update (only on the keys we put into updateData)
-    const result = await menuItem.update(updateData);
-    if (!result) {
-      throw new Error("something went wrong while updating menu")
-    }
+    // 6) Perform update
+    await menuItem.update(updateData);
 
-    // 6) After updating, transform the stored `images` (which might be an array of metadata objects)
-    //    into publicly‐accessible URLs, exactly as you do in your GET endpoints:
-    const processedItem = menuItem.toJSON(); // get plain object
-
+    // 7) Return the updated item
+    const processedItem = menuItem.toJSON();
     return res.status(200).json({
       success: true,
       message: "Menu item updated successfully",
@@ -389,7 +390,11 @@ export const updateMenuItem = async (req, res) => {
     });
   } catch (err) {
     console.error("Error updating menu item:", err);
-    return handleSequelizeError(err, res);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
   }
 };
 

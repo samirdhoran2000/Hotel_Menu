@@ -18,7 +18,6 @@ export function buildImageUrls(items, req) {
   return items.map((item) => {
     // 3) If it's an array of objects, map to URLs
     const itemImgs = JSON.parse(item.images);
-    console.log("item imgs is ", itemImgs);
     item.ingredients = JSON.parse(item.ingredients);
 
     if (itemImgs.length > 0) {
