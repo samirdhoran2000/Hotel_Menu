@@ -110,7 +110,7 @@ const Dashboard = () => {
                 Menu
               </Link>
               <Link
-                to="/hotel/dashboard/qrcodes"
+                to="/hotel/dashboard/settings"
                 className="px-3 py-1 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
               >
                 QR Codes

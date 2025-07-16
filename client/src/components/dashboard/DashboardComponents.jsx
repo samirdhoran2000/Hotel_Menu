@@ -16,6 +16,7 @@ import {
   RefreshCw,
   Search,
   QrCodeIcon,
+  Download,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import TableForm from "./TableForm";
@@ -36,6 +37,7 @@ import {
 import MenuItemForm from "./MenuItemForm";
 import Chart from "./Chart"; // Assuming you have a Chart component for the area chart
 import MenuVisitedTrend from "./Chart";
+import { useNavigate } from "react-router-dom";
 
 const DashboardHome = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -454,6 +456,14 @@ const Settings = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
+  const navigate = useNavigate();
+
+  const tableUniqueCode = (hotelId, TableNo) => {
+
+    const rawString = `${hotelId}:${TableNo}`;
+    return btoa(rawString);
+   }
+
   async function fetchQrCodeDetails() {
     setIsLoading(true);
     setError(null);
@@ -736,11 +746,17 @@ const Settings = () => {
                     {/* Action Buttons */}
                     <div className="flex items-center gap-2 ml-4">
                       <button
-                        onClick={() => handleEdit(tableItem)}
+                        onClick={() => {
+                          console.log("Downloading QR Code for:", tableItem);
+                          
+                          navigate(
+                            `/hotel/dashboard/qrcode/${tableUniqueCode(tableItem.hotelId, tableItem.tableNumber)}`
+                          );
+                        }}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                        title="Edit QR Code"
+                        title="Download QR Code"
                       >
-                        <Edit className="w-5 h-5" />
+                        <Download className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleDelete(tableItem.id)}

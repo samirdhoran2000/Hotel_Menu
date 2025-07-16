@@ -16,6 +16,7 @@ import MenuManager from "./components/dashboard/MenuManager";
 import ComingSoon from "./pages/ComingSoon";
 import HomePageLayout from "./pages/HomePageLayout";
 import ScrollToTop from "./components/ScrollToTop";
+import  QrCode  from "./components/QrCode";
 
 const App = () => {
   return (
@@ -42,10 +43,10 @@ const App = () => {
             <Route path="menu" element={<MenuManager />} />
             <Route path="settings" element={<Settings />} />
           
-            {/* <Route path="temp3" element={<HotelierMenuManager />} /> */}
+            <Route path="qrcode/:id" element={<QrCode />} />
             {/* <Route path="temp4" element={<Temp4 />} />
             <Route path="temp5" element={<Temp5 />} /> */}
-            <Route path="qrcodes" element={<Settings />} />
+            {/* <Route path="qrcodes" element={<Settings />} /> */}
           </Route>
 
           {/* Add other routes here as needed */}
