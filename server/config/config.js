@@ -8,7 +8,7 @@ export const config = {
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "location_tracker",
+    database: process.env.DB_NAME || "hotel_menu",
     port: process.env.DB_PORT || 3307,
     dialect: "mysql",
     pool: {
@@ -18,7 +18,7 @@ export const config = {
       idle: 10000,
     },
   },
-  domain:process.env.DOMAIN || 'https://localhost:5173/hotel'
+  domain:process.env.DOMAIN || 'http://localhost:5173/hotel'
 };
 
 // export default config;
