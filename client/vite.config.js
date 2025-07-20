@@ -17,10 +17,10 @@ export default defineConfig({
     open: true,
 
     // Enable HTTPS and point to the key & cert files you generated.
-    https: {
-      key: fs.readFileSync(resolve(__dirname, "./localhost.key")),
-      cert: fs.readFileSync(resolve(__dirname, "./localhost.crt")),
-    },
+    // https: {
+    //   key: fs.readFileSync(resolve(__dirname, "./localhost.key")),
+    //   cert: fs.readFileSync(resolve(__dirname, "./localhost.crt")),
+    // },
   },
   plugins: [react()],
 });

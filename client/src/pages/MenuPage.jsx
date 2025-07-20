@@ -1,30 +1,30 @@
-// import React from 'react'
-// import Header from '../components/Header';
 import { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom'
+import { useParams } from "react-router-dom";
 
-import Header from '../components/Header';
-import MenuSection from '../components/MenuSection';
-import { useDataManager } from '../utils/dataManager';
-import Sidebar from '../components/Sidebar';
-import Footer from '../components/Footer';
-
+import Header from "../components/Header";
+import MenuSection from "../components/MenuSection";
+import Sidebar from "../components/Sidebar";
+import Footer from "../components/Footer";
+import { useDataManager } from "../utils/dataManager";
 
 const MenuPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  // const [isLoading, setIsLoading] = useState(true);
   const params = useParams();
-  const dataManager = useDataManager({id:params?.id});
+  const dataManager = useDataManager({ id: params?.id });
 
   return (
-    <div
-      className="min-h-screen bg-orange-100 relative"
-      // style={{ backgroundColor: "hsl(196.8deg 33.78% 29.02%)" }}
-    >
-      {/* Decorative background blobs */}
-      <div className="absolute top-0 left-0 w-96 h-9w-96 bg-orange-500 rounded-full opacity-10 filter blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-800 rounded-full opacity-15 filter blur-3xl" />
-      <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-orange-700 rounded-full opacity-15 filter blur-3xl" />
+    <div className="relative min-h-screen flex flex-col">
+      {/* Fixed full‑screen background */}
+      <div
+        className="fixed inset-0 bg-[url('/main_bg.jpeg')] bg-fixed bg-contain bg-no-repeat bg-center -z-10"
+        style={{
+          filter: "blur(1px)",
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center auto",
+        }}
+      />
+
+      {/* Your normal page flow */}
       <Header
         toggleSidebar={() => setIsSidebarOpen(true)}
         searchQuery={dataManager.searchQuery}
@@ -32,13 +32,13 @@ const MenuPage = () => {
       />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
-      <main className="pt-24 pb-12 flex justify-center items-center">
+      <main className="flex-1 pt-24 pb-12 flex justify-center items-start overflow-auto">
         <MenuSection dataManager={dataManager} />
       </main>
 
       <Footer />
     </div>
   );
-}
+};
 
-export default MenuPage
+export default MenuPage;
