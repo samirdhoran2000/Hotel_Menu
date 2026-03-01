@@ -7,11 +7,18 @@ import Table from "./table.model.js";
 import ActivityLog from "./activityLog.model.js";
 
 // A hotel has many menu items and tables
+import File from "./file.model.js";
+
+// A hotel has many menu items and tables
 Hotel.hasMany(MenuItem, { foreignKey: "hotelId", onDelete: "CASCADE" });
 Hotel.hasMany(Table, { foreignKey: "hotelId", onDelete: "CASCADE" });
 
 // A MenuItem belongs to a Hotel
 MenuItem.belongsTo(Hotel, { foreignKey: "hotelId" });
+
+// A MenuItem has many Files (images)
+MenuItem.hasMany(File, { foreignKey: "menuItemId", as: "files", onDelete: "CASCADE" });
+File.belongsTo(MenuItem, { foreignKey: "menuItemId" });
 
 // A Table belongs to a Hotel
 Table.belongsTo(Hotel, { foreignKey: "hotelId" });
@@ -23,4 +30,4 @@ Table.hasMany(ActivityLog, { foreignKey: "tableId", onDelete: "CASCADE" });
 ActivityLog.belongsTo(Table, { foreignKey: "tableId", onDelete: "CASCADE" });
 
 // don’t forget to export ActivityLog
-export { sequelize, Hotel, MenuItem, Table, ActivityLog };
+export { sequelize, Hotel, MenuItem, Table, ActivityLog, File };

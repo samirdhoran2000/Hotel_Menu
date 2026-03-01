@@ -34,10 +34,12 @@ app.get("/", (req, res) => {
 })
 
 // Sync database
-sequelize
-  .sync()
-  // .sync({ alter: true })
-  .then(() => console.log("Database synced"))
-  .catch((err) => console.error("Database sync error:", err));
+// Database sync is now handled in server.js
+// sequelize
+//   .sync()
+//   // .sync({ alter: true })
+//   .then(() => console.log("Database synced"))
+//   .catch((err) => console.error("Database sync error:", err));
+
 
 export default app;

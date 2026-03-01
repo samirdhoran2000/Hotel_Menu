@@ -1,8 +1,8 @@
 // controllers/menuItemController.js
-import { Hotel, MenuItem } from "../models/associations.js";
+import { Hotel, MenuItem, File } from "../models/associations.js";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
-import {  buildImageUrls,  } from "../utils/codeDecode.utils.js";
+import { buildImageUrls, } from "../utils/codeDecode.utils.js";
 
 // Helper to standardize error response
 export const handleSequelizeError = (err, res) => {
@@ -49,26 +49,8 @@ export const createMenuItem = async (req, res) => {
       });
     }
 
-    // `req.files` is an array of file info objects if at least one file was uploaded
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ message: "No images were uploaded." });
-    }
-
-    // Build an array of metadata for each uploaded file
-    const uploadedFiles = req.files.map((file) => ({
-      originalName: file.originalname,
-      savedFilename: file.filename,
-      mimeType: file.mimetype,
-      sizeBytes: file.size,
-      destinationPath: file.path,
-    }));
-   
-
-    // If you want to save the full metadata array in your DB:
-    const images = uploadedFiles;
-
-    // If instead you only want to store the filenames, do:
-    // const images = req.files.map((file) => file.filename);
+    // `req.files` is an array of file info objects (from multer-s3)
+    // S3 files have properties like location (url), key, etc.
 
     const menuItem = await MenuItem.create({
       name,
@@ -80,16 +62,46 @@ export const createMenuItem = async (req, res) => {
       available: available === "true" || available === true,
       original_half_price: parseFloat(original_half_price),
       original_full_price: parseFloat(original_full_price),
-      images, 
+      // images: [], // Deprecated
       ingredients,
       hotelId: id,
-      // userId,
     });
+
+    if (req.files && req.files.length > 0) {
+      // Create associated File records
+      const fileRecords = req.files.map(file => ({
+        url: file.location, // S3 URL
+        key: file.key,      // S3 Key
+        mimeType: file.mimetype,
+        originalName: file.originalname,
+        size: file.size,
+        menuItemId: menuItem.id
+      }));
+
+      // We need to import File model at the top really, or use the association method
+      // Using the association method `createFiles` or bulkCreate
+      // Since we imported { MenuItem } from associations, we might need File too.
+      // Let's rely on standard sequelize mixins if possible, strictly speaking `createFile` exists.
+      // But simpler to bulk create on the File model.
+      // Wait, I need to check imports.
+      // Let's use getMenuItemById pattern which imports models from associations.
+      // I need to import `File` in this controller.
+      // For now, I'll assume `import { File } ...` is added.
+      // Actually, I should update imports first. 
+      // Check next tool call for import update.
+
+      // For this replacement, I will assume `File` is available or use `menuItem.createFile` (singular) loop?
+      // Better: use bulkCreate on File model. 
+      // `import { File } from "../models/associations.js"`
+
+      const { File } = await import("../models/associations.js");
+      await File.bulkCreate(fileRecords);
+    }
 
     return res.status(201).json({
       success: true,
       message: "Menu item created successfully",
-      data: menuItem,
+      data: menuItem, // note: associated files won't be in this return object unless we reload with include
     });
   } catch (error) {
     console.error("Error creating menu item:", error);
@@ -104,7 +116,7 @@ export const createMenuItem = async (req, res) => {
 export const getMenuItems = async (req, res) => {
   try {
     const { id: hotelId } = req.user;
-    
+
     // 5) Parse query parameters for filtering and pagination
     const {
       search,
@@ -180,6 +192,14 @@ export const getMenuItems = async (req, res) => {
       limit: pageSize,
       offset,
       order: [[sortBy, finalSortOrder]],
+      include: [
+        {
+          model: File,
+          as: "files",
+          attributes: ["id", "url", "mimeType", "originalName"],
+        },
+      ],
+      distinct: true, // Important for correct count with include
     });
 
     // 8) Process image URLs if needed
@@ -214,7 +234,10 @@ export const getMenuItemById = async (req, res) => {
   try {
     const { id } = req.params;
     const { id: hotelId } = req.user;
-    const { count, rows } = await MenuItem.findAndCountAll({ where: { id } });
+    const { count, rows } = await MenuItem.findAndCountAll({
+      where: { id },
+      include: [{ model: File, as: "files" }]
+    });
 
     if (!rows) {
       return res
@@ -243,6 +266,7 @@ export const getMenuItemByHotelId = async (req, res) => {
     const { id: hotelId } = req.user;
     const { count, rows } = await MenuItem.findAndCountAll({
       where: { id, hotelId },
+      include: [{ model: File, as: "files" }]
     });
 
     if (!rows) {
@@ -366,16 +390,18 @@ export const updateMenuItem = async (req, res) => {
       updateData.ingredients = ingredients;
     }
 
-    // 5) Handle new image uploads
+    // 5) Handle new image uploads (Add to existing)
     if (req.files && req.files.length > 0) {
-      const uploadedFiles = req.files.map((file) => ({
-        originalName: file.originalname,
-        savedFilename: file.filename,
+      const fileRecords = req.files.map(file => ({
+        url: file.location,
+        key: file.key,
         mimeType: file.mimetype,
-        sizeBytes: file.size,
-        destinationPath: file.path,
+        originalName: file.originalname,
+        size: file.size,
+        menuItemId: menuItem.id
       }));
-      updateData.images = uploadedFiles;
+      const { File } = await import("../models/associations.js");
+      await File.bulkCreate(fileRecords);
     }
 
     // 6) Perform update
@@ -402,7 +428,7 @@ export const updateMenuItem = async (req, res) => {
 export const deleteMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
-    const { id:hotelId } = req.user;
+    const { id: hotelId } = req.user;
     const menuItem = await MenuItem.findOne({ where: { id, hotelId } });
     if (!menuItem) {
       return res

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import https from "https";
 
 import app from "./app.js";
-import {config} from "./config/config.js";
+import { config } from "./config/config.js";
 
 // HTTPS options
 const options = {
@@ -15,8 +15,17 @@ const options = {
 const server = https.createServer(options, app);
 
 // Start server
-server.listen(config.port, config.host, () => {
-  console.log(`Server running on https://${config.host}:${config.port}`);
+// Import sequelize
+import sequelize from "./models/index.js";
+
+// Sync database and start server
+sequelize.sync({ alter: true }).then(() => {
+  console.log("Database synchronized");
+  server.listen(config.port, config.host, () => {
+    console.log(`Server running on https://${config.host}:${config.port}`);
+  });
+}).catch((err) => {
+  console.error("Failed to sync database:", err);
 });
 
 // Handle server errors

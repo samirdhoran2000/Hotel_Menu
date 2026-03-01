@@ -76,7 +76,6 @@ const MenuItem = sequelize.define(
         "veg_speciality",
         "veg_main_course",
         "nonveg_starter",
-        "tandoori_starter",
         "chicken",
         "mutton",
         "fish",
@@ -111,12 +110,12 @@ const MenuItem = sequelize.define(
         min: 0,
       },
     },
-    images: {
-      // Array of image paths/URLs, e.g. ["./paratha_A.jpeg", "./paratha_B.jpeg"]
-      type: DataTypes.JSON,
-      allowNull: true,
-      // JSON allows storing an array of strings
-    },
+    // images: {
+    //   // Array of image paths/URLs, e.g. ["./paratha_A.jpeg", "./paratha_B.jpeg"]
+    //   type: DataTypes.JSON,
+    //   allowNull: true,
+    //   // JSON allows storing an array of strings
+    // },
     video: {
       type: DataTypes.JSON,
       allowNull: true,
