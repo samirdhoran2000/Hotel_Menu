@@ -1,0 +1,23 @@
+1. return only users that are associated with that hotel -- not all
+2. update history - track of changes e.g. status: pending, completed, rejected, etc.
+3. add the pre-defined menu's
+4. duration time for visiting app
+5. video is pending
+6. delivery system is pending
+
+
+
+//----------------------------------
+
+1. update menu controller price error handling pending
+2. 
+
+
+
+
+
+//---------------issues----------------------
+1. two API called for chart one is in dashboard and second one is in analytics
+2. full screen image view 
+3. two times JSON parsing required
+4. 

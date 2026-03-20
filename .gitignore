@@ -46,5 +46,6 @@ dist-ssr/
 /server/yarn-debug.log*
 /server/yarn-error.log*
 /server/*.env*
+/server/uploads
 
 *temp*
