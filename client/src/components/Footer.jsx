@@ -26,10 +26,10 @@ const Footer = () => (
         <div>
           <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
           <address className="text-gray-400 not-italic">
-            <p>123 Gourmet Street</p>
-            <p>Pune City, MH 411057</p>
-            <p className="mt-2">Phone: (+91) 90223 28048</p>
-            <p>Email: contanct@techamica.com</p>
+            <p> Dattatray, Kankate Park Gajraj Heights, Belhekar wasti, opp. Defence Enclave, </p>
+            <p>Manjri, Manjari Budruk, Pune, Maharashtra 412307</p>
+            <p className="mt-2">Phone: (+91) 8888 634041</p>
+            <p>Email: samirdhoran2000@gmail.com</p>
           </address>
         </div>
         <div>
