@@ -12,7 +12,7 @@ export const useDataManager = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOption, setSortOption] = useState("featured");
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState("list");
   const [likesUpdated, setLikesUpdated] = useState(0);
 
   // Use a seeded random number generator

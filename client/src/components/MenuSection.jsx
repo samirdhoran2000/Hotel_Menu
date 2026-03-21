@@ -1,6 +1,5 @@
-// MenuSection.js
-import React from "react";
-import { ChevronDown, Grid, List, Heart } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import { ChevronDown, ChevronLeft, ChevronRight, Grid, List, Heart } from "lucide-react";
 import ListViewItem from "./ListViewItem";
 import GridViewItem from "./GridViewItem";
 
@@ -23,6 +22,36 @@ const MenuSection = ({ dataManager }) => {
     viewMode,
     setViewMode,
   } = dataManager;
+
+  const scrollContainerRef = useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      // Determine if we haven't reached the end (giving a small 10px buffer)
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  useEffect(() => {
+    // Initial check
+    handleScroll();
+    window.addEventListener("resize", handleScroll);
+    return () => window.removeEventListener("resize", handleScroll);
+  }, []);
+
+  const scroll = (direction) => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 200;
+      scrollContainerRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth"
+      });
+    }
+  };
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -47,20 +76,48 @@ const MenuSection = ({ dataManager }) => {
       {/* Navigation and Controls */}
       <div className="flex flex-col w-full mb-6 overflow-hidden">
         {/* Categories */}
-        <div className="flex overflow-x-auto gap-3 pb-3 mb-4 w-full px-2 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryChange(category.id)}
-              className={`flex-shrink-0 px-6 py-2.5 rounded-full font-medium transition-all duration-300 snap-center ${
-                selectedCategory === category.id
-                  ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-lg shadow-orange-500/30 scale-105"
-                  : "bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-orange-600 hover:shadow-md border border-gray-100/50"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
+        <div className="relative w-full mb-4 flex items-center group">
+          {/* Left Arrow */}
+          <button 
+            onClick={() => scroll("left")}
+            className={`absolute left-0 z-10 p-1.5 rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-orange-600 transition-all ${
+              showLeftArrow ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full pointer-events-none'
+            }`}
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <div 
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="flex overflow-x-auto gap-3 pb-2 pt-2 w-full px-8 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => handleCategoryChange(category.id)}
+                className={`flex-shrink-0 px-4 py-2 text-sm rounded-full font-medium transition-all duration-300 snap-center ${
+                  selectedCategory === category.id
+                    ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-md shadow-orange-500/30 scale-105"
+                    : "bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-orange-600 hover:shadow-sm border border-gray-100/50"
+                }`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Arrow */}
+          <button 
+            onClick={() => scroll("right")}
+            className={`absolute right-0 z-10 p-1.5 rounded-full bg-white shadow-md border border-gray-100 text-gray-500 hover:text-orange-600 transition-all ${
+              showRightArrow ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full pointer-events-none'
+            }`}
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Filters, Sort, and View Toggle */}
@@ -81,16 +138,7 @@ const MenuSection = ({ dataManager }) => {
 
           <div className="flex items-center space-x-4">
             <div className="flex space-x-2">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2.5 rounded-xl transition-all ${
-                  viewMode === "grid"
-                    ? "bg-orange-100 text-orange-600 shadow-sm"
-                    : "bg-white/60 text-gray-500 hover:bg-white hover:text-orange-500 hover:shadow-sm"
-                }`}
-              >
-                <Grid className="w-5 h-5" />
-              </button>
+             
               <button
                 onClick={() => setViewMode("list")}
                 className={`p-2.5 rounded-xl transition-all ${
@@ -100,6 +148,16 @@ const MenuSection = ({ dataManager }) => {
                 }`}
               >
                 <List className="w-5 h-5" />
+              </button>
+               <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2.5 rounded-xl transition-all ${
+                  viewMode === "grid"
+                    ? "bg-orange-100 text-orange-600 shadow-sm"
+                    : "bg-white/60 text-gray-500 hover:bg-white hover:text-orange-500 hover:shadow-sm"
+                }`}
+              >
+                <Grid className="w-5 h-5" />
               </button>
             </div>
           </div>
