@@ -28,8 +28,7 @@ const App = () => {
 
   return (
     <div
-      className="min-h-screen bg-orange-100"
-      // style={{ backgroundColor: "hsl(196.8deg 33.78% 29.02%)" }}
+      className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50/50 to-orange-100/30 font-outfit"
     >
       <Header
         toggleSidebar={() => setIsSidebarOpen(true)}

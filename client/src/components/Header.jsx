@@ -27,8 +27,10 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? "backdrop-blur-md shadow-md" : "backdrop-blur-md"
+      className={`fixed w-full z-50 transition-all duration-300 border-b ${
+        isScrolled 
+          ? "bg-white/80 backdrop-blur-xl shadow-sm border-gray-200/50" 
+          : "bg-transparent backdrop-blur-sm border-transparent"
       }`}
     >
       {/* Main Header */}
@@ -55,15 +57,15 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
             {[
               { title: "Menu", href: "#menu" },
               { title: "About", href: "#footer" },
-              { title: "Contanct", href: "#footer" },
+              { title: "Contact", href: "#footer" },
             ].map((item) => (
               <a
                 key={item.title}
                 href={`${item.href.toLowerCase()}`}
-                className="relative font-medium text-gray-800 hover:text-black transition-colors py-2"
+                className="relative font-medium text-gray-700 hover:text-orange-600 transition-colors py-2 group"
               >
                 {item.title}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full" />
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-600 to-red-500 transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
           </nav>

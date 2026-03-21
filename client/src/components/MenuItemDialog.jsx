@@ -37,7 +37,7 @@ const Modal = ({ isOpen, onClose, children }) => {
       />
       <div
         ref={modalRef}
-        className="relative z-10 max-w-3xl w-full mx-4 bg-white rounded-2xl overflow-hidden"
+        className="relative z-10 max-w-3xl w-full mx-4 bg-white rounded-[2rem] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {children}
@@ -174,10 +174,10 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
                   <button
                     key={size.id}
                     onClick={() => setSelectedSize(size.id)}
-                    className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all ${
+                    className={`flex-1 py-3 px-4 rounded-xl border-2 transition-all duration-300 ${
                       selectedSize === size.id
-                        ? "border-black bg-black text-white"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm"
+                        : "border-gray-100 hover:border-orange-200 hover:bg-orange-50/50"
                     }`}
                   >
                     <div className="text-sm">{size.name}</div>
@@ -194,7 +194,7 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
                 {item.ingredients.map((ingredient) => (
                   <span
                     key={ingredient}
-                    className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                    className="px-4 py-1.5 bg-orange-100/50 text-orange-800 font-medium rounded-full text-sm border border-orange-100"
                   >
                     {ingredient}
                   </span>

@@ -30,7 +30,7 @@ const GridViewItem = ({ item }) => {
   return (
     <>
       <div
-        className="relative bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl"
+        className="relative bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-500 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -39,14 +39,14 @@ const GridViewItem = ({ item }) => {
             src={item.images[0]}
             loading="lazy"
             alt={item.name}
-            className="w-full h-full object-cover transition-transform duration-300"
+            className="w-full h-full object-cover transition-transform duration-700"
             style={{
               transform: isHovered ? "scale(1.05)" : "scale(1)",
             }}
           />
           <button
             onClick={handleLikeToggle}
-            className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md transition-all duration-300 hover:scale-110"
+            className="absolute top-4 right-4 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm transition-all duration-300 hover:scale-110 hover:bg-white"
           >
             <Heart
               className={`w-5 h-5 ${
@@ -77,7 +77,7 @@ const GridViewItem = ({ item }) => {
 
           <div className="flex justify-between items-center">
             <div>
-              <span className="text-2xl font-bold text-gray-900">
+              <span className="text-2xl font-bold text-orange-600">
                 ₹{item.price}
               </span>
               <span className="text-sm text-gray-500 line-through ml-2">
@@ -86,7 +86,7 @@ const GridViewItem = ({ item }) => {
             </div>
             <button
               onClick={() => setIsDialogOpen(true)}
-              className="px-4 py-2 bg-black text-white rounded-lg transition-all duration-300 hover:bg-gray-800 active:scale-95"
+              className="px-5 py-2.5 bg-gray-900 text-white font-medium rounded-xl transition-all duration-300 hover:bg-orange-600 hover:shadow-lg hover:shadow-orange-500/30 active:scale-95"
             >
               View
             </button>

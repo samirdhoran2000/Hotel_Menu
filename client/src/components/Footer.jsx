@@ -32,7 +32,7 @@ const Footer = () => (
             <p>Email: samirdhoran2000@gmail.com</p>
           </address>
         </div>
-        <div>
+        {/* <div>
           <h4 className="text-lg font-semibold mb-4">Newsletter</h4>
           <p className="text-gray-400 mb-4">
             Subscribe to our newsletter for updates and special offers.
@@ -47,7 +47,7 @@ const Footer = () => (
               Subscribe
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
         <p>&copy; 2024 Gourmet. All rights reserved.</p>

@@ -34,10 +34,10 @@ const MenuSection = ({ dataManager }) => {
     >
       {/* Header Section */}
       <div className="flex flex-col items-center w-full mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-red-500 to-orange-400 text-center mb-4">
           Our Special Menu
         </h2>
-        <p className="text-gray-800 text-center max-w-2xl">
+        <p className="text-gray-600 text-center max-w-2xl text-lg">
           Discover our carefully curated selection of dishes, made with love and
           the finest ingredients
         </p>
@@ -51,10 +51,10 @@ const MenuSection = ({ dataManager }) => {
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`px-6 py-2 rounded-full transition-all duration-300 ${
+              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
                 selectedCategory === category.id
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                  ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-lg shadow-orange-500/30 scale-105"
+                  : "bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-orange-600 hover:shadow-md border border-gray-100/50"
               }`}
             >
               {category.name}
@@ -68,7 +68,7 @@ const MenuSection = ({ dataManager }) => {
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
-              className="appearance-none px-4 py-2 pr-10 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
+              className="appearance-none px-4 py-2 pr-10 bg-white/60 backdrop-blur-sm border border-gray-100/50 rounded-xl hover:bg-white hover:shadow-sm transition-all text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
             >
               <option value="featured">Featured</option>
               <option value="price-asc">Price: Low to High</option>
@@ -82,20 +82,20 @@ const MenuSection = ({ dataManager }) => {
             <div className="flex space-x-2">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg ${
+                className={`p-2.5 rounded-xl transition-all ${
                   viewMode === "grid"
-                    ? "bg-gray-200"
-                    : "bg-gray-100 hover:bg-gray-200"
+                    ? "bg-orange-100 text-orange-600 shadow-sm"
+                    : "bg-white/60 text-gray-500 hover:bg-white hover:text-orange-500 hover:shadow-sm"
                 }`}
               >
                 <Grid className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg ${
+                className={`p-2.5 rounded-xl transition-all ${
                   viewMode === "list"
-                    ? "bg-gray-200"
-                    : "bg-gray-100 hover:bg-gray-200"
+                    ? "bg-orange-100 text-orange-600 shadow-sm"
+                    : "bg-white/60 text-gray-500 hover:bg-white hover:text-orange-500 hover:shadow-sm"
                 }`}
               >
                 <List className="w-5 h-5" />
