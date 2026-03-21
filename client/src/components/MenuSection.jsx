@@ -1,6 +1,6 @@
 // MenuSection.js
 import React from "react";
-import { ChevronDown, Grid, List } from "lucide-react";
+import { ChevronDown, Grid, List, Heart } from "lucide-react";
 import ListViewItem from "./ListViewItem";
 import GridViewItem from "./GridViewItem";
 
@@ -10,6 +10,7 @@ const categories = [
   { id: "trending", name: "Trending" },
   { id: "featured", name: "Featured" },
   { id: "new", name: "New Arrivals" },
+  { id: "favorites", name: "Favorites" },
 ];
 
 const MenuSection = ({ dataManager }) => {
@@ -106,21 +107,35 @@ const MenuSection = ({ dataManager }) => {
       </div>
 
       {/* Menu Items */}
-      <div
-        className={
-          viewMode === "grid"
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            : "flex flex-col gap-6 w-full"
-        }
-      >
-        {filteredItems.map((item) =>
-          viewMode === "grid" ? (
-            <GridViewItem key={item.id} item={item} />
-          ) : (
-            <ListViewItem key={item.id} item={item} />
-          )
-        )}
-      </div>
+      {filteredItems.length === 0 ? (
+        <div className="w-full flex flex-col items-center justify-center py-20 px-4 text-center">
+          <Heart className={`w-16 h-16 mb-4 ${selectedCategory === "favorites" ? "text-orange-200" : "text-gray-200"}`} />
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            {selectedCategory === "favorites" ? "No favorites yet!" : "No items found"}
+          </h3>
+          <p className="text-gray-500 max-w-md">
+            {selectedCategory === "favorites"
+              ? "You haven't saved any items. Click the heart icon on any dish to view it here later."
+              : "We couldn't find any items matching your current filters. Try adjusting your search or category."}
+          </p>
+        </div>
+      ) : (
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full"
+              : "flex flex-col gap-6 w-full"
+          }
+        >
+          {filteredItems.map((item) =>
+            viewMode === "grid" ? (
+              <GridViewItem key={item.id} item={item} />
+            ) : (
+              <ListViewItem key={item.id} item={item} />
+            )
+          )}
+        </div>
+      )}
     </section>
   );
 };

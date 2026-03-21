@@ -8,8 +8,13 @@ const ListViewItem = ({ item }) => {
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
-    const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
-    setIsLiked(!!likedItems[item.name]);
+    const updateLikeState = () => {
+      const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
+      setIsLiked(!!likedItems[item.name]);
+    };
+    updateLikeState();
+    window.addEventListener("likesUpdated", updateLikeState);
+    return () => window.removeEventListener("likesUpdated", updateLikeState);
   }, [item.name]);
 
   const handleLikeToggle = (e) => {
@@ -24,6 +29,7 @@ const ListViewItem = ({ item }) => {
       delete likedItems[item.name];
     }
     localStorage.setItem("likedItems", JSON.stringify(likedItems));
+    window.dispatchEvent(new Event("likesUpdated"));
   };
 
   return (

@@ -51,6 +51,29 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
   const [selectedSize, setSelectedSize] = useState("medium");
   const [isLiked, setIsLiked] = useState(false);
 
+  useEffect(() => {
+    const updateLikeState = () => {
+      const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
+      setIsLiked(!!likedItems[item.name]);
+    };
+    updateLikeState();
+    window.addEventListener("likesUpdated", updateLikeState);
+    return () => window.removeEventListener("likesUpdated", updateLikeState);
+  }, [item.name, isOpen]);
+
+  const handleLikeToggle = () => {
+    const newLikedState = !isLiked;
+    setIsLiked(newLikedState);
+    const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
+    if (newLikedState) {
+      likedItems[item.name] = true;
+    } else {
+      delete likedItems[item.name];
+    }
+    localStorage.setItem("likedItems", JSON.stringify(likedItems));
+    window.dispatchEvent(new Event("likesUpdated"));
+  };
+
   const sizes = [
     { id: "half", name: "Half", price: (item.price * 0.8).toFixed(0) },
     { id: "full", name: "Full", price: item.price },
@@ -149,7 +172,7 @@ const MenuItemDialog = ({ item, isOpen, onClose }) => {
               </div>
               <div className="flex space-x-2 pr-10">
                 <button
-                  onClick={() => setIsLiked(!isLiked)}
+                  onClick={handleLikeToggle}
                   className="p-2 hover:bg-gray-100 rounded-full transition-all"
                 >
                   <Heart

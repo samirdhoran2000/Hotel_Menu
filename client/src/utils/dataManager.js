@@ -13,6 +13,7 @@ export const useDataManager = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOption, setSortOption] = useState("featured");
   const [viewMode, setViewMode] = useState("grid");
+  const [likesUpdated, setLikesUpdated] = useState(0);
 
   // Use a seeded random number generator
   const rng = seedrandom(0);
@@ -24,6 +25,12 @@ export const useDataManager = () => {
       category: categories[Math.floor(rng() * (categories.length - 1)) + 1], // Exclude 'all'
     }))
   );
+
+  useEffect(() => {
+    const handleLikesUpdate = () => setLikesUpdated((prev) => prev + 1);
+    window.addEventListener("likesUpdated", handleLikesUpdate);
+    return () => window.removeEventListener("likesUpdated", handleLikesUpdate);
+  }, []);
 
   useEffect(() => {
     let result = [...itemsWithCategories];
@@ -39,7 +46,10 @@ export const useDataManager = () => {
     }
 
     // Apply category filter
-    if (selectedCategory !== "all") {
+    if (selectedCategory === "favorites") {
+      const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
+      result = result.filter((item) => likedItems[item.name]);
+    } else if (selectedCategory !== "all") {
       result = result.filter((item) => item.category === selectedCategory);
     }
 
@@ -54,7 +64,7 @@ export const useDataManager = () => {
     // For "featured", we don't change the order
 
     setFilteredItems(result);
-  }, [itemsWithCategories, searchQuery, selectedCategory, sortOption]);
+  }, [itemsWithCategories, searchQuery, selectedCategory, sortOption, likesUpdated]);
 
   return {
     items: itemsWithCategories,
