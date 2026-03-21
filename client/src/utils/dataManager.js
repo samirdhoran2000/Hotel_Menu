@@ -10,6 +10,7 @@ export const useDataManager = () => {
   const [items] = useState(menuData);
   const [filteredItems, setFilteredItems] = useState(menuData);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMainCategory, setSelectedMainCategory] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOption, setSortOption] = useState("featured");
   const [viewMode, setViewMode] = useState("list");
@@ -20,10 +21,20 @@ export const useDataManager = () => {
 
   // Assign random categories to items (only once)
   const [itemsWithCategories] = useState(() =>
-    items.map((item) => ({
-      ...item,
-      category: categories[Math.floor(rng() * (categories.length - 1)) + 1], // Exclude 'all'
-    }))
+    items.map((item) => {
+      const isNonVeg =
+        /chicken|mutton|lobster|ribeye|meat|fish|prawn|egg/i.test(item.name) ||
+        (item.ingredients &&
+          item.ingredients.some((i) =>
+            /chicken|mutton|lobster|meat|fish|prawn|egg/i.test(i)
+          ));
+
+      return {
+        ...item,
+        dietType: isNonVeg ? "non-veg" : "veg",
+        category: categories[Math.floor(rng() * (categories.length - 1)) + 1], // Exclude 'all'
+      };
+    })
   );
 
   useEffect(() => {
@@ -40,9 +51,17 @@ export const useDataManager = () => {
       result = result.filter(
         (item) =>
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              item.ingredients.includes(searchQuery)
+          item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (item.ingredients &&
+            item.ingredients.some((i) =>
+              i.toLowerCase().includes(searchQuery.toLowerCase())
+            ))
       );
+    }
+
+    // Apply main category filter (veg / non-veg)
+    if (selectedMainCategory !== "all") {
+      result = result.filter((item) => item.dietType === selectedMainCategory);
     }
 
     // Apply category filter
@@ -64,13 +83,22 @@ export const useDataManager = () => {
     // For "featured", we don't change the order
 
     setFilteredItems(result);
-  }, [itemsWithCategories, searchQuery, selectedCategory, sortOption, likesUpdated]);
+  }, [
+    itemsWithCategories,
+    searchQuery,
+    selectedMainCategory,
+    selectedCategory,
+    sortOption,
+    likesUpdated,
+  ]);
 
   return {
     items: itemsWithCategories,
     filteredItems,
     searchQuery,
     setSearchQuery,
+    selectedMainCategory,
+    setSelectedMainCategory,
     selectedCategory,
     setSelectedCategory,
     sortOption,

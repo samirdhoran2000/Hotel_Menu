@@ -17,11 +17,19 @@ const MenuSection = ({ dataManager }) => {
     filteredItems,
     selectedCategory,
     setSelectedCategory,
+    selectedMainCategory,
+    setSelectedMainCategory,
     sortOption,
     setSortOption,
     viewMode,
     setViewMode,
   } = dataManager;
+
+  const mainCategories = [
+    { id: "all", name: "All" },
+    { id: "veg", name: "Veg" },
+    { id: "non-veg", name: "Non Veg" }
+  ];
 
   const scrollContainerRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -75,7 +83,44 @@ const MenuSection = ({ dataManager }) => {
 
       {/* Navigation and Controls */}
       <div className="flex flex-col w-full mb-6 overflow-hidden">
-        {/* Categories */}
+        {/* Main Categories (Diet Type) */}
+        <div className="flex justify-center flex-wrap gap-4 mb-6">
+          {mainCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedMainCategory(cat.id)}
+              className={`px-6 py-2.5 rounded-full font-bold transition-all duration-300 ${
+                selectedMainCategory === cat.id
+                  ? cat.id === 'veg' 
+                    ? "bg-green-600 text-white shadow-md shadow-green-600/30 scale-105 border border-green-600"
+                    : cat.id === 'non-veg'
+                    ? "bg-red-600 text-white shadow-md shadow-red-600/30 scale-105 border border-red-600"
+                    : "bg-gray-800 text-white shadow-md shadow-gray-800/30 scale-105 border border-gray-800"
+                  : cat.id === 'veg'
+                  ? "bg-white/80 backdrop-blur-sm text-green-700 border border-green-200 hover:bg-green-50 hover:shadow-sm"
+                  : cat.id === 'non-veg'
+                  ? "bg-white/80 backdrop-blur-sm text-red-700 border border-red-200 hover:bg-red-50 hover:shadow-sm"
+                  : "bg-white/80 backdrop-blur-sm text-gray-700 border border-gray-200 hover:bg-gray-50 hover:shadow-sm"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {cat.id === 'veg' && (
+                  <div className={`flex items-center justify-center w-5 h-5 rounded border-2 p-0.5 ${selectedMainCategory === cat.id ? 'border-white' : 'border-green-600'}`}>
+                    <div className={`w-2.5 h-2.5 rounded-full ${selectedMainCategory === cat.id ? 'bg-white' : 'bg-green-600'}`} />
+                  </div>
+                )}
+                {cat.id === 'non-veg' && (
+                  <div className={`flex items-center justify-center w-5 h-5 rounded border-2 p-0.5 ${selectedMainCategory === cat.id ? 'border-white' : 'border-red-600'}`}>
+                    <div className={`w-0 h-0 border-l-[5px] border-r-[5px] border-b-[8px] border-l-transparent border-r-transparent ${selectedMainCategory === cat.id ? 'border-b-white' : 'border-b-red-600'}`} />
+                  </div>
+                )}
+                {cat.name}
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Sub Categories */}
         <div className="relative w-full mb-4 flex items-center group">
           {/* Left Arrow */}
           <button 

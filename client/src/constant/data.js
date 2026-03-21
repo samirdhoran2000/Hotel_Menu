@@ -298,7 +298,7 @@ const menuData = [
   },
   {
     id: 15 + 7,
-    name: "MECRENCINITS CANCTIDUN",
+    name: "MECRENCINITS Fruits",
     price: generateRandomPrice(500, 1000),
     originalPrice: generateRandomPrice(1000, 2000),
     rating: generateRandomPrice(3, 5, 1),
@@ -315,7 +315,7 @@ const menuData = [
   },
   {
     id: 15 + 8,
-    name: "MECRENCINITS CANCTIDUN",
+    name: "Chinese Chocha",
     price: generateRandomPrice(500, 1000),
     originalPrice: generateRandomPrice(1000, 2000),
     rating: generateRandomPrice(3, 5, 1),
@@ -326,6 +326,7 @@ const menuData = [
       "Olive Oil",
       "Sea Salt",
       "Green Root",
+      "Chicken",
     ],
     description:
       "Doublesworn Satethellow Hteo Eenex Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
