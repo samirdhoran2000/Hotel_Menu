@@ -8,5 +8,5 @@ export default defineConfig({
     host: true,
   },
   plugins: [react()],
-  base: "/easymenucard/",
+  base: "/Hotel_Menu/",
 });
