@@ -81,7 +81,7 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search menu..."
-                    className="w-64 py-2 pl-4 pr-10 rounded-lg bg-gray-100 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                    className="w-64 py-2 pl-4 pr-10 rounded-lg bg-gray-100 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
                   />
                   <button
                     type="button"
@@ -108,7 +108,7 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
 
       {/* Mobile Search Overlay */}
       {isSearchOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-md">
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
           <div className="p-4">
             <form onSubmit={handleSearchSubmit} className="relative">
               <input
@@ -116,7 +116,7 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search menu..."
-                className="w-full py-2 pl-4 pr-10 rounded-lg bg-gray-100 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                className="w-full py-2.5 pl-4 pr-10 rounded-xl bg-gray-100/80 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
                 autoFocus
               />
               <button

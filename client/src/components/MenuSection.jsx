@@ -33,8 +33,8 @@ const MenuSection = ({ dataManager }) => {
       id="menu"
     >
       {/* Header Section */}
-      <div className="flex flex-col items-center w-full mb-8">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-red-500 to-orange-400 text-center mb-4">
+      <div className="flex flex-col items-center w-full mb-6">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-red-500 to-orange-400 text-center mb-3">
           Our Special Menu
         </h2>
         <p className="text-gray-600 text-center max-w-2xl text-lg">
@@ -44,14 +44,14 @@ const MenuSection = ({ dataManager }) => {
       </div>
 
       {/* Navigation and Controls */}
-      <div className="flex flex-col w-full mb-8">
+      <div className="flex flex-col w-full mb-6 overflow-hidden">
         {/* Categories */}
-        <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <div className="flex overflow-x-auto gap-3 pb-3 mb-4 w-full px-2 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
+              className={`flex-shrink-0 px-6 py-2.5 rounded-full font-medium transition-all duration-300 snap-center ${
                 selectedCategory === category.id
                   ? "bg-gradient-to-r from-orange-600 to-orange-500 text-white shadow-lg shadow-orange-500/30 scale-105"
                   : "bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white hover:text-orange-600 hover:shadow-md border border-gray-100/50"
