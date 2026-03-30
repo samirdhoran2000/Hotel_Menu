@@ -1,6 +1,8 @@
 import Category from "../models/Category.js";
 import Item from "../models/Item.js";
 
+const normalizeCategoryName = (value = "") => value.trim().toLowerCase();
+
 export const createCategory = async (req, res) => {
   try {
     const { name, description = "", sortOrder = 0 } = req.body;
@@ -10,7 +12,8 @@ export const createCategory = async (req, res) => {
       return res.status(400).json({ message: "Category name is required" });
     }
 
-    const existing = await Category.findOne({ hotelId, name: name.trim() });
+    const normalizedName = normalizeCategoryName(name);
+    const existing = await Category.findOne({ hotelId, normalizedName });
     if (existing) {
       return res.status(409).json({ message: "Category already exists" });
     }
@@ -18,6 +21,7 @@ export const createCategory = async (req, res) => {
     const category = await Category.create({
       hotelId,
       name: name.trim(),
+      normalizedName,
       description: description.trim(),
       sortOrder: Number(sortOrder) || 0,
     });
@@ -58,13 +62,15 @@ export const updateCategory = async (req, res) => {
       return res.status(400).json({ message: "Category name is required" });
     }
 
-    const duplicate = await Category.findOne({ hotelId, name: name.trim(), _id: { $ne: id } });
+    const normalizedName = normalizeCategoryName(name);
+    const duplicate = await Category.findOne({ hotelId, normalizedName, _id: { $ne: id } });
     if (duplicate) {
       return res.status(409).json({ message: "Category name already in use" });
     }
 
     const oldName = category.name;
     category.name = name.trim();
+    category.normalizedName = normalizedName;
     category.description = description.trim();
     category.sortOrder = Number(sortOrder) || 0;
     await category.save();

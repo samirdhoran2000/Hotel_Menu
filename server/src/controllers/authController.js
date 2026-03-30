@@ -10,6 +10,8 @@ const slugify = (value = "") =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "") || `hotel-${Date.now()}`;
 
+const normalizeCategoryName = (value = "") => value.trim().toLowerCase();
+
 const createUniqueSlug = async (hotelName) => {
   const baseSlug = slugify(hotelName);
   let slug = baseSlug;
@@ -29,12 +31,14 @@ const buildAuthResponse = (admin) => ({
   hotelName: admin.hotelName,
   adminName: admin.adminName,
   email: admin.email,
+  role: admin.role || "admin",
   hotelImage: admin.hotelImage,
   phone: admin.phone,
   altPhone: admin.altPhone,
   address: admin.address,
   about: admin.about,
   contactEmail: admin.contactEmail || admin.email,
+  mapLocation: admin.mapLocation || null,
   publicSlug: admin.publicSlug,
   publicBaseUrl: admin.publicBaseUrl || process.env.PUBLIC_BASE_URL || "",
 });
@@ -48,9 +52,10 @@ const seedDefaultCategories = async (hotelId) => {
   ];
 
   for (const category of defaults) {
-    const exists = await Category.findOne({ hotelId, name: category.name });
+    const normalizedName = normalizeCategoryName(category.name);
+    const exists = await Category.findOne({ hotelId, normalizedName });
     if (!exists) {
-      await Category.create({ hotelId, ...category });
+      await Category.create({ hotelId, normalizedName, ...category });
     }
   }
 };
@@ -63,7 +68,8 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "hotelName, adminName, email, and password are required" });
     }
 
-    const existing = await Admin.findOne({ email: email.toLowerCase() });
+    const normalizedEmail = email.toLowerCase().trim();
+    const existing = await Admin.findOne({ email: normalizedEmail });
     if (existing) {
       return res.status(409).json({ message: "Admin already exists" });
     }
@@ -74,16 +80,21 @@ export const signup = async (req, res) => {
     const admin = await Admin.create({
       hotelName: hotelName.trim(),
       adminName: adminName.trim(),
-      email: email.toLowerCase().trim(),
+      email: normalizedEmail,
       password: hashedPassword,
+      role: "admin",
       publicSlug,
       hotelImage: "",
       about: `${hotelName.trim()} welcomes you with freshly prepared food and a warm dining experience.`,
-      contactEmail: email.toLowerCase().trim(),
+      contactEmail: normalizedEmail,
       publicBaseUrl: process.env.PUBLIC_BASE_URL || "",
     });
 
-    await seedDefaultCategories(String(admin._id));
+    try {
+      await seedDefaultCategories(String(admin._id));
+    } catch (seedError) {
+      console.warn("Default category seed skipped:", seedError.message);
+    }
 
     const token = jwt.sign({ id: admin._id, email: admin.email }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -102,7 +113,13 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const admin = await Admin.findOne({ email: email?.toLowerCase().trim() });
+    const identifier = String(email || "").trim();
+
+    const admin = await Admin.findOne(
+      identifier.includes("@")
+        ? { email: identifier.toLowerCase() }
+        : { phone: identifier }
+    );
 
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });

@@ -30,18 +30,50 @@ const saveBase64Image = (base64Value) => {
   return `/uploads/${fileName}`;
 };
 
-const normalizeItemPayload = async (payload, hotelId) => {
-  const category = payload.categoryId
-    ? await Category.findOne({ _id: payload.categoryId, hotelId })
-    : null;
+const normalizeImages = (payload, existingImages = []) => {
+  const collected = [];
 
-  let imagePath = payload.image || "";
+  if (Array.isArray(payload.images)) {
+    payload.images.forEach((value) => {
+      if (typeof value === "string" && value.trim()) {
+        collected.push(value.trim());
+      }
+    });
+  }
+
+  if (Array.isArray(payload.imageBase64s)) {
+    payload.imageBase64s.forEach((value) => {
+      const savedImage = saveBase64Image(value);
+      if (savedImage) {
+        collected.push(savedImage);
+      }
+    });
+  }
+
   if (payload.imageBase64) {
     const savedImage = saveBase64Image(payload.imageBase64);
     if (savedImage) {
-      imagePath = savedImage;
+      collected.unshift(savedImage);
     }
   }
+
+  if (payload.image && typeof payload.image === "string" && payload.image.trim()) {
+    collected.unshift(payload.image.trim());
+  }
+
+  const finalImages = [...collected.filter(Boolean)];
+
+  if (!finalImages.length && Array.isArray(existingImages) && existingImages.length) {
+    return existingImages.slice(0, 4);
+  }
+
+  return [...new Set(finalImages)].slice(0, 4);
+};
+
+const normalizeItemPayload = async (payload, hotelId, existingItem = null) => {
+  const category = payload.categoryId
+    ? await Category.findOne({ _id: payload.categoryId, hotelId })
+    : null;
 
   const ingredients = Array.isArray(payload.ingredients)
     ? payload.ingredients
@@ -49,6 +81,9 @@ const normalizeItemPayload = async (payload, hotelId) => {
         .split(",")
         .map((part) => part.trim())
         .filter(Boolean);
+
+  const images = normalizeImages(payload, existingItem?.images || []);
+  const primaryImage = images[0] || "";
 
   return {
     hotelId,
@@ -59,14 +94,25 @@ const normalizeItemPayload = async (payload, hotelId) => {
     categoryId: category ? String(category._id) : payload.categoryId || "",
     categoryName: category?.name || payload.categoryName || payload.category || "",
     type: payload.type === "nonveg" ? "non-veg" : payload.type || "veg",
-    image: imagePath,
-    images: imagePath ? [imagePath] : [],
+    image: primaryImage,
+    images,
     ingredients,
     description: payload.description?.trim() || "",
     isPopular: Boolean(payload.isPopular),
     isTrending: Boolean(payload.isTrending),
     isAvailable: payload.isAvailable !== false,
   };
+};
+
+const cleanupUploadedImages = (images = []) => {
+  images.forEach((imagePath) => {
+    if (typeof imagePath === "string" && imagePath.startsWith("/uploads/")) {
+      const filePath = path.resolve(process.cwd(), `server${imagePath}`);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+  });
 };
 
 export const createItem = async (req, res) => {
@@ -108,10 +154,14 @@ export const updateItem = async (req, res) => {
       return res.status(404).json({ message: "Menu item not found" });
     }
 
-    const payload = await normalizeItemPayload({ ...item.toObject(), ...req.body }, hotelId);
+    const oldImages = Array.isArray(item.images) ? [...item.images] : [];
+    const payload = await normalizeItemPayload({ ...item.toObject(), ...req.body }, hotelId, item);
 
     Object.assign(item, payload);
     await item.save();
+
+    const removedImages = oldImages.filter((imagePath) => !payload.images.includes(imagePath));
+    cleanupUploadedImages(removedImages);
 
     return res.json(item);
   } catch (error) {
@@ -128,12 +178,7 @@ export const deleteItem = async (req, res) => {
       return res.status(404).json({ message: "Menu item not found" });
     }
 
-    if (item.image?.startsWith("/uploads/")) {
-      const filePath = path.resolve(process.cwd(), `server${item.image}`);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
+    cleanupUploadedImages(item.images?.length ? item.images : [item.image]);
 
     await item.deleteOne();
     return res.json({ message: "Menu item deleted successfully" });

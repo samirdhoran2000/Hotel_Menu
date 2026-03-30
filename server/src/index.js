@@ -9,6 +9,8 @@ import categoryRoutes from "./routes/category.js";
 import itemRoutes from "./routes/item.js";
 import settingsRoutes from "./routes/settings.js";
 import publicRoutes from "./routes/public.js";
+import Admin from "./models/Admin.js";
+import Category from "./models/Category.js";
 
 dotenv.config();
 
@@ -36,7 +38,7 @@ app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 app.use("/uploads", express.static(path.resolve(process.cwd(), "server/uploads")));
 
 app.get("/api/health", (req, res) => {
-  res.json({ ok: true, message: "Server is running", database: process.env.MONGO_URI });
+  res.json({ ok: true, message: "Server is running" });
 });
 
 app.use("/api/auth", authRoutes);
@@ -47,7 +49,12 @@ app.use("/api/public", publicRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
+    await Category.updateMany(
+      { $or: [{ normalizedName: { $exists: false } }, { normalizedName: "" }] },
+      [{ $set: { normalizedName: { $toLower: "$name" } } }]
+    );
+    await Promise.allSettled([Admin.syncIndexes(), Category.syncIndexes()]);
     console.log("MongoDB Connected");
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);

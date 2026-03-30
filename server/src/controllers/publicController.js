@@ -28,6 +28,7 @@ export const getPublicHotel = async (req, res) => {
         address: admin.address,
         about: admin.about,
         contactEmail: admin.contactEmail || admin.email,
+        mapLocation: admin.mapLocation || null,
         publicSlug: admin.publicSlug,
       },
       categories,
