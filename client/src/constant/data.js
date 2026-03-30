@@ -1,0 +1,336 @@
+const generateRandomPrice = (min, max, toFix = 0) => {
+  return parseFloat((Math.random() * (max - min) + min).toFixed(toFix));
+};
+
+const menuData = [
+  {
+    id: 1,
+    name: "Paneer Butter Masala",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./paneer_A.jpeg", "./paneer_B.jpeg"],
+    ingredients: ["Paneer", "Tomatoes", "Butter", "Cream", "Spices"],
+    description:
+      "A rich and creamy dish made with soft paneer cubes cooked in a spicy tomato and butter sauce.",
+  },
+  {
+    id: 2,
+    name: "Hyderabadi Biryani",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./hydrabadi_biryani_B.jpeg", "./hydrabadi_biryani_A.jpeg"],
+    ingredients: ["Basmati Rice", "Chicken", "Spices", "Yogurt", "Saffron"],
+    description:
+      "A flavorful biryani from Hyderabad made with basmati rice, marinated chicken, and a blend of aromatic spices.",
+  },
+  {
+    id: 3,
+    name: "Masala Dosa",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./masala_dosa_A.jpeg", "./masala_dosa_B.jpeg"],
+    ingredients: ["Rice", "Urad Dal", "Potatoes", "Onions", "Spices"],
+    description:
+      "A crispy dosa filled with a spiced potato filling, served with chutney and sambar.",
+  },
+  {
+    id: 4,
+    name: "Chole Bhature",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./bhature_A.jpeg", "./bhature_B.jpeg"],
+    ingredients: ["Chickpeas", "Flour", "Tomatoes", "Onions", "Spices"],
+    description:
+      "A popular North Indian dish consisting of spicy chickpeas served with fluffy, deep-fried bread called bhature.",
+  },
+  {
+    id: 5,
+    name: "Samosa Chaat",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./samosa_A.jpeg", "./samosa_B.jpeg"],
+    ingredients: ["Samosa", "Chickpeas", "Yogurt", "Chutney", "Spices"],
+    description:
+      "A delightful street food made with crushed samosas, topped with tangy chutneys, yogurt, and spices.",
+  },
+  {
+    id: 6,
+    name: "Tandoori Chicken",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./tandoori_A.jpeg", "./tandoori_B.jpeg"],
+    ingredients: ["Chicken", "Yogurt", "Spices", "Ginger", "Garlic"],
+    description:
+      "A popular Indian dish where chicken is marinated in spices and yogurt, then cooked in a tandoor for a smoky flavor.",
+  },
+  {
+    id: 7,
+    name: "Pav Bhaji",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["pav_bhaji_A.jpeg", "pav_bhaji_B.jpeg"],
+    ingredients: ["Mixed Vegetables", "Pav Bread", "Butter", "Spices", "Lemon"],
+    description:
+      "A spicy vegetable mash served with soft buttered buns, a favorite street food from Mumbai.",
+  },
+  {
+    id: 8,
+    name: "Butter Chicken",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./butter_chicken_A.jpeg", "./butter_chicken_B.jpeg"],
+    ingredients: ["Chicken", "Tomatoes", "Butter", "Cream", "Spices"],
+    description:
+      "A creamy and mildly spiced dish made with marinated chicken cooked in a tomato and butter gravy.",
+  },
+  {
+    id: 9,
+    name: "Mutton Rogan Josh",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    sgm: "SGM 200",
+    images: ["./mutton_A.jpeg", "./mutton_B.jpeg"],
+    ingredients: ["Mutton", "Yogurt", "Spices", "Tomato Puree", "Ghee"],
+    description:
+      "A Kashmiri specialty made with tender pieces of mutton cooked in a rich and spicy red sauce.",
+  },
+  {
+    id: 10,
+    name: "Aloo Paratha",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    sgm: "SGM 200",
+    images: ["./paratha_A.jpeg", "./paratha_B.jpeg"],
+    ingredients: [
+      "Wheat Flour",
+      "Potatoes",
+      "Spices",
+      "Butter",
+      "Green Chilies",
+    ],
+    description:
+      "A delicious paratha stuffed with spiced potato filling, best enjoyed with curd and pickles.",
+  },
+  {
+    id: 11,
+    name: "Rajma Chawal",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    sgm: "CGM 200",
+    images: ["./rajma_chawal_A.jpeg", "./rajma_chawal_B.jpeg"],
+    ingredients: ["Red Kidney Beans", "Rice", "Onions", "Tomatoes", "Spices"],
+    description:
+      "A comforting dish made with red kidney beans in a thick gravy, served with steamed rice.",
+  },
+  // {
+  //   id: 12,
+  //   name: "Pani Puri",
+  //   price: generateRandomPrice(500, 1000),
+  //   originalPrice: generateRandomPrice(1000, 2000),
+  //   rating: generateRandomPrice(3, 5, 1),
+  //   sgm: "CGM 200",
+  //   images: ["./dish_K.jpeg", "./dish_L.jpeg"],
+  //   ingredients: ["Puri", "Spiced Water", "Potatoes", "Chickpeas", "Tamarind"],
+  //   description:
+  //     "Crispy puris filled with spicy water, potatoes, and chickpeas, a popular Indian street snack.",
+  // },
+  // {
+  //   id: 13,
+  //   name: "Dal Makhani",
+  //   price: generateRandomPrice(500, 1000),
+  //   originalPrice: generateRandomPrice(1000, 2000),
+  //   rating: generateRandomPrice(3, 5, 1),
+  //   sgm: "SGM 200",
+  //   images: ["./dish_M.jpeg", "./dish_N.jpeg"],
+  //   ingredients: ["Black Lentils", "Butter", "Cream", "Tomatoes", "Spices"],
+  //   description:
+  //     "A creamy, rich dish made with black lentils simmered with butter, cream, and Indian spices.",
+  // },
+  // {
+  //   id: 14,
+  //   name: "Chicken Tikka",
+  //   price: generateRandomPrice(500, 1000),
+  //   originalPrice: generateRandomPrice(1000, 2000),
+  //   rating: generateRandomPrice(3, 5, 1),
+  //   sgm: "CGM 200",
+  //   images: ["./dish_O.jpeg", "./dish_P.jpeg"],
+  //   ingredients: [
+  //     "Chicken",
+  //     "Yogurt",
+  //     "Spices",
+  //     "Lemon",
+  //     "Ginger Garlic Paste",
+  //   ],
+  //   description:
+  //     "Juicy chunks of chicken marinated in spices and yogurt, cooked on a grill for a smoky flavor.",
+  // },
+  // {
+  //   id: 15,
+  //   name: "Dhokla",
+  //   price: generateRandomPrice(500, 1000),
+  //   originalPrice: generateRandomPrice(1000, 2000),
+  //   rating: generateRandomPrice(3, 5, 1),
+  //   sgm: "SGM 200",
+  //   images: ["./dish_Q.jpeg", "./dish_R.jpeg"],
+  //   ingredients: [
+  //     "Gram Flour",
+  //     "Curd",
+  //     "Green Chilies",
+  //     "Mustard Seeds",
+  //     "Coriander",
+  //   ],
+  //   description:
+  //     "A spongy, steamed Gujarati snack made from fermented gram flour, garnished with spices and coriander.",
+  // },
+  {
+    id: 15 + 1,
+    name: "MAHN COLL OVEN",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./dish_A.jpeg", "./dish_B.jpeg"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+    ],
+    description:
+      "Doublesworn Grethellow Heo Eenex Deotent, Deotent fexis oeotre setuza ot dein ottent exues hoxtelt jhok emkoer.",
+  },
+  {
+    id: 15 + 2,
+    name: "MOOUR THIENIS",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./dish_B.jpeg", "./dish_A.jpeg"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+    ],
+    description:
+      "Deotly seoty Satethellow Htew Eenoos, Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
+  },
+  {
+    id: 15 + 3,
+    name: "MAIN COUTCEOS",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./ribeye_A.jpeg", "./ribeye_B.jpeg"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+    ],
+    description:
+      "Doublesworn Satethellow Hteo Eenex Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
+  },
+  {
+    id: 15 + 4,
+    name: "PECCMN CHER CHIDRER",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./pizza_A.jpeg", "./pizza_B.jpeg"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+    ],
+    description:
+      "Deotly seoty Satethellow Htew Eenoos Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
+  },
+
+  {
+    id: 15 + 5,
+    name: "REMTANIGE OUI DUIEVER",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./noodle_A.jpeg", "./noodle_B.jpeg"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+    ],
+    description:
+      "Doublesworn Satethellow Htew Eenoos Deotent, deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
+  },
+  {
+    id: 15 + 6,
+    name: "MECRENCINITS CANCTIDUN",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./lobster_A.jpeg", "./lobster_B.jpeg"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+    ],
+    description:
+      "Doublesworn Satethellow Hteo Eenex Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
+  },
+  {
+    id: 15 + 7,
+    name: "MECRENCINITS Fruits",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./dish_M.webp", "./dish_N.webp"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+    ],
+    description:
+      "Doublesworn Satethellow Hteo Eenex Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
+  },
+  {
+    id: 15 + 8,
+    name: "Chinese Chocha",
+    price: generateRandomPrice(500, 1000),
+    originalPrice: generateRandomPrice(1000, 2000),
+    rating: generateRandomPrice(3, 5, 1),
+    images: ["./dish_C.webp", "./dish_A.jpeg", "./dish_B.jpeg"],
+    ingredients: [
+      "Fresh Tomatoes",
+      "Basil",
+      "Olive Oil",
+      "Sea Salt",
+      "Green Root",
+      "Chicken",
+    ],
+    description:
+      "Doublesworn Satethellow Hteo Eenex Deotent, Deotent fexis ototu ot deken ot seia ottent avouls hoxtelt.",
+  },
+];
+
+export default menuData;
