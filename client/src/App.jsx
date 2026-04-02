@@ -13,6 +13,8 @@ import {
   Settings,
 } from "./components/dashboard/DashboardComponents";
 import MenuManager from "./components/dashboard/MenuManager";
+import CategoryManager from "./components/dashboard/CategoryManager";
+
 import ComingSoon from "./pages/ComingSoon";
 import HomePageLayout from "./pages/HomePageLayout";
 import ScrollToTop from "./components/ScrollToTop";
@@ -41,6 +43,7 @@ const App = () => {
             <Route path="orders" element={<Orders />} />
             {/* <Route path="menu" element={<MenuItemForm />} /> */}
             <Route path="menu" element={<MenuManager />} />
+            <Route path="categories" element={<CategoryManager />} />
             <Route path="settings" element={<Settings />} />
           
             <Route path="qrcode/:id" element={<QrCode />} />

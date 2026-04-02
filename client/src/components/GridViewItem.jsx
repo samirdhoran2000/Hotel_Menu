@@ -151,7 +151,7 @@ const GridViewItem = ({ item }) => {
           {/* Category tag at the bottom */}
           {item.category && (
             <p className="mt-2 text-xs text-gray-500">
-              Category: {humanizeCategory(item.category)}
+              Category: {item.category.name}
             </p>
           )}
         </div>

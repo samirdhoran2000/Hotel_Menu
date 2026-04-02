@@ -7,6 +7,8 @@ import hotelRoutes from "./routes/hotel.route.js";
 import menuRoutes from "./routes/menuItem.route.js";
 import tableRoutes from "./routes/table.route.js";
 import activityRoutes from "./routes/activityLog.route.js";
+import categoryRoutes from "./routes/category.route.js";
+
 
 
 const app = express();
@@ -22,6 +24,8 @@ app.use(express.json());
 
 
 app.use("/api/hotel", hotelRoutes);
+app.use("/api/category", categoryRoutes);
+
 // app.use("/api/user", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/table", tableRoutes);

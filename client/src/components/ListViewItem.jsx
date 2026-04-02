@@ -140,7 +140,7 @@ const ListViewItem = ({ item }) => {
             {/* Category */}
             {item.category && (
               <p className="text-xs text-gray-500 mb-2">
-                Category: {humanizeCategory(item.category)}
+                Category: {item.category.name}
               </p>
             )}
           </div>

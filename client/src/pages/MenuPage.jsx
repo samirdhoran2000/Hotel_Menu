@@ -15,14 +15,8 @@ const MenuPage = () => {
   return (
     <div className="relative min-h-screen flex flex-col">
       {/* Fixed full‑screen background */}
-      <div
-        className="fixed inset-0 bg-[url('/main_bg.jpeg')] bg-fixed bg-contain bg-no-repeat bg-center -z-10"
-        style={{
-          filter: "blur(1px)",
-          backgroundSize: "100% 100%",
-          backgroundPosition: "center auto",
-        }}
-      />
+
+      <div className="fixed inset-0 bg-gradient-to-br from-orange-100 via-white to-yellow-100" />
 
       {/* Your normal page flow */}
       <Header

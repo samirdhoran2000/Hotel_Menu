@@ -1,6 +1,6 @@
 // server/controllers/hotelController.js
 
-import { Hotel, MenuItem } from "../models/associations.js";
+import { Hotel, MenuItem, File, Category } from "../models/associations.js";
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -310,7 +310,7 @@ export const getMenuItemsbyHotel = async (req, res) => {
 
     // Add category filter
     if (category && category.trim()) {
-      whereClause.category = category.trim();
+      whereClause.categoryId = category.trim();
     }
 
     // Add price range filters
@@ -345,6 +345,11 @@ export const getMenuItemsbyHotel = async (req, res) => {
       limit: pageSize,
       offset,
       order: [[sortBy, finalSortOrder]],
+      include: [
+        { model: Category, as: "category" },
+        { model: File, as: "files" }
+      ],
+      distinct: true,
     });
 
     // 8) Process image URLs if needed

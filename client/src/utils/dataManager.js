@@ -31,7 +31,7 @@ export const useDataManager = ({ id = null }) => {
         setItems(fetchedItems);
 
         const distinctCats = new Set(
-          fetchedItems.map((it) => it.category || "")
+          fetchedItems.map((it) => it.category?.name || "Other")
         );
         setCategories([
           "all",
@@ -71,7 +71,7 @@ export const useDataManager = ({ id = null }) => {
 
     // 2b) CATEGORY FILTER
     if (selectedCategory && selectedCategory !== "all") {
-      result = result.filter((item) => item.category === selectedCategory);
+      result = result.filter((item) => item.category?.name === selectedCategory);
     }
 
     // 2c) SORTING

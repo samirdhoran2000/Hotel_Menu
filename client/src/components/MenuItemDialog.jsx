@@ -91,7 +91,9 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
     );
   };
 
-  const humanizeCategory = (str) => {
+  const humanizeCategory = (cat) => {
+    if (!cat) return "";
+    const str = typeof cat === 'object' ? cat.name : cat;
     if (!str) return "";
     return str
       .split("_")

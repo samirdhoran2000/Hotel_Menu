@@ -11,7 +11,8 @@ import {
   User,
   FileText,
   ShoppingCart,
-  QrCode
+  QrCode,
+  List
 } from "lucide-react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 
@@ -25,6 +26,7 @@ const Dashboard = () => {
     { icon: BarChart3, label: "Analytics", path: "/hotel/dashboard/analytics" },
     // { icon: ShoppingCart, label: "Orders", path: "/hotel/dashboard/orders" },
     { icon: FileText, label: "Menu", path: "/hotel/dashboard/menu" },
+    { icon: List, label: "Categories", path: "/hotel/dashboard/categories" },
     { icon: QrCode, label: "QR Codes", path: "/hotel/dashboard/settings" },
     // { icon: Settings, label: "Settings", path: "/hotel/dashboard/settings" },
     // { icon: Settings, label: "temp1", path: "/hotel/dashboard/temp1" },
