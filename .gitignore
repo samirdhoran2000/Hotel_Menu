@@ -48,5 +48,17 @@ dist-ssr/
 /server/*.env*
 /server/uploads/*
 
+
+
+/server2/.env
+/server2/.DS_Store
+/server2/npm-debug.log*
+/server2/yarn-debug.log*
+/server2/yarn-error.log*
+/server2/*.env*
+/server2/uploads/*
+
 *temp*
 issues.txt
+.agents/
+.gitignore
