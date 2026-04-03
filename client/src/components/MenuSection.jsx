@@ -46,9 +46,21 @@ const MenuSection = ({ dataManager }) => {
         <div className="flex justify-center w-full">
           <div className="flex bg-gray-100 p-1 rounded-2xl w-full sm:w-auto overflow-hidden">
             {[
-              { id: "all", label: "All", color: "bg-white text-black shadow-sm" },
-              { id: "veg", label: "Veg", color: "bg-green-500 text-white shadow-sm" },
-              { id: "non-veg", label: "Non-Veg", color: "bg-red-500 text-white shadow-sm" }
+              {
+                id: "all",
+                label: "All",
+                color: "bg-white text-black shadow-sm",
+              },
+              {
+                id: "veg",
+                label: "Veg",
+                color: "bg-green-500 text-white shadow-sm",
+              },
+              {
+                id: "non-veg",
+                label: "Non-Veg",
+                color: "bg-red-500 text-white shadow-sm",
+              },
             ].map((diet) => (
               <button
                 key={diet.id}
@@ -86,33 +98,42 @@ const MenuSection = ({ dataManager }) => {
               {category === "all"
                 ? "All"
                 : category === "favourite"
-                ? "❤️ Favourite"
-                : category.replace("_", " ").toUpperCase()}
+                  ? "❤️ Favourite"
+                  : category.replace("_", " ").toUpperCase()}
             </button>
           ))}
         </div>
 
         {/* Bottom Controls: Sort and View Toggle */}
         <div className="flex justify-end items-center gap-3 w-full border-t border-gray-50 pt-3">
-
           <div className="flex items-center gap-3 w-full sm:w-auto">
             {/* Sorting Dropdown replaces the 'item found' text */}
             <div className="relative flex-1 sm:flex-none">
-                <select
+              <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}
                 className="w-full sm:w-auto appearance-none px-4 py-2 pr-10 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-black/5"
-                >
+              >
                 <option value="featured">Featured</option>
                 <option value="price-asc">Price ↑</option>
                 <option value="price-desc">Price ↓</option>
                 <option value="rating">Top Rated</option>
-                </select>
-                <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
+              </select>
+              <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
 
             {/* View Toggle */}
             <div className="flex p-1 bg-gray-100 rounded-xl">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-1.5 rounded-lg transition-all ${
+                  viewMode === "list"
+                    ? "bg-white text-black shadow-sm"
+                    : "text-gray-400 hover:text-gray-600"
+                }`}
+              >
+                <List className="w-4 h-4" />
+              </button>{" "}
               <button
                 onClick={() => setViewMode("grid")}
                 className={`p-1.5 rounded-lg transition-all ${
@@ -123,16 +144,6 @@ const MenuSection = ({ dataManager }) => {
               >
                 <Grid className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-1.5 rounded-lg transition-all ${
-                  viewMode === "list"
-                    ? "bg-white text-black shadow-sm"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                <List className="w-4 h-4" />
-              </button>
             </div>
           </div>
         </div>
@@ -142,7 +153,10 @@ const MenuSection = ({ dataManager }) => {
       {dataManager.loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full opacity-60">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-gray-100 animate-pulse rounded-3xl h-80 w-full" />
+            <div
+              key={i}
+              className="bg-gray-100 animate-pulse rounded-3xl h-80 w-full"
+            />
           ))}
         </div>
       ) : filteredItems && filteredItems.length > 0 ? (
@@ -168,7 +182,7 @@ const MenuSection = ({ dataManager }) => {
                 isLiked={dataManager.likedItemIds.includes(item.id)}
                 onLikeToggle={() => dataManager.toggleLike(item.id)}
               />
-            )
+            ),
           )}
         </div>
       ) : (
@@ -177,8 +191,8 @@ const MenuSection = ({ dataManager }) => {
             <span className="text-3xl">❤️</span>
           </div>
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            {selectedCategory === "favourite" 
-              ? "Your favourites is empty!" 
+            {selectedCategory === "favourite"
+              ? "Your favourites is empty!"
               : "No items found!"}
           </h3>
           <p className="text-gray-500 max-w-sm">

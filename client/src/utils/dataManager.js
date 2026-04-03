@@ -12,7 +12,7 @@ export const useDataManager = ({ id = null }) => {
   const [selectedCategory, setSelectedCategory] = useState("all"); // single‐category filter
   const [sortOption, setSortOption] = useState("featured"); // e.g. "featured" | "price-asc" | "price-desc" | ...
   const [dietaryFilter, setDietaryFilter] = useState("all"); // "all" | "veg" | "non-veg"
-  const [viewMode, setViewMode] = useState("grid"); // e.g. "grid" or "list"
+  const [viewMode, setViewMode] = useState("list"); // e.g. "grid" or "list"
   const [loading, setLoading] = useState(true);
   const [hotelDetails, setHotelDetails] = useState({ name: "Hotel Menu", tableNumber: "" });
   
