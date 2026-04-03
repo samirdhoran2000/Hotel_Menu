@@ -612,32 +612,36 @@ const Settings = () => {
       {/* Main Content Card */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {/* Card Header */}
-        <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+        <div className="border-b border-gray-200 bg-gray-50/50 px-4 md:px-6 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <QrCode className="w-6 h-6 text-blue-600" />
-              <h2 className="text-xl font-semibold text-gray-900">
-                QR Code Management
-              </h2>
-              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                {table.length} {table.length === 1 ? "code" : "codes"}
-              </span>
+              <div className="bg-blue-600/10 p-2 rounded-xl">
+                <QrCode className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-gray-900 leading-tight">
+                  QR Code Management
+                </h2>
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mt-0.5">
+                  {table.length} {table.length === 1 ? "Configuration" : "Configurations"}
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <button
                 onClick={fetchQrCodeDetails}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                title="Refresh"
+                className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-95 border border-transparent hover:border-blue-100"
+                title="Refresh List"
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
               <button
                 onClick={openCreateTableModal}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-black text-white px-4 py-2.5 rounded-xl hover:bg-gray-800 transition-all shadow-lg shadow-black/10 text-xs font-bold active:scale-95"
               >
                 <Plus className="w-4 h-4" />
-                Add QR Code
+                <span>Add QR Code</span>
               </button>
             </div>
           </div>
@@ -674,128 +678,117 @@ const Settings = () => {
               <EmptyState />
             )
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-6">
               {filteredTables.map((tableItem) => (
                 <div
                   key={tableItem.id}
-                  className="bg-gray-50 border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                  className="bg-white border border-gray-100 rounded-2xl p-4 md:p-6 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group"
                 >
-                  <div className="flex items-start justify-between">
-                    {/* Table Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="bg-blue-100 p-2 rounded-lg">
-                          <QrCode className="w-5 h-5 text-blue-600" />
-                        </div>
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {/* QR Code Column - Primary on mobile */}
+                    <div className="flex flex-row md:flex-col items-center gap-4 md:items-center">
+                      <div className="relative group/qr p-2 bg-slate-50 rounded-2xl border border-slate-100 transition-all group-hover:bg-blue-50/50 group-hover:border-blue-100 shrink-0">
+                        <QRCodeCanvas
+                          value={tableItem.qrCodeLink}
+                          size={120} // Larger size for better visibility
+                          className="rounded-xl w-24 h-24 md:w-32 md:h-32 shadow-sm"
+                        />
+                      </div>
+                      <div className="flex flex-col md:items-center gap-2 w-full">
+                         <div className="md:hidden">
+                            <h3 className="text-xl font-black text-gray-900 leading-none">Table #{tableItem.tableNumber}</h3>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase mt-1">Created {new Date(tableItem.createdAt).toLocaleDateString()}</p>
+                         </div>
+                         <div className="flex gap-2">
+                            <button
+                              onClick={() => navigate(`/hotel/dashboard/qrcode/${tableUniqueCode(tableItem.hotelId, tableItem.tableNumber)}`)}
+                              className="flex-1 md:w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-xl text-xs font-bold hover:bg-blue-100 transition-all shadow-sm active:scale-95"
+                            >
+                              <Download className="w-4 h-4" />
+                              <span>Card</span>
+                            </button>
+                            <button
+                              onClick={() => handleDelete(tableItem.id)}
+                              className={`p-2 rounded-xl transition-all active:scale-95 shrink-0 ${
+                                deleteConfirm === tableItem.id
+                                  ? "bg-red-600 text-white shadow-lg shadow-red-200"
+                                  : "bg-red-50 text-red-600 hover:bg-red-100 border border-transparent hover:border-red-200"
+                              }`}
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                         </div>
+                      </div>
+                    </div>
+
+                    {/* Content Column */}
+                    <div className="flex-1 min-w-0 flex flex-col">
+                      <div className="hidden md:flex items-center justify-between mb-4">
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className="text-2xl font-black text-gray-900 tracking-tight">
                             Table #{tableItem.tableNumber}
                           </h3>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Calendar className="w-4 h-4" />
-                            Created{" "}
-                            {new Date(tableItem.createdAt).toLocaleDateString()}
+                          <div className="flex items-center gap-2 text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">
+                            <Calendar className="w-3 h-3" />
+                            <span>Created {new Date(tableItem.createdAt).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* QR Link */}
-                      <div className="bg-white rounded-lg p-3 border border-gray-200 flex flex-row justify-between">
-                        <div className="w-full">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            QR Code Link
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={tableItem.qrCodeLink}
-                              readOnly
-                              className="flex-1 text-sm text-gray-600 bg-gray-50 border border-gray-200 rounded px-3 py-2"
-                            />
-                            <button
-                              onClick={() =>
-                                copyToClipboard(tableItem.qrCodeLink)
-                              }
-                              className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded border border-gray-200 transition"
-                              title="Copy link"
-                            >
-                              Copy
-                            </button>
-                            <a
+                      {/* URL Box */}
+                      <div className="mt-auto space-y-3">
+                        <div className="flex items-center justify-between">
+                           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Redirection Link</span>
+                           {/* External Link button moved here for visibility */}
+                           <a
                               href={tableItem.qrCodeLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition"
-                              title="Open link"
+                              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-full transition-all hover:bg-blue-100"
                             >
-                              <ExternalLink className="w-4 h-4" />
+                              <span className="hidden sm:inline">Go to Menu</span>
+                              <ExternalLink className="w-3.5 h-3.5" />
                             </a>
-                          </div>
                         </div>
-                        {/* <div className=""> */}
-                        <QRCodeCanvas
-                          value={tableItem.qrCodeLink}
-                          // height={20}
-                          // width={20}
-                          className="p-3 bg-blue-50 rounded-xl h-8 w-8"
-                        />
-                        {/* </div> */}
+                        
+                        <div className="flex items-stretch gap-2">
+                           <div className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 flex items-center min-w-0">
+                              <span className="text-sm text-gray-500 font-medium truncate">{tableItem.qrCodeLink}</span>
+                           </div>
+                           <button
+                             onClick={() => copyToClipboard(tableItem.qrCodeLink)}
+                             className="px-4 py-2 bg-black text-white rounded-xl text-xs font-bold hover:bg-gray-800 active:scale-95 transition-all shadow-lg shadow-black/5"
+                           >
+                             Copy
+                           </button>
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-2 ml-4">
-                      <button
-                        onClick={() => {
-                          console.log("Downloading QR Code for:", tableItem);
-                          
-                          navigate(
-                            `/hotel/dashboard/qrcode/${tableUniqueCode(tableItem.hotelId, tableItem.tableNumber)}`
-                          );
-                        }}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                        title="Download QR Code"
-                      >
-                        <Download className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(tableItem.id)}
-                        className={`p-2 rounded-lg transition ${
-                          deleteConfirm === tableItem.id
-                            ? "bg-red-100 text-red-700"
-                            : "text-red-600 hover:bg-red-50"
-                        }`}
-                        title={
-                          deleteConfirm === tableItem.id
-                            ? "Click again to confirm"
-                            : "Delete QR Code"
-                        }
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
                     </div>
                   </div>
 
-                  {/* Delete Confirmation */}
+                  {/* Delete Confirmation Overlay */}
                   {deleteConfirm === tableItem.id && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-sm text-red-800 mb-2">
-                        Are you sure you want to delete this QR code? This
-                        action cannot be undone.
-                      </p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleDelete(tableItem.id)}
-                          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
-                        >
-                          Delete
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirm(null)}
-                          className="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition"
-                        >
-                          Cancel
-                        </button>
+                    <div className="mt-4 p-4 bg-red-50 border border-red-100 rounded-2xl animate-in slide-in-from-top-2 duration-300">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-bold text-red-900 leading-tight">Delete this menu link?</p>
+                          <p className="text-xs text-red-700 mt-1">This will permanently disable this QR code. You can't undo this.</p>
+                          <div className="flex gap-3 mt-3">
+                            <button
+                              onClick={() => handleDelete(tableItem.id)}
+                              className="px-4 py-1.5 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-700 transition shadow-md shadow-red-200"
+                            >
+                              Delete Now
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirm(null)}
+                              className="px-4 py-1.5 bg-white text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-red-100 hover:bg-red-50 transition"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}

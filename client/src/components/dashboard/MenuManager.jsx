@@ -163,175 +163,162 @@ const MenuManager = () => {
 
   // Table View Component
   const TableView = () => (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden">
-      <div className="overflow-x-auto">
+    <div className="bg-white shadow-md rounded-2xl overflow-hidden border border-gray-100">
+      {/* Table View (Desktop) */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Image
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Price
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Image</th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Name</th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Price</th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {menuItems.length === 0 ? (
+            {menuItems.map((item) => (
+              <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {item.images?.[0] ? (
+                    <img src={item.images[0]} alt={item.name} className="w-12 h-12 object-cover rounded-xl shadow-sm" />
+                  ) : (
+                    <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center border border-dashed border-gray-300">
+                      <Eye className="w-5 h-5 text-gray-400" />
+                    </div>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-semibold text-gray-900">{item.name}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 uppercase tracking-wider">
+                    {item.category?.name || "Uncategorized"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center text-sm font-bold text-gray-900">
+                    <IndianRupee className="w-3.5 h-3.5 mr-0.5" />
+                    {item.half_price}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    item.available ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+                  }`}>
+                    {item.available ? "Available" : "Unavailable"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <div className="flex items-center justify-center space-x-4">
+                    <button onClick={() => openEditModal(item.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-100 shadow-sm transition-all" title="Edit">
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => deleteMenuById(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 shadow-sm transition-all" title="Delete">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {menuItems.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-400 font-medium italic">
                   No menu items found.
                 </td>
               </tr>
-            ) : (
-              menuItems.map((item) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  {/* Image */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {item.images && item.images.length > 0 ? (
-                      <img
-                        src={item.images[0]}
-                        alt={item.name}
-                        className="w-12 h-12 object-cover rounded-lg"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <Eye className="w-5 h-5 text-gray-400" />
-                      </div>
-                    )}
-                  </td>
-
-                  {/* Name */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {item.name}
-                    </div>
-                  </td>
-
-                  {/* Category */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
-                      {item.category?.name || "Uncategorized"}
-                    </span>
-                  </td>
-
-                  {/* Price */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <IndianRupee className="w-4 h-4 text-gray-600" />
-                      <span className="text-sm font-semibold text-gray-900 ml-1">
-                        {item.half_price}
-                      </span>
-                      {item.original_half_price &&
-                        item.original_half_price !== item.half_price && (
-                          <span className="text-sm text-gray-500 line-through ml-2">
-                            ₹{item.original_half_price}
-                          </span>
-                        )}
-                    </div>
-                  </td>
-
-                  {/* Status */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {item.available ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Available
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        Unavailable
-                      </span>
-                    )}
-                  </td>
-
-                  {/* Actions */}
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <div className="flex items-center justify-center space-x-3">
-                      <button
-                        onClick={() => openEditModal(item.id)}
-                        className="text-blue-600 hover:text-blue-900 transition-colors"
-                        title="Edit"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => deleteMenuById(item.id)}
-                        className="text-red-600 hover:text-red-900 transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Card View (Mobile only replacements for Table) */}
+      <div className="md:hidden divide-y divide-gray-100">
+        {menuItems.map((item) => (
+          <div key={item.id} className="p-4 flex gap-4 bg-white active:bg-gray-50 transition-colors">
+            <div className="shrink-0">
+              {item.images?.[0] ? (
+                <img src={item.images[0]} alt={item.name} className="w-20 h-20 object-cover rounded-2xl shadow-sm" />
+              ) : (
+                <div className="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center border border-dashed border-gray-200">
+                  <Eye className="w-6 h-6 text-gray-300" />
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0 py-1 flex flex-col">
+              <div className="flex justify-between items-start mb-1">
+                <h3 className="text-base font-bold text-gray-900 truncate pr-2">{item.name}</h3>
+                <span className={`shrink-0 text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                  item.available ? "text-green-600 bg-green-50" : "text-red-600 bg-red-50"
+                }`}>
+                  {item.available ? "On" : "Off"}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mb-4 font-bold uppercase tracking-widest">{item.category?.name || "Uncategorized"}</p>
+              <div className="flex items-center justify-between mt-auto">
+                <span className="text-lg font-black text-gray-900 flex items-center">
+                  <IndianRupee className="w-4 h-4 mr-0.5" />
+                  {item.half_price}
+                </span>
+                <div className="flex gap-2">
+                  <button onClick={() => openEditModal(item.id)} className="p-2 sm:p-2.5 text-blue-600 bg-blue-50 rounded-xl active:scale-90 transition-all border border-blue-100">
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => deleteMenuById(item.id)} className="p-2 sm:p-2.5 text-red-600 bg-red-50 rounded-xl active:scale-90 transition-all border border-red-100">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {menuItems.length === 0 && (
+          <div className="p-12 text-center text-gray-400 font-medium italic bg-gray-50/30">
+            No items found.
+          </div>
+        )}
       </div>
     </div>
   );
 
   return (
-    <div className="max-w-full px-8 py-6">
+    <div className="max-w-full px-4 md:px-8 py-6">
       {/* Header with Add Item button and View Toggle */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900">
-          Menu Management
-        </h2>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+        <div>
+          <h2 className="text-2xl font-black text-gray-900 tracking-tight">Menu Management</h2>
+          <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Total {menuItems.length} Dishes</p>
+        </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           {/* View Toggle Buttons */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center bg-gray-100 rounded-xl p-1 shrink-0">
             <button
               onClick={() => setViewMode("table")}
-              className={`
-    flex items-center gap-2 px-3 py-2 mx-1 rounded-md text-sm font-medium transition-colors
-    ${
-      viewMode === "table"
-        ? "bg-white text-gray-900 shadow-sm"
-        : "text-gray-600 hover:text-gray-900"
-    }`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                viewMode === "table" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-gray-900"
+              }`}
             >
-              <List className="w-4 h-4" /> Table
+              <List className="w-3.5 h-3.5" /> List
             </button>
-
             <button
               onClick={() => setViewMode("grid")}
-              className={`
-    flex items-center gap-2 px-3 py-2 mx-1 rounded-md text-sm font-medium transition-colors
-    ${
-      viewMode === "grid" // ← change is here
-        ? "bg-white text-gray-900 shadow-sm"
-        : "text-gray-600 hover:text-gray-900"
-    }`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                viewMode === "grid" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-gray-900"
+              }`}
             >
-              <Grid3X3 className="w-4 h-4" /> Grid
+              <Grid3X3 className="w-3.5 h-3.5" /> Grid
             </button>
           </div>
 
-          {/* Add Menu Item Button */}
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-black text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-95 shadow-black/10"
           >
             <Plus className="w-5 h-5" />
-            Add Menu Item
+            Add New Item
           </button>
         </div>
       </div>

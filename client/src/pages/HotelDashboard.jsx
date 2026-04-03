@@ -17,8 +17,28 @@ import {
 import { Link, useLocation, Outlet } from "react-router-dom";
 
 const Dashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   const location = useLocation();
+
+  // Handle window resize to auto-hide sidebar on mobile
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Auto-close sidebar on mobile after navigation
+  const handleLinkClick = () => {
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+  };
 
   const menuItems = [
     { icon: Home, label: "Dashboard", path: "/hotel/dashboard", exact: true },
@@ -44,22 +64,31 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      {/* Sidebar Overlay (Mobile Only) */}
+      {sidebarOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <div
-        className={`${
-          sidebarOpen ? "w-64" : "w-18"
-        } bg-gray-900 text-white transition-all duration-300 flex flex-col`}
+        className={`
+          ${sidebarOpen ? "w-64 translate-x-0" : "w-18 -translate-x-full lg:translate-x-0"} 
+          fixed lg:relative z-50 h-full bg-gray-900 text-white transition-all duration-300 flex flex-col
+        `}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-gray-700">
-          <div className="flex items-center justify-between">
+        <div className="p-4 border-b border-gray-700 min-h-[80px] flex items-center">
+          <div className="flex items-center justify-between w-full">
             {sidebarOpen && (
-              <h2 className="text-xl font-bold text-white">DashBoard</h2>
+              <h2 className="text-xl font-bold text-white truncate">DashBoard</h2>
             )}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-700 transition-colors ml-auto"
             >
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -67,19 +96,20 @@ const Dashboard = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 p-4 overflow-y-auto no-scrollbar">
           <ul className="space-y-2">
             {menuItems.map((item, index) => (
               <li key={index}>
                 <Link
                   to={item.path}
+                  onClick={handleLinkClick}
                   className={`flex items-center p-3 rounded-lg transition-colors hover:bg-gray-700 ${
-                    isActive(item.path, item.exact) ? "bg-blue-600" : ""
+                    isActive(item.path, item.exact) ? "bg-blue-600 shadow-lg" : ""
                   }`}
                 >
-                  <item.icon size={20} />
+                  <item.icon size={20} className="shrink-0" />
                   {sidebarOpen && (
-                    <span className="ml-3 font-medium">{item.label}</span>
+                    <span className="ml-3 font-medium truncate">{item.label}</span>
                   )}
                 </Link>
               </li>
@@ -89,47 +119,58 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-full">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-semibold text-gray-800">
-                Dashboard
+        <header className="bg-white shadow-sm border-b border-gray-200 px-4 md:px-6 py-3 shrink-0">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              {/* Mobile Menu Toggle */}
+              {!sidebarOpen && (
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  <Menu size={20} />
+                </button>
+              )}
+              <h1 className="text-lg md:text-2xl font-semibold text-gray-800 truncate">
+                {menuItems.find(item => isActive(item.path, item.exact))?.label || "Dashboard"}
               </h1>
             </div>
-            <div className="flex items-center space-x-4">
+
+            {/* Desktop Navigation Group */}
+            <div className="hidden md:flex items-center space-x-2">
               <Link
                 to="/hotel/dashboard"
-                className="px-3 py-1 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
               >
-                Dashboard
+                Home
               </Link>
               <Link
                 to="/hotel/dashboard/menu"
-                className="px-3 py-1 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
               >
                 Menu
               </Link>
               <Link
                 to="/hotel/dashboard/settings"
-                className="px-3 py-1 rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
               >
                 QR Codes
               </Link>
             </div>
 
-            {/* Search and Actions */}
-            <div className="flex items-center space-x-4">
-              <div className="relative">
+            {/* Right Section Actions */}
+            <div className="flex items-center gap-2 md:gap-4 shrink-0">
+              <div className="hidden sm:relative sm:block">
                 <Search
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={18}
+                  size={16}
                 />
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-9 pr-4 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent w-32 md:w-48 transition-all"
                 />
               </div>
 
@@ -137,16 +178,18 @@ const Dashboard = () => {
                 <Bell size={20} />
               </button>
 
-              <button className="flex items-center space-x-2 p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
-                <User size={20} />
-                <span className="font-medium">Admin</span>
+              <button className="flex items-center gap-2 p-1.5 md:p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <User size={18} className="text-blue-600" />
+                </div>
+                <span className="hidden sm:block text-sm font-medium">Admin</span>
               </button>
             </div>
           </div>
         </header>
 
-        {/* Content Area - This will render child routes */}
-        <main className="flex-1 overflow-auto p-6">
+        {/* Content Area - Scrollable */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50/50">
           <Outlet />
         </main>
       </div>

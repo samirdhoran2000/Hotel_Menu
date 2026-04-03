@@ -84,33 +84,32 @@ const QrCode = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 font-sans relative overflow-hidden">
       {/* Animated background gradient blobs */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-2000"></div>
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-32 md:w-64 h-32 md:h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-32 md:w-64 h-32 md:h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse delay-1000"></div>
       </div>
 
-      {/* Download buttons with a fixed position for easy access */}
-      <div className="fixed top-28 right-16 z-50 flex flex-col gap-3">
+      {/* Download buttons - Responsive Position */}
+      <div className="fixed bottom-6 right-6 lg:top-28 lg:right-16 lg:bottom-auto z-50 flex lg:flex-col gap-3">
         <button
           onClick={downloadCard}
-          className="group bg-slate-800/90 backdrop-blur-xl border border-slate-700/50 rounded-xl p-3 hover:bg-slate-700/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+          className="group bg-slate-800/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 lg:p-3 hover:bg-slate-700 transition-all shadow-2xl hover:scale-110 active:scale-95"
           title="Download Full Card"
         >
           <div className="flex items-center gap-2 text-white">
-            <Download className="w-5 h-5 group-hover:text-purple-400 transition-colors" />
-            <span className="text-sm font-medium">Card</span>
+            <Download className="w-6 h-6 lg:w-5 lg:h-5 group-hover:text-purple-400 transition-colors" />
+            <span className="hidden lg:inline text-sm font-medium">Card</span>
           </div>
         </button>
 
         <button
           onClick={downloadQRCodeOnly}
-          className="group bg-slate-800/90 backdrop-blur-xl border border-slate-700/50 rounded-xl p-3 hover:bg-slate-700/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+          className="group bg-slate-800/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 lg:p-3 hover:bg-slate-700 transition-all shadow-2xl hover:scale-110 active:scale-95"
           title="Download QR Code Only"
         >
           <div className="flex items-center gap-2 text-white">
-            <Camera className="w-5 h-5 group-hover:text-cyan-400 transition-colors" />
-            <span className="text-sm font-medium">QR</span>
+            <Camera className="w-6 h-6 lg:w-5 lg:h-5 group-hover:text-cyan-400 transition-colors" />
+            <span className="hidden lg:inline text-sm font-medium">QR</span>
           </div>
         </button>
       </div>
@@ -134,10 +133,10 @@ const QrCode = () => {
             <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-cyan-400 rounded-br-lg opacity-60 animate-pulse delay-1000"></div>
 
             {/* Fixed text styling - using solid colors instead of gradient clipping */}
-            <h1 className="text-5xl md:text-6xl font-bold text-purple-300 mb-2 tracking-tight leading-tight drop-shadow-lg">
+            <h1 className="text-4xl md:text-6xl font-bold text-purple-300 mb-1 tracking-tight leading-tight drop-shadow-lg">
               DIGITAL
             </h1>
-            <h2 className="text-4xl md:text-5xl font-bold text-cyan-300 mb-8 tracking-tight drop-shadow-lg">
+            <h2 className="text-3xl md:text-5xl font-bold text-cyan-300 mb-6 md:mb-8 tracking-tight drop-shadow-lg">
               MENU
             </h2>
 
@@ -149,14 +148,14 @@ const QrCode = () => {
             </div>
 
             {/* QR Code container with its own glow and hover effects */}
-            <div className="relative mb-8 group/qr">
+            <div className="relative mb-6 md:mb-8 group/qr w-full flex justify-center">
               <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-cyan-400/20 rounded-3xl blur-lg group-hover/qr:blur-xl transition-all duration-300"></div>
-              <div className="relative bg-white/95 backdrop-blur-sm p-6 rounded-3xl shadow-2xl border border-white/20 group-hover/qr:scale-105 transition-transform duration-300">
+              <div className="relative bg-white/95 backdrop-blur-sm p-4 md:p-6 rounded-3xl shadow-2xl border border-white/20 group-hover/qr:scale-105 transition-transform duration-300 max-w-full">
                 <QRCodeCanvas
                   value={`${import.meta.env.VITE_DOMAIN_URL}/${params?.id}`} // The URL for the QR code
-                  size={200}
+                  size={window.innerWidth < 640 ? 160 : 200}
                   level="H" // High error correction level
-                  className="rounded-xl"
+                  className="rounded-xl w-full h-auto max-w-[160px] md:max-w-[200px]"
                   bgColor="#ffffff"
                   fgColor="#1e293b" // A dark slate color for the QR code pattern
                 />
