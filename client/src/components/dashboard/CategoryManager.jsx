@@ -91,7 +91,8 @@ const CategoryManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category? All items in this category will be unassigned.")) return;
+    if (!window.confirm("Are you sure you want to delete this category?")) return;
+
 
     try {
       const token = localStorage.getItem("token");

@@ -89,8 +89,9 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
             available: result.available || false,
           });
 
-          // Files from associations
-          setExistingImages(result.files ? result.files.map((f) => f.url) : []);
+          // Files from associations - Store both ID and URL
+          setExistingImages(result.files ? result.files.map((f) => ({ id: f.id, url: f.url })) : []);
+
         }
       } catch (err) {
         console.error("Network error fetching item:", err);
@@ -215,9 +216,10 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     setPreviews((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
-  const removeExistingImage = (urlToRemove) => {
-    setExistingImages((prev) => prev.filter((url) => url !== urlToRemove));
+  const removeExistingImage = (idToRemove) => {
+    setExistingImages((prev) => prev.filter((img) => img.id !== idToRemove));
   };
+
 
   const openImagePreview = (imageUrl, imageName = "Image") => {
     setImagePreview({ isOpen: true, imageUrl, imageName });
@@ -265,8 +267,9 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
       });
 
       if (isEditing) {
-        formDataToSend.append("existingImages", JSON.stringify(existingImages));
+        formDataToSend.append("keepImageIds", JSON.stringify(existingImages.map(img => img.id)));
       }
+
 
       files.forEach((file) => {
         formDataToSend.append("files", file);
@@ -362,23 +365,24 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     Images <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {existingImages.map((url, index) => (
-                      <div key={url} className="relative group">
+                    {existingImages.map((img) => (
+                      <div key={img.id} className="relative group">
                         <img
-                          src={url}
+                          src={img.url}
                           alt="Existing"
-                          className="w-full h-32 object-cover rounded-lg border"
-                          onClick={() => openImagePreview(url)}
+                          className="w-full h-32 object-cover rounded-lg border cursor-pointer"
+                          onClick={() => openImagePreview(img.url)}
                         />
                         <button
                           type="button"
-                          onClick={() => removeExistingImage(url)}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                          onClick={() => removeExistingImage(img.id)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
                         >
                           <X className="w-4 h-4" />
                         </button>
                       </div>
                     ))}
+
                     {previews.map((preview, idx) => (
                       <div key={preview.id} className="relative group">
                         <img

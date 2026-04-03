@@ -2,8 +2,8 @@
 import { Hotel, MenuItem, File, Category } from "../models/associations.js";
 import { Op } from "sequelize";
 import { buildImageUrls } from "../utils/codeDecode.utils.js";
-import { s3 } from "../service/file.upload.service.js";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { s3, deleteFromS3 } from "../service/file.upload.service.js";
+
 
 // Helper to standardize error response
 export const handleSequelizeError = (err, res) => {
@@ -265,8 +265,9 @@ export const updateMenuItem = async (req, res) => {
       isVegetarian,
       available,
       ingredients,
-      existingImages // This should be an array of URLs to KEEP
+      keepImageIds // Now passing IDs instead of URLs
     } = req.body;
+
 
     const updateData = {};
     if (name) updateData.name = name.trim();
@@ -281,31 +282,25 @@ export const updateMenuItem = async (req, res) => {
     if (ingredients != null) updateData.ingredients = typeof ingredients === 'string' ? JSON.parse(ingredients) : ingredients;
 
     // --- File Synchronization ---
-    // 1. Identify files to delete
-    if (existingImages) {
-      const keepUrls = Array.isArray(existingImages) ? existingImages : JSON.parse(existingImages);
+    // 1. Identify files to delete by ID
+    if (keepImageIds !== undefined) {
+      const keepIds = Array.isArray(keepImageIds) ? keepImageIds : JSON.parse(keepImageIds);
       
       const filesToDelete = await File.findAll({
         where: {
           menuItemId: id,
-          url: { [Op.notIn]: keepUrls }
+          id: { [Op.notIn]: keepIds }
         }
       });
 
       for (const file of filesToDelete) {
-        // Delete from S3
-        try {
-          await s3.send(new DeleteObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: file.key
-          }));
-        } catch (s3Err) {
-          console.error(`Failed to delete S3 object ${file.key}:`, s3Err);
-        }
+        // Delete from S3 using the centralized service
+        await deleteFromS3(file.key);
         // Delete from DB
         await file.destroy();
       }
     }
+
 
     // 2. Handle new uploads
     if (req.files && req.files.length > 0) {
@@ -356,15 +351,9 @@ export const deleteMenuItem = async (req, res) => {
 
     // Delete all associated files from S3
     for (const file of menuItem.files) {
-      try {
-        await s3.send(new DeleteObjectCommand({
-          Bucket: process.env.AWS_BUCKET_NAME,
-          Key: file.key
-        }));
-      } catch (s3Err) {
-        console.error(`Failed to delete S3 object ${file.key}:`, s3Err);
-      }
+      await deleteFromS3(file.key);
     }
+
 
     await menuItem.destroy(); // Files will be deleted by CASCADE in DB
     

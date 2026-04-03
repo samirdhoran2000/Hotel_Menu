@@ -1,5 +1,6 @@
 import multer from "multer";
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+
 import multerS3 from "multer-s3";
 import path from "path";
 
@@ -43,5 +44,25 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024, // 10MB limit (increased for videos if needed)
   },
 });
-export { s3 };
+/**
+ * Deletes an object from the S3 bucket.
+ * @param {string} key - The S3 key of the object to delete.
+ */
+const deleteFromS3 = async (key) => {
+  if (!key) return;
+  try {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: key,
+    };
+    await s3.send(new DeleteObjectCommand(params));
+    console.log(`Successfully deleted file from S3: ${key}`);
+  } catch (error) {
+    console.error(`Error deleting file from S3 (${key}):`, error.message);
+    // Depending on requirements, you might want to re-throw or just log
+  }
+};
+
+export { s3, deleteFromS3 };
+
 export default upload;

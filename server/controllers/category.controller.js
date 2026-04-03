@@ -1,5 +1,6 @@
 // server/controllers/category.controller.js
-import { Category } from "../models/associations.js";
+import { Category, MenuItem } from "../models/associations.js";
+
 
 export const createCategory = async (req, res) => {
   try {
@@ -99,7 +100,17 @@ export const deleteCategory = async (req, res) => {
       });
     }
 
+    // Check if any menu items are associated with this category
+    const menuItemsCount = await MenuItem.count({ where: { categoryId: id } });
+    if (menuItemsCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete category because it is mapped to one or more menu items.",
+      });
+    }
+
     await category.destroy();
+
 
     res.status(200).json({
       success: true,
