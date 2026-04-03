@@ -352,13 +352,19 @@ export const getMenuItemsbyHotel = async (req, res) => {
       distinct: true,
     });
 
-    // 8) Process image URLs if needed
+    // 8) Fetch Hotel Details for Branding
+    const hotel = await Hotel.findByPk(hotelId, { attributes: ["name"] });
+    const hotelName = hotel ? hotel.name : "Hotel Menu";
+
+    // 9) Process image URLs if needed
     const processedRows = buildImageUrls(rows, req);
 
-    // 9) Send successful response
+    // 10) Send successful response with branding
     return res.status(200).json({
       success: true,
       data: {
+        hotelName,
+        tableNumber: tableId, // From decodeCode
         menuItems: processedRows,
         pagination: {
           currentPage: pageNumber,

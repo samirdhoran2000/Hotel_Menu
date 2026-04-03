@@ -27,73 +27,111 @@ const MenuSection = ({ dataManager }) => {
     >
       {/* Header Section */}
       <div className="flex flex-col items-center w-full mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
-          Our Special Menu
-        </h2>
-        <p className="text-gray-800 text-center max-w-2xl">
-          Discover our carefully curated selection of dishes, made with love and
-          the finest ingredients
-        </p>
+        <div className="flex items-center gap-3 mb-2">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center">
+            Delicious Menu
+          </h2>
+          {dataManager.hotelDetails?.tableNumber && (
+            <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full shadow-sm">
+              Table #{dataManager.hotelDetails.tableNumber}
+            </span>
+          )}
+        </div>
+        <div className="h-1 w-20 bg-black rounded-full mb-4" />
       </div>
 
       {/* Navigation and Controls */}
-      <div className="flex flex-col w-full mb-8">
-        {/* Categories */}
-        <div className="flex flex-wrap justify-center gap-4 mb-6">
+      <div className="flex flex-col w-full mb-8 sticky top-20 z-40 bg-white/90 backdrop-blur-xl p-3 sm:p-4 rounded-3xl shadow-sm border border-gray-100 gap-4">
+        {/* Veg/Non-Veg Minimalist Toggle - Now at the Top */}
+        <div className="flex justify-center w-full">
+          <div className="flex bg-gray-100 p-1 rounded-2xl w-full sm:w-auto overflow-hidden">
+            {[
+              { id: "all", label: "All", color: "bg-white text-black shadow-sm" },
+              { id: "veg", label: "Veg", color: "bg-green-500 text-white shadow-sm" },
+              { id: "non-veg", label: "Non-Veg", color: "bg-red-500 text-white shadow-sm" }
+            ].map((diet) => (
+              <button
+                key={diet.id}
+                onClick={() => dataManager.setDietaryFilter(diet.id)}
+                className={`
+                  flex-1 sm:flex-none px-6 py-2 rounded-xl text-xs font-bold transition-all duration-300
+                  ${
+                    dataManager.dietaryFilter === diet.id
+                      ? diet.color
+                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                  }
+                `}
+              >
+                {diet.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Categories - Minimalistic & Horizontal Scrollable */}
+        <div className="flex overflow-x-auto no-scrollbar justify-start sm:justify-center gap-2 overscroll-contain">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => handleCategoryChange(category)}
-              className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                selectedCategory === category
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-              }`}
+              className={`
+                whitespace-nowrap px-5 py-2 rounded-full transition-all duration-300 text-sm font-medium
+                ${
+                  selectedCategory === category
+                    ? "bg-black text-white shadow-md"
+                    : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                }
+              `}
             >
               {category === "all"
                 ? "All"
+                : category === "favourite"
+                ? "❤️ Favourite"
                 : category.replace("_", " ").toUpperCase()}
             </button>
           ))}
         </div>
 
-        {/* Filters, Sort, and View Toggle */}
-        <div className="flex justify-between items-center w-full mb-6">
-          <div className="relative inline-flex">
-            <select
-              value={sortOption}
-              onChange={(e) => setSortOption(e.target.value)}
-              className="appearance-none px-4 py-2 pr-10 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
-            >
-              <option value="featured">Featured</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="rating">Top Rated</option>
-            </select>
-            <ChevronDown className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-          </div>
+        {/* Bottom Controls: Sort and View Toggle */}
+        <div className="flex justify-end items-center gap-3 w-full border-t border-gray-50 pt-3">
 
-          <div className="flex items-center space-x-4">
-            <div className="flex space-x-2">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            {/* Sorting Dropdown replaces the 'item found' text */}
+            <div className="relative flex-1 sm:flex-none">
+                <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="w-full sm:w-auto appearance-none px-4 py-2 pr-10 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-black/5"
+                >
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price ↑</option>
+                <option value="price-desc">Price ↓</option>
+                <option value="rating">Top Rated</option>
+                </select>
+                <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400" />
+            </div>
+
+            {/* View Toggle */}
+            <div className="flex p-1 bg-gray-100 rounded-xl">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-lg ${
+                className={`p-1.5 rounded-lg transition-all ${
                   viewMode === "grid"
-                    ? "bg-green-200"
-                    : "bg-gray-100 hover:bg-green-200"
+                    ? "bg-white text-black shadow-sm"
+                    : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                <Grid className="w-5 h-5" />
+                <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2 rounded-lg ${
+                className={`p-1.5 rounded-lg transition-all ${
                   viewMode === "list"
-                    ? "bg-green-200"
-                    : "bg-gray-100 hover:bg-green-200"
+                    ? "bg-white text-black shadow-sm"
+                    : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                <List className="w-5 h-5" />
+                <List className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -101,21 +139,61 @@ const MenuSection = ({ dataManager }) => {
       </div>
 
       {/* Menu Items */}
-      <div
-        className={
-          viewMode === "grid"
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            : "flex flex-col gap-6 w-full"
-        }
-      >
-        {filteredItems?.map((item) =>
-          viewMode === "grid" ? (
-            <GridViewItem key={item.id} item={item} />
-          ) : (
-            <ListViewItem key={item.id} item={item} />
-          )
-        )}
-      </div>
+      {dataManager.loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full opacity-60">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div key={i} className="bg-gray-100 animate-pulse rounded-3xl h-80 w-full" />
+          ))}
+        </div>
+      ) : filteredItems && filteredItems.length > 0 ? (
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full"
+              : "flex flex-col gap-6 w-full"
+          }
+        >
+          {filteredItems.map((item) =>
+            viewMode === "grid" ? (
+              <GridViewItem
+                key={item.id}
+                item={item}
+                isLiked={dataManager.likedItemIds.includes(item.id)}
+                onLikeToggle={() => dataManager.toggleLike(item.id)}
+              />
+            ) : (
+              <ListViewItem
+                key={item.id}
+                item={item}
+                isLiked={dataManager.likedItemIds.includes(item.id)}
+                onLikeToggle={() => dataManager.toggleLike(item.id)}
+              />
+            )
+          )}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-200 w-full max-w-2xl mx-auto">
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+            <span className="text-3xl">❤️</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            {selectedCategory === "favourite" 
+              ? "Your favourites is empty!" 
+              : "No items found!"}
+          </h3>
+          <p className="text-gray-500 max-w-sm">
+            {selectedCategory === "favourite"
+              ? "Explore our delicious menu and tap the heart icon to save your favorite dishes here."
+              : "We couldn't find any items matching your current filters. Try adjusting your search or category."}
+          </p>
+          <button
+            onClick={() => setSelectedCategory("all")}
+            className="mt-6 px-6 py-2 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition-all active:scale-95"
+          >
+            Explore Menu
+          </button>
+        </div>
+      )}
     </section>
   );
 };

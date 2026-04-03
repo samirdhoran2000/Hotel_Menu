@@ -1,7 +1,7 @@
 import { Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
+const Header = ({ toggleSidebar, searchQuery, setSearchQuery, hotelName }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -50,7 +50,9 @@ const Header = ({ toggleSidebar, searchQuery, setSearchQuery }) => {
             >
               <Menu className="w-6 h-6" />
             </button>
-            <h1 className="text-xl font-bold text-gray-900">Gourmet</h1>
+            <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+              {hotelName || ""}
+            </h1>
           </div>
 
           {/* Desktop Navigation */}

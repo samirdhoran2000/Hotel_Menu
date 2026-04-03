@@ -1,5 +1,6 @@
 // server/controllers/category.controller.js
 import { Category, MenuItem } from "../models/associations.js";
+import { decodeCode } from "../utils/codeDecode.utils.js";
 
 
 export const createCategory = async (req, res) => {
@@ -118,6 +119,37 @@ export const deleteCategory = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting category:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getPublicCategories = async (req, res) => {
+  try {
+    const { tableCode } = req.params;
+    const { hotelId } = decodeCode(tableCode);
+
+    if (!hotelId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid table code",
+      });
+    }
+
+    const categories = await Category.findAll({
+      where: { hotelId },
+      order: [["name", "ASC"]],
+    });
+
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    console.error("Error fetching public categories:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error",

@@ -3,32 +3,17 @@ import React, { useState, useEffect } from "react";
 import { Heart, Star, Leaf } from "lucide-react";
 import MenuItemDialog from "./MenuItemDialog";
 
-const ListViewItem = ({ item }) => {
+const ListViewItem = ({ item, isLiked, onLikeToggle }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
 
   const ingredientsArray =
     typeof item.ingredients === "string"
       ? JSON.parse(item.ingredients)
       : item.ingredients;
 
-  useEffect(() => {
-    const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
-    setIsLiked(!!likedItems[item.name]);
-  }, [item.name]);
-
   const handleLikeToggle = (e) => {
     e.stopPropagation();
-    const newLikedState = !isLiked;
-    setIsLiked(newLikedState);
-
-    const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
-    if (newLikedState) {
-      likedItems[item.name] = true;
-    } else {
-      delete likedItems[item.name];
-    }
-    localStorage.setItem("likedItems", JSON.stringify(likedItems));
+    onLikeToggle();
   };
 
   // Utility to humanize "main_course" → "Main Course"

@@ -11,7 +11,27 @@ export const useDataManager = ({ id = null }) => {
   const [searchQuery, setSearchQuery] = useState(""); // text search
   const [selectedCategory, setSelectedCategory] = useState("all"); // single‐category filter
   const [sortOption, setSortOption] = useState("featured"); // e.g. "featured" | "price-asc" | "price-desc" | ...
+  const [dietaryFilter, setDietaryFilter] = useState("all"); // "all" | "veg" | "non-veg"
   const [viewMode, setViewMode] = useState("grid"); // e.g. "grid" or "list"
+  const [loading, setLoading] = useState(true);
+  const [hotelDetails, setHotelDetails] = useState({ name: "Hotel Menu", tableNumber: "" });
+  
+  // Favourites state (using IDs)
+  const [likedItemIds, setLikedItemIds] = useState(() => {
+    try {
+      const stored = localStorage.getItem("favouriteItems");
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) { return []; }
+  });
+
+  const toggleLike = (id) => {
+    setLikedItemIds((prev) => {
+      const isLiked = prev.includes(id);
+      const next = isLiked ? prev.filter((i) => i !== id) : [...prev, id];
+      localStorage.setItem("favouriteItems", JSON.stringify(next));
+      return next;
+    });
+  };
 
   const [filteredItems, setFilteredItems] = useState([]);
 
@@ -22,26 +42,52 @@ export const useDataManager = ({ id = null }) => {
     const signal = controller.signal;
 
     async function fetchData() {
+      setLoading(true);
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/hotel/${id}`, {
-          signal,
-        });
-        const json = await res.json();
-        const fetchedItems = json?.data?.menuItems || [];
+        const [menuRes, catRes] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_URL}/hotel/${id}`, { signal }),
+          fetch(`${import.meta.env.VITE_API_URL}/category/public/${id}`, { signal }),
+        ]);
+
+        const menuJson = await menuRes.json();
+        const catJson = await catRes.json();
+
+        // Hotel Info
+        if (menuJson?.success && menuJson?.data) {
+          setHotelDetails({
+            name: menuJson.data.hotelName || "Hotel Menu",
+            tableNumber: menuJson.data.tableNumber || ""
+          });
+        }
+
+        const fetchedItems = menuJson?.data?.menuItems || [];
         setItems(fetchedItems);
 
-        const distinctCats = new Set(
-          fetchedItems.map((it) => it.category?.name || "Other")
+        // Map official categories from API, then filter to only those that have items
+        const officialCats = catJson?.data?.map(c => c.name) || [];
+        const activeCats = officialCats.filter(catName => 
+          fetchedItems.some(item => item.category?.name === catName)
         );
+        
+        // Falling back to derived categories if official list is empty
+        const derivedCats = Array.from(new Set(
+          fetchedItems.map((it) => it.category?.name || "Other")
+        )).filter(c => c !== "");
+
+        const finalCats = activeCats.length > 0 ? activeCats : derivedCats;
+
         setCategories([
           "all",
-          ...Array.from(distinctCats).filter((c) => c !== ""),
+          "favourite",
+          ...finalCats,
         ]);
       } catch (err) {
         // ignore aborts, log others
         if (err.name !== "AbortError") {
           console.log("Error fetching menu items:", err);
         }
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -71,10 +117,21 @@ export const useDataManager = ({ id = null }) => {
 
     // 2b) CATEGORY FILTER
     if (selectedCategory && selectedCategory !== "all") {
-      result = result.filter((item) => item.category?.name === selectedCategory);
+      if (selectedCategory === "favourite") {
+        result = result.filter((item) => likedItemIds.includes(item.id));
+      } else {
+        result = result.filter((item) => item.category?.name === selectedCategory);
+      }
     }
 
-    // 2c) SORTING
+    // 2c) DIETARY FILTER
+    if (dietaryFilter === "veg") {
+      result = result.filter((item) => item.isVegetarian === true);
+    } else if (dietaryFilter === "non-veg") {
+      result = result.filter((item) => item.isVegetarian === false);
+    }
+
+    // 2d) SORTING
     switch (sortOption) {
       case "price-asc":
         result.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
@@ -83,22 +140,22 @@ export const useDataManager = ({ id = null }) => {
         result.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
         break;
       case "rating":
-        // If your API sends a `rating` field, otherwise skip
         result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
-      // "featured" or default → leave as‐is
       default:
         break;
     }
 
     setFilteredItems(result);
-  }, [items, searchQuery, selectedCategory, sortOption]);
+  }, [items, searchQuery, selectedCategory, sortOption, dietaryFilter, likedItemIds]);
 
   // ──────────── 3. RETURN EVERYTHING YOU’LL NEED IN YOUR COMPONENT ────────────
   return {
     // Raw data + category list
     items,
     categories, // ["all", "beverage", "main_course", …]
+    loading,
+    hotelDetails,
 
     // Filtered & sorted data
     filteredItems,
@@ -112,6 +169,12 @@ export const useDataManager = ({ id = null }) => {
 
     sortOption,
     setSortOption,
+
+    dietaryFilter,
+    setDietaryFilter,
+
+    likedItemIds,
+    toggleLike,
 
     // View‐mode (grid/list)
     viewMode,

@@ -3,28 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Heart, Star, Leaf } from "lucide-react"; // Added a Leaf icon for Veg badge
 import MenuItemDialog from "./MenuItemDialog";
 
-const GridViewItem = ({ item }) => {
+const GridViewItem = ({ item, isLiked, onLikeToggle }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
-    setIsLiked(!!likedItems[item.name]);
-  }, [item.name]);
 
   const handleLikeToggle = (e) => {
     e.stopPropagation();
-    const newLikedState = !isLiked;
-    setIsLiked(newLikedState);
-
-    const likedItems = JSON.parse(localStorage.getItem("likedItems") || "{}");
-    if (newLikedState) {
-      likedItems[item.name] = true;
-    } else {
-      delete likedItems[item.name];
-    }
-    localStorage.setItem("likedItems", JSON.stringify(likedItems));
+    onLikeToggle();
   };
 
   // Utility to turn "main_course" → "Main Course"

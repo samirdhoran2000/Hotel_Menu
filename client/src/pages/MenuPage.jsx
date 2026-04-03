@@ -23,8 +23,15 @@ const MenuPage = () => {
         toggleSidebar={() => setIsSidebarOpen(true)}
         searchQuery={dataManager.searchQuery}
         setSearchQuery={dataManager.setSearchQuery}
+        hotelName={dataManager.hotelDetails?.name}
       />
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        categories={dataManager.categories}
+        selectedCategory={dataManager.selectedCategory}
+        setSelectedCategory={dataManager.setSelectedCategory}
+      />
 
       <main className="flex-1 pt-24 pb-12 flex justify-center items-start overflow-auto">
         <MenuSection dataManager={dataManager} />

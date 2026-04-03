@@ -5,10 +5,13 @@ import {
   getCategories,
   updateCategory,
   deleteCategory,
+  getPublicCategories,
 } from "../controllers/category.controller.js";
 import { authenticateHotelToken } from "../middleware/auth.js";
 
 const router = express.Router();
+
+router.get("/public/:tableCode", getPublicCategories);
 
 router.use(authenticateHotelToken);
 
