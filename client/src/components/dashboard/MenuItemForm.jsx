@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import imageCompression from "browser-image-compression";
 import {
   Upload,
   X,
@@ -7,6 +8,7 @@ import {
   Check,
   ZoomIn,
   IndianRupee,
+  Loader2,
 } from "lucide-react";
 
 const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
@@ -30,6 +32,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   const [previews, setPreviews] = useState([]); // local data URLs for preview
   const [existingImages, setExistingImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [errors, setErrors] = useState({});
   const [value, setValue] = useState(""); // for ingredient text input
@@ -161,7 +164,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const selectedFiles = Array.from(e.target.files);
     if (selectedFiles.length + existingImages.length > 5) {
       setErrors((prev) => ({
@@ -171,43 +174,68 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
       return;
     }
 
+    setIsCompressing(true);
+    setErrors((prev) => ({ ...prev, files: null }));
+
+    const compressionOptions = {
+      maxSizeMB: 0.3,
+      maxWidthOrHeight: 1600,
+      useWebWorker: true,
+      initialQuality:0.7,
+      fileType: "image/webp"
+    };
+
     const validFiles = [...files];
     const newPreviews = [...previews];
     let hasError = false;
 
-    selectedFiles.forEach((file) => {
-      if (!file.type.startsWith("image/")) {
-        setErrors((prev) => ({
-          ...prev,
-          files: "Only image files are allowed",
-        }));
-        hasError = true;
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({
-          ...prev,
-          files: "Each image must be less than 5MB",
-        }));
-        hasError = true;
-        return;
-      }
-      validFiles.push(file);
-      const reader = new FileReader();
-      reader.onload = (ev) => {
+    try {
+      for (const file of selectedFiles) {
+        if (!file.type.startsWith("image/")) {
+          setErrors((prev) => ({
+            ...prev,
+            files: "Only image files are allowed",
+          }));
+          hasError = true;
+          continue;
+        }
+
+        // Apply compression only if file is > 500KB
+        let compressedFile = file;
+        if (file.size > 500 * 1024) {
+          try {
+            console.log(`Compressing ${file.name} - Original size: ${file.size / 1024 / 1024} MB`);
+            compressedFile = await imageCompression(file, compressionOptions);
+            console.log(`Compressed ${file.name} - New size: ${compressedFile.size / 1024 / 1024} MB`);
+            // Preserve the original name in the compressed blob
+            compressedFile = new File([compressedFile], file.name, { type: file.type });
+          } catch (compressionError) {
+            console.error("Compression failed, using original:", compressionError);
+          }
+        } else {
+          console.log(`Skipping compression for ${file.name} (size: ${file.size / 1024} KB)`);
+        }
+
+        validFiles.push(compressedFile);
+
+        // Generate preview for the compressed file
+        const previewUrl = await imageCompression.getDataUrlFromFile(compressedFile);
         newPreviews.push({
           id: Math.random().toString(36).substr(2, 9),
-          url: ev.target.result,
+          url: previewUrl,
           name: file.name,
         });
-        setPreviews([...newPreviews]);
-      };
-      reader.readAsDataURL(file);
-    });
+      }
 
-    if (!hasError) {
-      setFiles(validFiles);
-      setErrors((prev) => ({ ...prev, files: null }));
+      if (!hasError) {
+        setFiles(validFiles);
+        setPreviews([...newPreviews]);
+      }
+    } catch (err) {
+      console.error("File processing error:", err);
+      setErrors((prev) => ({ ...prev, files: "Error processing some images" }));
+    } finally {
+      setIsCompressing(false);
     }
   };
 
@@ -402,13 +430,21 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     ))}
                   </div>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                      Choose Images
+                    <label 
+                      className={`inline-flex items-center gap-2 cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-sm font-medium ${isCompressing ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    >
+                      {isCompressing ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                      <span>{isCompressing ? "Optimizing..." : "Choose Better Images"}</span>
                       <input
                         type="file"
                         multiple
                         accept="image/*"
                         onChange={handleFileChange}
+                        disabled={isCompressing}
                         className="hidden"
                       />
                     </label>
