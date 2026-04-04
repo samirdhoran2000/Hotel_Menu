@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ChevronDown, Grid, List, Loader2 } from "lucide-react";
+import { ChevronDown, Grid, List, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import ListViewItem from "./ListViewItem";
 import GridViewItem from "./GridViewItem";
 
@@ -19,6 +19,33 @@ const MenuSection = ({ dataManager }) => {
   } = dataManager;
 
   const observerTarget = useRef(null);
+  const categoryContainerRef = useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = React.useState(false);
+  const [showRightArrow, setShowRightArrow] = React.useState(false);
+
+  const checkScroll = () => {
+    if (categoryContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = categoryContainerRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener("resize", checkScroll);
+    return () => window.removeEventListener("resize", checkScroll);
+  }, [categories]);
+
+  const scroll = (direction) => {
+    if (categoryContainerRef.current) {
+      const scrollAmount = 200;
+      categoryContainerRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   useEffect(() => {
     // We use a small timeout to avoid triggering too fast if the sentinel is visible
@@ -115,28 +142,58 @@ const MenuSection = ({ dataManager }) => {
           </div>
         </div>
 
-        {/* Categories - Minimalistic & Horizontal Scrollable */}
-        <div className="flex overflow-x-auto no-scrollbar justify-start sm:justify-center gap-2 overscroll-contain">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => handleCategoryChange(category)}
-              className={`
-                whitespace-nowrap px-5 py-2 rounded-full transition-all duration-300 text-sm font-medium
-                ${
-                  selectedCategory === category
-                    ? "bg-black text-white shadow-md"
-                    : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                }
-              `}
-            >
-              {category === "all"
-                ? "All"
-                : category === "favourite"
-                  ? "❤️ Favourite"
-                  : category.replace("_", " ").toUpperCase()}
-            </button>
-          ))}
+        {/* Categories - Minimalistic & Horizontal Scrollable with Arrows */}
+        <div className="relative w-full group">
+          {/* Left Arrow */}
+          {showLeftArrow && (
+            <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center bg-gradient-to-r from-white via-white/80 to-transparent pr-8 pointer-events-none transition-all duration-300">
+              <button
+                onClick={() => scroll("left")}
+                className="p-2 bg-white rounded-full shadow-lg border border-gray-100 text-gray-800 pointer-events-auto hover:scale-110 active:scale-95 transition-all"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          <div
+            ref={categoryContainerRef}
+            onScroll={checkScroll}
+            className="flex overflow-x-auto overflow-y-hidden no-scrollbar justify-start sm:justify-start lg:justify-center gap-2 overscroll-contain px-2 py-2 scroll-smooth"
+          >
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategoryChange(category)}
+                className={`
+                  whitespace-nowrap px-5 py-2 rounded-full transition-all duration-300 text-sm font-medium
+                  ${
+                    selectedCategory === category
+                      ? "bg-black text-white shadow-md transform scale-[1.05]"
+                      : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                  }
+                `}
+              >
+                {category === "all"
+                  ? "All"
+                  : category === "favourite"
+                    ? "❤️ Favourite"
+                    : category.replace("_", " ").toUpperCase().replace("MAIN COURCE", "MAIN COURSE")}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Arrow */}
+          {showRightArrow && (
+            <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center bg-gradient-to-l from-white via-white/80 to-transparent pl-8 pointer-events-none transition-all duration-300">
+              <button
+                onClick={() => scroll("right")}
+                className="p-2 bg-white rounded-full shadow-lg border border-gray-100 text-gray-800 pointer-events-auto hover:scale-110 active:scale-95 transition-all"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Bottom Controls: Sort and View Toggle */}
