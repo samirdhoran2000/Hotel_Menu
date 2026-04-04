@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { X, Heart, Star, ChevronLeft, ChevronRight, Leaf } from "lucide-react";
-import promotionalVideo from '../../src/assets/promotional_video.mp4'
 
 const Modal = ({ isOpen, onClose, children }) => {
   const modalRef = useRef();
@@ -42,7 +41,6 @@ const Modal = ({ isOpen, onClose, children }) => {
 const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("full");
-  const [selectedMediaTab, setSelectedMediaTab] = useState("photos");
 
   // Parse ingredients
   const ingredientsArray =
@@ -75,7 +73,6 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       setCurrentImageIndex(0);
-      setSelectedMediaTab("photos");
     }
   }, [isOpen]);
 
@@ -84,7 +81,6 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
     let intervalId;
     if (
       isOpen &&
-      selectedMediaTab === "photos" &&
       Array.isArray(item.images) &&
       item.images.length > 1
     ) {
@@ -96,7 +92,7 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isOpen, selectedMediaTab, item.images]);
+  }, [isOpen, item.images]);
 
   const nextImage = () => {
     if (!Array.isArray(item.images) || item.images.length === 0) return;
@@ -125,100 +121,54 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
       <div className="flex flex-col md:flex-row h-[80vh] md:h-[600px]">
         {/* Left – Media Gallery */}
         <div className="relative w-full md:w-1/2 h-1/2 md:h-full bg-gray-100">
-          {/* Media Tabs */}
-          {item?.video && <div className="absolute top-4 left-4 flex space-x-2 bg-white/80 rounded-full shadow-lg p-1 z-20">
-            <button
-              onClick={() => setSelectedMediaTab("photos")}
-              className={`px-4 py-1 rounded-full transition-all ${
-                selectedMediaTab === "photos"
-                  ? "bg-black text-white"
-                  : "text-gray-600"
-              }`}
-            >
-              Photos
-            </button>
-            <button
-              onClick={() => setSelectedMediaTab("videos")}
-              className={`px-4 py-1 rounded-full transition-all ${
-                selectedMediaTab === "videos"
-                  ? "bg-black text-white"
-                  : "text-gray-600"
-              }`}
-            >
-              Videos
-            </button>
-          </div>}
-
-          {selectedMediaTab === "photos" ? (
-            Array.isArray(item.images) && item.images.length > 0 ? (
-              <>
-                <img
-                  src={item.images[currentImageIndex]}
-                  loading="lazy"
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-                {/* Navigation */}
-                {item.images.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all"
-                      disabled={!item.available}
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all"
-                      disabled={!item.available}
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </>
-                )}
-                {/* Indicators */}
-                {item.images.length > 1 && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                    {item.images.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentImageIndex(idx)}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          idx === currentImageIndex
-                            ? "bg-white w-4"
-                            : "bg-white/50"
-                        }`}
-                        disabled={!item.available}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                <span className="text-gray-500">No Image Available</span>
-              </div>
-            )
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-black">
-              {Array.isArray(item.videos) && item.videos.length > 0 ? (
-                <video
-                  src={
-                    "https://youtube.com/shorts/SR4_mQPk0ss?si=gst3Inxyn7UBAirc"
-                  }
-                  controls
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <video
-                  src={promotionalVideo}
-                  controls
-                  className="w-full h-full object-contain"
-                  autoPlay
-                />
-                // <span className="text-white">No Video Available</span>
+          {Array.isArray(item.images) && item.images.length > 0 ? (
+            <>
+              <img
+                src={item.images[currentImageIndex]}
+                loading="lazy"
+                alt={item.name}
+                className="w-full h-full object-cover"
+              />
+              {/* Navigation */}
+              {item.images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all outline-none"
+                    disabled={!item.available}
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all outline-none"
+                    disabled={!item.available}
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
               )}
+              {/* Indicators */}
+              {item.images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                  {item.images.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        idx === currentImageIndex
+                          ? "bg-white w-4"
+                          : "bg-white/50"
+                      }`}
+                      disabled={!item.available}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+              <span className="text-gray-500">No Image Available</span>
             </div>
           )}
 
