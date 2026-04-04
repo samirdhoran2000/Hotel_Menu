@@ -271,6 +271,7 @@ export const getMenuItemsbyHotel = async (req, res) => {
     const {
       search,
       category,
+      dietary, // "all" | "veg" | "non-veg"
       minPrice,
       maxPrice,
       page = 1,
@@ -279,7 +280,8 @@ export const getMenuItemsbyHotel = async (req, res) => {
       sortOrder = "DESC",
     } = req.query;
 
-    const tableid = await getTableIdByHotelIdAndTableNumber(hotelId,tableId);
+    const hotelIdNum = parseInt(hotelId, 10);
+    const tableid = await getTableIdByHotelIdAndTableNumber(hotelIdNum, tableId);
      createActivityLog(tableid);
 
     // Validate pagination parameters
@@ -301,36 +303,35 @@ export const getMenuItemsbyHotel = async (req, res) => {
     }
 
     // 6) Build WHERE clause for database query
-    const whereClause = { hotelId };
+    const whereClause = { hotelId: hotelIdNum, available: true }; // Only show available items on public page
 
     // Add search filter
     if (search && search.trim()) {
-      whereClause.name = { [Op.iLike]: `%${search.trim()}%` };
+      whereClause.name = { [Op.like]: `%${search.trim()}%` };
     }
 
-    // Add category filter
-    if (category && category.trim()) {
-      whereClause.categoryId = category.trim();
+    // Add category filter (by name)
+    if (category && category.trim() && category !== "all" && category !== "favourite") {
+      const cat = await Category.findOne({ where: { name: category, hotelId: hotelIdNum } });
+      if (cat) {
+        whereClause.categoryId = cat.id;
+      } else {
+        whereClause.categoryId = -1; // Force empty result if category name not found
+      }
     }
 
-    // Add price range filters
-    if (minPrice != null && maxPrice != null) {
-      const min = parseFloat(minPrice);
-      const max = parseFloat(maxPrice);
+    // Add dietary filter
+    if (dietary === "veg") {
+      whereClause.isVegetarian = true;
+    } else if (dietary === "non-veg") {
+      whereClause.isVegetarian = false;
+    }
 
-      if (!isNaN(min) && !isNaN(max) && min <= max) {
-        whereClause.price = { [Op.between]: [min, max] };
-      }
-    } else if (minPrice != null) {
-      const min = parseFloat(minPrice);
-      if (!isNaN(min)) {
-        whereClause.price = { [Op.gte]: min };
-      }
-    } else if (maxPrice != null) {
-      const max = parseFloat(maxPrice);
-      if (!isNaN(max)) {
-        whereClause.price = { [Op.lte]: max };
-      }
+    // Add price range filters (using full_price)
+    if (minPrice != null || maxPrice != null) {
+      whereClause.full_price = {};
+      if (minPrice != null) whereClause.full_price[Op.gte] = parseFloat(minPrice);
+      if (maxPrice != null) whereClause.full_price[Op.lte] = parseFloat(maxPrice);
     }
 
     // 7) Query the database with pagination
@@ -353,7 +354,7 @@ export const getMenuItemsbyHotel = async (req, res) => {
     });
 
     // 8) Fetch Hotel Details for Branding
-    const hotel = await Hotel.findByPk(hotelId, { attributes: ["name"] });
+    const hotel = await Hotel.findByPk(hotelIdNum, { attributes: ["name"] });
     const hotelName = hotel ? hotel.name : "Hotel Menu";
 
     // 9) Process image URLs if needed

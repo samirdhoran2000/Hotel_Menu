@@ -1,9 +1,9 @@
 // ListViewItem.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Heart, Star, Leaf } from "lucide-react";
 import MenuItemDialog from "./MenuItemDialog";
 
-const ListViewItem = ({ item, isLiked, onLikeToggle }) => {
+const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const ingredientsArray =
@@ -172,6 +172,6 @@ const ListViewItem = ({ item, isLiked, onLikeToggle }) => {
       />
     </>
   );
-};
+});
 
 export default ListViewItem;

@@ -1,6 +1,5 @@
-// MenuSection.js
-import React from "react";
-import { ChevronDown, Grid, List } from "lucide-react";
+import React, { useEffect, useRef } from "react";
+import { ChevronDown, Grid, List, Loader2 } from "lucide-react";
 import ListViewItem from "./ListViewItem";
 import GridViewItem from "./GridViewItem";
 
@@ -14,9 +13,45 @@ const MenuSection = ({ dataManager }) => {
     setSortOption,
     viewMode,
     setViewMode,
+    hasMore,
+    isFetchingMore,
+    loadMore,
   } = dataManager;
 
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    // We use a small timeout to avoid triggering too fast if the sentinel is visible
+    // immediately after a state update.
+    let timeoutId;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isFetchingMore && !dataManager.loading) {
+          // Add a tiny debounce to prevent accidental double-triggers
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => {
+            loadMore();
+          }, 150); 
+        }
+      },
+      { threshold: 0.1, rootMargin: "100px" } // Slightly reduced margin for better control
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMore, isFetchingMore, loadMore, dataManager.loading]);
+
   const handleCategoryChange = (category) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setSelectedCategory(category);
   };
 
@@ -185,7 +220,32 @@ const MenuSection = ({ dataManager }) => {
             ),
           )}
         </div>
-      ) : (
+      ) : null}
+
+      {/* Loading More Spinner / Sentinel */}
+      <div 
+        ref={observerTarget} 
+        className="w-full flex justify-center py-8"
+      >
+        {isFetchingMore && (
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+              Loading More Delights...
+            </p>
+          </div>
+        )}
+        {!hasMore && filteredItems.length > 0 && selectedCategory !== "favourite" && (
+           <div className="flex flex-col items-center gap-2 opacity-40">
+             <div className="h-px w-12 bg-gray-300 mb-2" />
+             <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+               You've reached the end
+             </p>
+           </div>
+        )}
+      </div>
+
+      {filteredItems && filteredItems.length === 0 && !dataManager.loading ? (
         <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-200 w-full max-w-2xl mx-auto">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
             <span className="text-3xl">❤️</span>
@@ -207,7 +267,7 @@ const MenuSection = ({ dataManager }) => {
             Explore Menu
           </button>
         </div>
-      )}
+      ) : null}
     </section>
   );
 };

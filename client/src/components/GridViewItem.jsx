@@ -1,9 +1,9 @@
 // GridViewItem.js
-import React, { useState, useEffect } from "react";
+import React, { useState, memo } from "react";
 import { Heart, Star, Leaf } from "lucide-react"; // Added a Leaf icon for Veg badge
 import MenuItemDialog from "./MenuItemDialog";
 
-const GridViewItem = ({ item, isLiked, onLikeToggle }) => {
+const GridViewItem = memo(({ item, isLiked, onLikeToggle }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -152,6 +152,6 @@ const GridViewItem = ({ item, isLiked, onLikeToggle }) => {
       />
     </>
   );
-};
+});
 
 export default GridViewItem;

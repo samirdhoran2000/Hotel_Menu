@@ -20,48 +20,45 @@ export function buildImageUrls(items, req) {
   const list = Array.isArray(items) ? items : [items];
 
   return list.map((item) => {
-    // If we have associated S3 files, use them
-    // Note: item might be a Sequelize instance or plain object. 
-    // If instance, use item.files. If plain, item.files.
-    const files = item.files || (item.AppFiles /* alias check? */); // check association alias
+    // 1) Handle Sequelize instance vs plain object
+    const itemData = item.get ? item.get({ plain: true }) : item;
 
-    if (files && Array.isArray(files) && files.length > 0) {
-      // Map S3 URLs to `images` property for frontend compatibility
-      item.setDataValue ? item.setDataValue('images', files.map(f => f.url)) : (item.images = files.map(f => f.url));
-      // Also parse ingredients if it is a string (legacy behavior?)
-      if (typeof item.ingredients === 'string') {
-        try {
-          const parsed = JSON.parse(item.ingredients);
-          item.setDataValue ? item.setDataValue('ingredients', parsed) : (item.ingredients = parsed);
-        } catch (e) { }
-      }
-      return item;
-    }
-
-    // Legacy logic for local files
-    try {
-      if (item.images && typeof item.images === 'string') {
-        const itemImgs = JSON.parse(item.images);
-        if (itemImgs.length > 0) {
-          const urls = itemImgs.map((imgObj) => {
-            const fileName = imgObj.savedFilename || imgObj; // handle both object and string
-            return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
-          });
-          item.setDataValue ? item.setDataValue('images', urls) : (item.images = urls);
+    // 2) Collect S3 Images if 'files' association exists
+    const files = itemData.files || [];
+    if (Array.isArray(files) && files.length > 0) {
+      itemData.images = files.map((f) => f.url);
+    } else {
+      // Legacy logic for local files stored in 'images' JSON column
+      try {
+        if (itemData.images && typeof itemData.images === "string") {
+          const itemImgs = JSON.parse(itemData.images);
+          if (Array.isArray(itemImgs) && itemImgs.length > 0) {
+            itemData.images = itemImgs.map((imgObj) => {
+              const fileName = imgObj.savedFilename || imgObj;
+              return `${req.protocol}://${req.get("host")}/api/public/${fileName}`;
+            });
+          } else {
+            itemData.images = [];
+          }
+        } else if (!itemData.images) {
+          itemData.images = [];
         }
+      } catch (e) {
+        itemData.images = [];
       }
-    } catch (e) {
-      // ignore parse errors
     }
 
-    // Parse ingredients if string
-    try {
-      if (typeof item.ingredients === 'string') {
-        const parsed = JSON.parse(item.ingredients);
-        item.setDataValue ? item.setDataValue('ingredients', parsed) : (item.ingredients = parsed);
+    // 3) Parse ingredients if it's a string
+    if (typeof itemData.ingredients === "string") {
+      try {
+        itemData.ingredients = JSON.parse(itemData.ingredients);
+      } catch (e) {
+        itemData.ingredients = []; // fallback to empty array
       }
-    } catch (e) { }
+    } else if (!itemData.ingredients) {
+      itemData.ingredients = [];
+    }
 
-    return item;
+    return itemData;
   });
-}
+}
