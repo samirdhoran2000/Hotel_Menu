@@ -28,7 +28,8 @@ const fileFilter = (req, file, cb) => {
 const storage = multerS3({
   s3: s3,
   bucket: process.env.AWS_BUCKET_NAME,
-  // acl: "public-read", // Uncomment if you want public access (and bucket allows it)
+  contentType: multerS3.AUTO_CONTENT_TYPE,
+  cacheControl: "public, max-age=31536000, immutable",
   metadata: function (req, file, cb) {
     cb(null, { fieldName: file.fieldname });
   },
