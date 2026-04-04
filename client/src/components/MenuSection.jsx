@@ -76,7 +76,7 @@ const MenuSection = ({ dataManager }) => {
       </div>
 
       {/* Navigation and Controls */}
-      <div className="flex flex-col w-full mb-8 sticky top-20 z-40 bg-white/90 backdrop-blur-xl p-3 sm:p-4 rounded-3xl shadow-sm border border-gray-100 gap-4">
+      <div className="flex flex-col w-full mb-8 sticky z-40 bg-white/90 backdrop-blur-xl p-3 sm:p-4 rounded-3xl shadow-sm border border-gray-100 gap-4">
         {/* Veg/Non-Veg Minimalist Toggle - Now at the Top */}
         <div className="flex justify-center w-full">
           <div className="flex bg-gray-100 p-1 rounded-2xl w-full sm:w-auto overflow-hidden">
