@@ -116,7 +116,7 @@ const Header = () => {
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
               <button className="relative px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm font-semibold rounded-2xl transition-all duration-300 shadow-xl group-hover:scale-105 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
-                <span>Generate Free QR</span>
+                <span>Login</span>
               </button>
             </div>
           </Link>
@@ -161,7 +161,7 @@ const Header = () => {
                   setIsMobileMenuOpen(false);
                 }} className="relative w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-2xl transition-all duration-300 flex items-center justify-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  <span>Generate Free QR</span>
+                  <span>Login</span>
                 </Link>
               </div>
             </div>
