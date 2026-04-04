@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Heart, Star, ChevronLeft, ChevronRight, Leaf } from "lucide-react";
+import { X, Heart, Star, ChevronLeft, ChevronRight, Leaf, Maximize2 } from "lucide-react";
 
 const Modal = ({ isOpen, onClose, children }) => {
   const modalRef = useRef();
@@ -41,6 +41,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("full");
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   // Parse ingredients
   const ingredientsArray =
@@ -123,12 +124,23 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
         <div className="relative w-full md:w-1/2 h-1/2 md:h-full bg-gray-100">
           {Array.isArray(item.images) && item.images.length > 0 ? (
             <>
-              <img
-                src={item.images[currentImageIndex]}
-                loading="lazy"
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
+              <div 
+                className="relative w-full h-full cursor-zoom-in group"
+                onClick={() => setIsFullScreen(true)}
+              >
+                <img
+                  src={item.images[currentImageIndex]}
+                  loading="lazy"
+                  alt={item.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                />
+                {/* Click-to-Zoom hint */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-2xl transform scale-75 group-hover:scale-100 transition-all duration-300">
+                    <Maximize2 className="w-6 h-6 text-slate-900" />
+                  </div>
+                </div>
+              </div>
               {/* Navigation */}
               {item.images.length > 1 && (
                 <>
@@ -293,6 +305,40 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
           </div>
         </div>
       </div>
+
+      {/* High-End Fullscreen Image Viewer */}
+      {isFullScreen && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl animate-in fade-in duration-300"
+          onClick={() => setIsFullScreen(false)}
+        >
+          {/* Close button with high-contrast text */}
+          <button 
+            className="absolute top-6 right-6 p-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition-all hover:rotate-90 group z-[110]"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFullScreen(false);
+            }}
+          >
+            <X className="w-8 h-8 group-hover:scale-110 transition-all" />
+          </button>
+
+          {/* Large image with smooth animation */}
+          <div className="relative w-full h-full flex items-center justify-center p-4 lg:p-12 animate-in zoom-in-95 duration-500">
+            <img
+              src={item.images[currentImageIndex]}
+              alt={item.name}
+              className="max-w-full max-h-full object-contain shadow-2xl rounded-lg border border-white/10"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          
+          {/* Close-on-click background hint */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/40 text-sm font-medium tracking-widest uppercase opacity-0 animate-in fade-in delay-700 duration-1000 hidden md:block">
+            Click anywhere to close
+          </div>
+        </div>
+      )}
     </Modal>
   );
 };
