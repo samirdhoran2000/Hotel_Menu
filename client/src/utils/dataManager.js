@@ -186,8 +186,12 @@ export const useDataManager = ({ id = null }) => {
   useEffect(() => {
     setPage(1);
     setHasMore(true);
-    // Note: Items will be replaced by the fetchData call when it detects page 1
-  }, [searchQuery, selectedCategory, dietaryFilter, sortOption]);
+    // If not in cache, clear items immediately so UI shows loading instead of "No items"
+    if (!apiCache[cacheKey]) {
+      setItems([]);
+      setLoading(true);
+    }
+  }, [searchQuery, selectedCategory, dietaryFilter, sortOption, cacheKey]);
 
   useEffect(() => {
     // Favourites logic remains local
