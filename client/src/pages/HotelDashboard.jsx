@@ -12,13 +12,15 @@ import {
   FileText,
   ShoppingCart,
   QrCode,
-  List
+  List,
+  LogOut
 } from "lucide-react";
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Handle window resize to auto-hide sidebar on mobile
   React.useEffect(() => {
@@ -61,6 +63,11 @@ const Dashboard = () => {
       return location.pathname === path;
     }
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/hotel/login");
   };
 
   return (
@@ -116,6 +123,21 @@ const Dashboard = () => {
             ))}
           </ul>
         </nav>
+
+        {/* Sidebar Footer - Logout */}
+        <div className="p-4 border-t border-gray-700">
+          <button
+            onClick={handleLogout}
+            className="flex items-center w-full p-3 rounded-lg transition-colors text-gray-400 hover:text-white hover:bg-red-600/20 group"
+          >
+            <LogOut size={20} className="shrink-0 group-hover:text-red-500" />
+            {sidebarOpen && (
+              <span className="ml-3 font-medium truncate group-hover:text-red-500">
+                Logout
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}
