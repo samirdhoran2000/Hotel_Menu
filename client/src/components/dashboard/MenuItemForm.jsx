@@ -388,6 +388,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   };
 
   const handleClose = () => {
+    if (isSubmitting) return; // Prevent closing while saving
     setIsOpen(false);
     onClose();
   };
@@ -413,11 +414,28 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                 </div>
                 <button
                   onClick={handleClose}
-                  className="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition"
+                  disabled={isSubmitting}
+                  className="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <X className="w-6 h-6" />
                 </button>
               </div>
+
+              {/* Loading Overlay - Fixed to viewport to prevent scrolling */}
+              {isSubmitting && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/20 backdrop-blur-[2px] animate-in fade-in duration-300">
+                  <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 border border-gray-100 max-w-sm w-full mx-4">
+                    <div className="relative">
+                      <div className="w-16 h-16 border-4 border-blue-100 rounded-full" />
+                      <Loader2 className="w-16 h-16 text-blue-600 animate-spin absolute inset-0" />
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-xl font-bold text-gray-900">Saving Changes</h3>
+                      <p className="text-sm text-gray-500">Please wait while we update your menu...</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {submitStatus && (
                 <div
@@ -432,7 +450,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                 </div>
               )}
 
-              <div className="p-6 space-y-6">
+              <div className={`p-6 space-y-6 ${isSubmitting ? 'pointer-events-none opacity-50' : ''}`}>
                 {/* Images */}
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-gray-700">
@@ -726,7 +744,8 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="px-6 py-2 border rounded-lg hover:bg-gray-50"
+                  disabled={isSubmitting}
+                  className="px-6 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
@@ -734,9 +753,14 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : isEditing ? "Update" : "Create"}
                 </button>
               </div>
             </div>
