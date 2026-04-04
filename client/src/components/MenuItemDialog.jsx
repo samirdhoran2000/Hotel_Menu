@@ -79,6 +79,25 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
     }
   }, [isOpen]);
 
+  // Automatic Sliding Logic
+  useEffect(() => {
+    let intervalId;
+    if (
+      isOpen &&
+      selectedMediaTab === "photos" &&
+      Array.isArray(item.images) &&
+      item.images.length > 1
+    ) {
+      intervalId = setInterval(() => {
+        nextImage();
+      }, 3000); // Slide every 3 seconds
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isOpen, selectedMediaTab, item.images]);
+
   const nextImage = () => {
     if (!Array.isArray(item.images) || item.images.length === 0) return;
     setCurrentImageIndex((prev) => (prev + 1) % item.images.length);

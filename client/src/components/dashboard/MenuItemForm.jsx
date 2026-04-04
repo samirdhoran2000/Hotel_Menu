@@ -43,6 +43,12 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     imageName: "",
   });
 
+  // --- Quick Add Category States ---
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [isSavingCategory, setIsSavingCategory] = useState(false);
+  const [categoryError, setCategoryError] = useState("");
+
   // Fetch categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
@@ -341,6 +347,46 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     }
   };
 
+  const handleQuickAddCategory = async () => {
+    if (!newCategoryName.trim()) {
+      setCategoryError("Category name is required");
+      return;
+    }
+
+    setIsSavingCategory(true);
+    setCategoryError("");
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/category`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: newCategoryName.trim() }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        // Update local categories list
+        setCategories((prev) => [...prev, data.data]);
+        // Select the new category
+        setFormData((prev) => ({ ...prev, categoryId: data.data.id }));
+        // Reset states
+        setNewCategoryName("");
+        setIsAddingCategory(false);
+      } else {
+        setCategoryError(data.message || "Failed to add category");
+      }
+    } catch (err) {
+      console.error("Error adding quick category:", err);
+      setCategoryError("Network error.");
+    } finally {
+      setIsSavingCategory(false);
+    }
+  };
+
   const handleClose = () => {
     setIsOpen(false);
     onClose();
@@ -475,19 +521,71 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Category
                     </label>
-                    <select
-                      name="categoryId"
-                      value={formData.categoryId}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    >
-                      <option value="">Select Category</option>
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex items-center gap-2">
+                      {isAddingCategory ? (
+                        <div className="flex-1 flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={newCategoryName}
+                            onChange={(e) => setNewCategoryName(e.target.value)}
+                            placeholder="New category name"
+                            className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${categoryError ? 'border-red-500' : 'border-gray-300'}`}
+                            autoFocus
+                          />
+                          <button
+                            type="button"
+                            onClick={handleQuickAddCategory}
+                            disabled={isSavingCategory}
+                            className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                            title="Save Category"
+                          >
+                            {isSavingCategory ? (
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                              <Check className="w-5 h-5" />
+                            )}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsAddingCategory(false);
+                              setCategoryError("");
+                            }}
+                            className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
+                            title="Cancel"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <select
+                            name="categoryId"
+                            value={formData.categoryId}
+                            onChange={handleInputChange}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Select Category</option>
+                            {categories.map((cat) => (
+                              <option key={cat.id} value={cat.id}>
+                                {cat.name}
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => setIsAddingCategory(true)}
+                            className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 border border-blue-200 transition"
+                            title="Add New Category"
+                          >
+                            <Plus className="w-5 h-5" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    {categoryError && (
+                      <p className="text-red-500 text-xs mt-1">{categoryError}</p>
+                    )}
                   </div>
                 </div>
 
