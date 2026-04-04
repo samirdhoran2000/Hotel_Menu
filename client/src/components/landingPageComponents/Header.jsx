@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BarChart3, Menu, X, User, ChevronDown, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/Logo.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
