@@ -20,6 +20,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: client
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,22 +37,19 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > client/.env
-          echo "VITE_DOMAIN_URL=${{ secrets.VITE_DOMAIN_URL }}" >> client/.env
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+          echo "VITE_DOMAIN_URL=${{ secrets.VITE_DOMAIN_URL }}" >> .env
 
       - name: Install dependencies
         run: npm ci
-        working-directory: ./client
 
       - name: Build project
         run: npm run build
-        working-directory: ./client
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
 
       - name: Show dist size
-        run: du -sh client/dist
-        working-directory: .
+        run: du -sh dist
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
