@@ -16,11 +16,13 @@ export default defineConfig({
     host: true,
     open: true,
 
+
     // Enable HTTPS and point to the key & cert files you generated.
     // https: {
     //   key: fs.readFileSync(resolve(__dirname, "./localhost.key")),
     //   cert: fs.readFileSync(resolve(__dirname, "./localhost.crt")),
     // },
   },
+  base: "/Hotel_Menu/",
   plugins: [react()],
 });
