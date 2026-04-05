@@ -23,6 +23,6 @@ export default defineConfig({
     //   cert: fs.readFileSync(resolve(__dirname, "./localhost.crt")),
     // },
   },
-  base: "/Hotel_Menu/",
+  base: "/",
   plugins: [react()],
 });
