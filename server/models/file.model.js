@@ -6,7 +6,7 @@ const File = sequelize.define(
     "File",
     {
         id: {
-            type: DataTypes.INTEGER.UNSIGNED,
+            type: DataTypes.INTEGER,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true,
@@ -28,7 +28,7 @@ const File = sequelize.define(
             allowNull: true,
         },
         size: {
-            type: DataTypes.INTEGER.UNSIGNED,
+            type: DataTypes.INTEGER,
             allowNull: true,
         },
         // We will associate this with MenuItem in associations.js

@@ -7,13 +7,13 @@ const ActivityLog = sequelize.define(
   "ActivityLog",
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
     tableId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: "tables", key: "id" },
       onUpdate: "CASCADE",
@@ -24,7 +24,7 @@ const ActivityLog = sequelize.define(
       allowNull: true,
     },
     duration: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     itemClicked: {

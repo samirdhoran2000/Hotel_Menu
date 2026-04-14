@@ -8,13 +8,13 @@ const Table = sequelize.define(
   "Table",
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
     hotelId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: { model: "hotels", key: "id" },
       onUpdate: "CASCADE",

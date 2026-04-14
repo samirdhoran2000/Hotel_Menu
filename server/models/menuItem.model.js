@@ -7,13 +7,13 @@ const MenuItem = sequelize.define(
   "MenuItem",
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
     hotelId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: true,
       references: {
         model: "hotels",
@@ -23,7 +23,7 @@ const MenuItem = sequelize.define(
       onDelete: "CASCADE",
     },
     // userId: {
-    //   type: DataTypes.INTEGER.UNSIGNED,
+    //   type: DataTypes.INTEGER,
     //   allowNull: true,
     //   references: {
     //     model: "users",
@@ -55,7 +55,7 @@ const MenuItem = sequelize.define(
       },
     },
     categoryId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: true,
       references: {
         model: "categories",

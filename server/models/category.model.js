@@ -6,7 +6,7 @@ const Category = sequelize.define(
   "Category",
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
@@ -16,7 +16,7 @@ const Category = sequelize.define(
       allowNull: false,
     },
     hotelId: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: "hotels",

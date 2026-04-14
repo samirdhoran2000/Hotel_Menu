@@ -68,7 +68,7 @@ export const getActivitySummaryByHotel = async (req, res) => {
       MenuItem.count({
         where: {
           hotelId,
-          available: 1,
+          available: true,
         },
       }),
     ]);

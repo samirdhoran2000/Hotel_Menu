@@ -8,7 +8,7 @@ const Hotel = sequelize.define(
   "Hotel",
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
