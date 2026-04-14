@@ -169,7 +169,7 @@ export const getMenuItems = async (req, res) => {
           totalPages: Math.ceil(count / pageSize),
           totalItems: count,
           itemsPerPage: pageSize,
-          hasNextPage: pageNumber < Math.ceil(count / pageSize),
+          hasNextPage: rows.length === pageSize && pageNumber < Math.ceil(count / pageSize),
           hasPreviousPage: pageNumber > 1,
         },
       },

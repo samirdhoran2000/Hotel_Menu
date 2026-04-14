@@ -307,7 +307,7 @@ export const getMenuItemsbyHotel = async (req, res) => {
 
     // Add search filter
     if (search && search.trim()) {
-      whereClause.name = { [Op.like]: `%${search.trim()}%` };
+      whereClause.name = { [Op.iLike]: `%${search.trim()}%` };
     }
 
     // Add category filter (by name)
@@ -372,7 +372,7 @@ export const getMenuItemsbyHotel = async (req, res) => {
           totalPages: Math.ceil(count / pageSize),
           totalItems: count,
           itemsPerPage: pageSize,
-          hasNextPage: pageNumber < Math.ceil(count / pageSize),
+          hasNextPage: rows.length === pageSize && pageNumber < Math.ceil(count / pageSize),
           hasPreviousPage: pageNumber > 1,
         },
       },

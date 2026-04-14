@@ -30,7 +30,7 @@ export const useDataManager = ({ id = null }) => {
   const [loading, setLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false); // Start as false to prevent sentinel trigger before first load
   const [hotelDetails, setHotelDetails] = useState({ name: "Hotel Menu", tableNumber: "" });
   
   // Favourites state (using IDs)
@@ -163,6 +163,7 @@ export const useDataManager = ({ id = null }) => {
           });
         } else {
           setHasMore(false);
+          if (page === 1) setItems([]);
         }
       } catch (err) {
         if (err.name !== "AbortError") {
@@ -185,7 +186,7 @@ export const useDataManager = ({ id = null }) => {
   // Reset page and items when filters change
   useEffect(() => {
     setPage(1);
-    setHasMore(true);
+    // don't setHasMore(true) here; let the first result from page 1 decide it.
     // If not in cache, clear items immediately so UI shows loading instead of "No items"
     if (!apiCache[cacheKey]) {
       setItems([]);
