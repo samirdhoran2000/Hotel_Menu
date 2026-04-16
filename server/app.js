@@ -6,7 +6,6 @@ import hotelRoutes from "./routes/hotel.route.js";
 // import userRoutes from "./routes/user.route.js";
 import menuRoutes from "./routes/menuItem.route.js";
 import tableRoutes from "./routes/table.route.js";
-import activityRoutes from "./routes/activityLog.route.js";
 import categoryRoutes from "./routes/category.route.js";
 
 
@@ -29,7 +28,6 @@ app.use("/api/category", categoryRoutes);
 // app.use("/api/user", userRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/table", tableRoutes);
-app.use("/api/activity-log", activityRoutes);
 
 app.use("/api/public", express.static("uploads"));
 

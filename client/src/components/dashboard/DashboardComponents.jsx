@@ -56,29 +56,12 @@ const DashboardHome = () => {
   // 1) Fetch the last 7 days of logs
   useEffect(() => {
     async function load() {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/activity-log`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const payload = await res.json();
-
-        if (payload.success) {
-          setRawLogs(payload.data);
-          setMostScanTable(payload?.analytics?.topTable[0]);
-          setTotalScan(payload?.analytics?.todayCount);
-          setMenuCounts(payload?.analytics?.menus);
-          setTableCounts(payload?.analytics?.tables);
-        }
-      } catch (err) {
-        console.error(err);
-      }
+      // API call to activity-log removed to stop functionality from frontend side
+      setRawLogs([]);
+      setMostScanTable({});
+      setTotalScan(0);
+      setMenuCounts({});
+      setTableCounts({});
     }
     load();
   }, []);
@@ -321,25 +304,8 @@ const Analytics = () => {
 
    useEffect(() => {
     async function load() {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/activity-log`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const payload = await res.json();
-
-        if (payload.success) {
-          setRawLogs(payload.data);
-        }
-      } catch (err) {
-        console.error(err);
-      }
+      // API call to activity-log removed
+      setRawLogs([]);
     }
     load();
    }, []);
