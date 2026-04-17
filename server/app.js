@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*", // Frontend origin
+    origin: "https://easymenucard.com", // Frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   })
