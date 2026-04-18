@@ -52,7 +52,14 @@ export const getAllTables = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    return res.status(200).json(tables);
+    // Dynamically update qrCodeLink to match current environment domain
+    const modifiedTables = tables.map((t) => {
+      const tablePlain = t.get({ plain: true });
+      tablePlain.qrCodeLink = `${config.domain}/${generateCode(tablePlain.hotelId, tablePlain.tableNumber)}`;
+      return tablePlain;
+    });
+
+    return res.status(200).json(modifiedTables);
   } catch (error) {
     console.error("Error fetching tables:", error);
     return res.status(500).json({ message: "Internal server error." });
@@ -69,7 +76,10 @@ export const getTableById = async (req, res) => {
       return res.status(404).json({ message: "Table not found." });
     }
 
-    return res.status(200).json(table);
+    const tablePlain = table.get({ plain: true });
+    tablePlain.qrCodeLink = `${config.domain}/${generateCode(tablePlain.hotelId, tablePlain.tableNumber)}`;
+
+    return res.status(200).json(tablePlain);
   } catch (error) {
     console.error("Error fetching table:", error);
     return res.status(500).json({ message: "Internal server error." });
@@ -93,7 +103,11 @@ export const updateTable = async (req, res) => {
     if (qrCodeLink !== undefined) table.qrCodeLink = qrCodeLink;
 
     await table.save();
-    return res.status(200).json(table);
+
+    const tablePlain = table.get({ plain: true });
+    tablePlain.qrCodeLink = `${config.domain}/${generateCode(tablePlain.hotelId, tablePlain.tableNumber)}`;
+
+    return res.status(200).json(tablePlain);
   } catch (error) {
     console.error("Error updating table:", error);
     if (error.name === "SequelizeUniqueConstraintError") {
