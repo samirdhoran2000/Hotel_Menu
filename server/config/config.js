@@ -4,6 +4,7 @@ export const config = {
   sslKeyPath: process.env.SSL_KEY_PATH || "localhost.key",
   sslCertPath: process.env.SSL_CERT_PATH || "localhost.crt",
   jwtSecret: process.env.JWT_SECRET || "your-secret-key",
+  domain:process.env.DOMAIN,
   db: {
     url: process.env.DATABASE_URL, // Used by Supabase and standard Postgres setups
     host: process.env.DB_HOST || "localhost",
@@ -25,7 +26,6 @@ export const config = {
       }
     } : {}
   },
-  domain:process.env.DOMAIN || 'http://localhost:5173/hotel'
 };
 
 // export default config;

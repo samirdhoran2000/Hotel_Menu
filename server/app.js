@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://easymenucard.com",
+    origin: "*",
     credentials: true
   })
 );
