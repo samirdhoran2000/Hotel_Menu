@@ -727,7 +727,7 @@ export default function RegisterHotel() {
                         ) : (
                           <div className="flex items-center justify-center gap-3">
                             <Sparkles className="w-4 h-4" />
-                            <span>Join the Revolution</span>
+                            <span>Submit</span>
                           </div>
                         )}
                       </button>

@@ -341,7 +341,7 @@ export default function LoginHotel() {
                     
                     className="text-white underline hover:text-purple-200 font-semibold transition-colors relative group focus:outline-none"
                   >
-                    <span className="relative z-10">Join the revolution</span>
+                    <span className="relative z-10">Sign Up</span>
                     <span className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                   </Link>
                 </p>

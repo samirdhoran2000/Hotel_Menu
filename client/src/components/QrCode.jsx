@@ -152,7 +152,7 @@ const QrCode = () => {
               <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-cyan-400/20 rounded-3xl blur-lg group-hover/qr:blur-xl transition-all duration-300"></div>
               <div className="relative bg-white/95 backdrop-blur-sm p-4 md:p-6 rounded-3xl shadow-2xl border border-white/20 group-hover/qr:scale-105 transition-transform duration-300 max-w-full">
                 <QRCodeCanvas
-                  value={`${import.meta.env.VITE_DOMAIN_URL}/${params?.id}`} // The URL for the QR code
+                  value={`${import.meta.env.VITE_DOMAIN_URL}/hotel/${params?.id}`} // The URL for the QR code
                   size={window.innerWidth < 640 ? 160 : 200}
                   level="H" // High error correction level
                   className="rounded-xl w-full h-auto max-w-[160px] md:max-w-[200px]"

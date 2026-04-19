@@ -68,7 +68,7 @@ const MenuCardAbout = () => {
       <WhyItsFree />
 
       {/* Blogs */}
-      <Blogs />
+      {/* <Blogs /> */}
 
       {/* FAQ */}
       <FAQ />
