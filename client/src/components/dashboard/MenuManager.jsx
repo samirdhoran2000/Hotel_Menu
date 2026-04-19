@@ -15,18 +15,21 @@ const MenuManager = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItemId, setEditingItemId] = useState(null);
   const [viewMode, setViewMode] = useState("table"); // 'grid' or 'table'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({});
 
   const token = localStorage.getItem("token");
   // Fetch all menu items on mount (or whenever you want to re-load)
-  const fetchMenuItems = async () => {
+  const fetchMenuItems = async (page = 1) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/menu`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/menu?page=${page}&limit=10`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
 
       if (res.ok) {
-        setMenuItems(data?.data?.menuItems);
+        setMenuItems(data?.data?.menuItems || []);
+        setPagination(data?.data?.pagination || {});
       } else {
         console.error("Failed to fetch menu items:", data.message);
       }
@@ -52,7 +55,7 @@ const MenuManager = () => {
       if (res.ok) {
         alert("Menu item deleted successfully.");
         // Refresh the menu items list after successful deletion
-        fetchMenuItems();
+        fetchMenuItems(currentPage);
       } else {
         alert(
           "Failed to delete menu item: " + (data.message || "Unknown error")
@@ -65,8 +68,8 @@ const MenuManager = () => {
   };
 
   useEffect(() => {
-    fetchMenuItems();
-  }, []);
+    fetchMenuItems(currentPage);
+  }, [currentPage]);
 
   const openCreateModal = () => {
     setEditingItemId(null);
@@ -86,7 +89,7 @@ const MenuManager = () => {
   // After creating or updating, re-fetch the list
   const handleSaveSuccess = () => {
     closeModal();
-    fetchMenuItems();
+    fetchMenuItems(currentPage);
   };
 
   // Grid View Component
@@ -289,7 +292,7 @@ const MenuManager = () => {
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
         <div>
           <h2 className="text-2xl font-black text-gray-900 tracking-tight">Menu Management</h2>
-          <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Total {menuItems.length} Dishes</p>
+          <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Total {pagination.totalItems || menuItems.length} Dishes</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -325,6 +328,29 @@ const MenuManager = () => {
 
       {/* Render Grid or Table based on viewMode */}
       {viewMode === "grid" ? <GridView /> : <TableView />}
+
+      {/* Pagination Controls */}
+      {pagination.totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8">
+          <button
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={!pagination.hasPreviousPage}
+            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+          >
+            Previous
+          </button>
+          <span className="text-sm font-medium text-gray-600">
+            Page {pagination.currentPage} of {pagination.totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(pagination.totalPages, p + 1))}
+            disabled={!pagination.hasNextPage}
+            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Modal: reuse MenuItemForm (passing editingItemId) */}
       {isFormOpen && (
