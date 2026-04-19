@@ -13,8 +13,6 @@ client/node_modules/
 server/node_modules/
 
 # Build output for both root and subdirectories
-dist/
-client/dist/
 server/dist/
 dist-ssr/
 

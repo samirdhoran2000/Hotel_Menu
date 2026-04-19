@@ -1,0 +1,5 @@
+# Easy Menu — https://easymenucard.com
+User-agent: *
+Allow: /
+Disallow:
+
