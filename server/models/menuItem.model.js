@@ -42,7 +42,7 @@ const MenuItem = sequelize.define(
     },
     half_price: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      allowNull: true,
       validate: {
         min: 0,
       },
@@ -67,7 +67,7 @@ const MenuItem = sequelize.define(
     isVegetarian: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
+      defaultValue: true,
     },
     available: {
       type: DataTypes.BOOLEAN,
@@ -76,14 +76,14 @@ const MenuItem = sequelize.define(
     },
     original_half_price: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      allowNull: true,
       validate: {
         min: 0,
       },
     },
     original_full_price: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      allowNull: true,
       validate: {
         min: 0,
       },

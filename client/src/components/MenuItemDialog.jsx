@@ -55,20 +55,21 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
   const baseFullPrice = parseFloat(item.full_price) || 0;
   const originalFullPrice = parseFloat(item.original_full_price) || 0;
 
-  const sizes = [
-    {
+  const sizes = [];
+  if (item.half_price != null && parseFloat(item.half_price) > 0) {
+    sizes.push({
       id: "half",
       name: "Half",
       price: baseHalfPrice.toFixed(2),
       originalPrice: originalHalfPrice.toFixed(2),
-    },
-    {
-      id: "full",
-      name: "Full",
-      price: baseFullPrice.toFixed(2),
-      originalPrice: originalFullPrice.toFixed(2),
-    },
-  ];
+    });
+  }
+  sizes.push({
+    id: "full",
+    name: "Full",
+    price: baseFullPrice.toFixed(2),
+    originalPrice: originalFullPrice.toFixed(2),
+  });
 
   // Reset on open
   useEffect(() => {
@@ -179,8 +180,8 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
               )}
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              <span className="text-gray-500">No Image Available</span>
+            <div className="w-full h-full flex items-center justify-center bg-gray-50 border border-gray-100">
+              <img src="/logo.png" alt="No Image" className="max-w-[50%] max-h-[50%] object-contain" />
             </div>
           )}
 
@@ -209,11 +210,18 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
                   {item.name}
                 </h2>
                 <div className="flex items-center space-x-4">
-                  {item.isVegetarian && (
+                  {item.isVegetarian ? (
                     <div className="flex items-center bg-green-100 px-2 py-1 rounded-full">
                       <Leaf className="w-4 h-4 text-green-600" />
                       <span className="text-xs font-medium text-green-800 ml-1">
                         Veg
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center bg-red-100 px-2 py-1 rounded-full">
+                      <div className="w-3 h-3 rounded-full bg-red-600 flex-shrink-0" />
+                      <span className="text-xs font-medium text-red-800 ml-1">
+                        Non-Veg
                       </span>
                     </div>
                   )}
@@ -256,8 +264,8 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
               <h3 className="font-semibold mb-3">Choose Size</h3>
               <div className="flex space-x-4">
                 {sizes.map((size) => {
-                  const isDiscounted =
-                    parseFloat(size.originalPrice) > parseFloat(size.price);
+                  const hasOriginalPrice =
+                    !isNaN(parseFloat(size.originalPrice)) && parseFloat(size.originalPrice) > 0;
                   return (
                     <button
                       key={size.id}
@@ -274,7 +282,7 @@ const MenuItemDialog = ({ item, isOpen, isLiked, onLikeToggle, onClose }) => {
                       <div className="text-sm">{size.name}</div>
                       <div className="flex items-baseline space-x-2">
                         <span className="font-semibold">₹{size.price}</span>
-                        {isDiscounted && (
+                        {hasOriginalPrice && (
                           <span className="text-sm line-through text-gray-500">
                             ₹{size.originalPrice}
                           </span>

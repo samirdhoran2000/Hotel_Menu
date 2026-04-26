@@ -39,15 +39,27 @@ const GridViewItem = memo(({ item, isLiked, onLikeToggle }) => {
       >
         {/* Image + Like button */}
         <div className="relative aspect-square">
-          <img
-            src={item.images[0]}
-            loading="lazy"
-            alt={item.name}
-            className="w-full h-full object-cover transition-transform duration-300"
-            style={{
-              transform: isHovered ? "scale(1.05)" : "scale(1)",
-            }}
-          />
+          {Array.isArray(item.images) && item.images.length > 0 ? (
+            <img
+              src={item.images[0]}
+              loading="lazy"
+              alt={item.name}
+              className="w-full h-full object-cover transition-transform duration-300"
+              style={{
+                transform: isHovered ? "scale(1.05)" : "scale(1)",
+              }}
+            />
+          ) : (
+            <img
+              src="/logo.png"
+              loading="lazy"
+              alt={item.name}
+              className="w-full h-full object-contain p-4 bg-gray-50 transition-transform duration-300 border border-gray-100"
+              style={{
+                transform: isHovered ? "scale(1.05)" : "scale(1)",
+              }}
+            />
+          )}
 
           {/* If item is not available, show "Sold Out" overlay */}
           {!item.available && (
@@ -70,29 +82,36 @@ const GridViewItem = memo(({ item, isLiked, onLikeToggle }) => {
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <div className="flex justify-between items-start mb-2">
+        <div className="p-2 sm:p-3 min-w-0 flex-1 flex flex-col justify-between">
+          <div className="flex justify-between items-start mb-2 gap-2">
             {/* Name */}
-            <h3 className="text-lg font-semibold text-gray-800 line-clamp-2">
-              {item.name.length > 17 ? item.name.slice(0, 17) + "…" : item.name}
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 line-clamp-2 min-w-0 flex-1 break-words">
+              {item.name}
             </h3>
 
-            <div className="flex items-center space-x-1">
+            <div className="flex-shrink-0 flex items-center space-x-1">
               {/* Veg Badge */}
-              {item.isVegetarian && (
-                <div className="flex items-center bg-green-100 px-2 py-1 rounded-full mr-2">
-                  <Leaf className="w-4 h-4 text-green-600" />
-                  <span className="text-xs font-medium text-green-800 ml-1">
+              {item.isVegetarian ? (
+                <div className="flex items-center bg-green-100 px-1.5 py-0.5 rounded-full mr-2">
+                  <Leaf className="w-3 h-3 text-green-600" />
+                  <span className="text-[10px] font-medium text-green-800 ml-1">
                     Veg
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center bg-red-100 px-1.5 py-0.5 rounded-full mr-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-600 flex-shrink-0" />
+                  <span className="text-[10px] font-medium text-red-800 ml-1">
+                    Non-Veg
                   </span>
                 </div>
               )}
 
               {/* Rating (only if present) */}
               {item.rating !== undefined && item.rating !== null && (
-                <div className="flex items-center bg-green-100 px-2 py-1 rounded-full">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="text-sm font-medium text-green-800 ml-1">
+                <div className="flex items-center bg-green-100 px-1.5 py-0.5 rounded-full">
+                  <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                  <span className="text-[11px] font-medium text-green-800 ml-1">
                     {item.rating}
                   </span>
                 </div>
@@ -101,26 +120,34 @@ const GridViewItem = memo(({ item, isLiked, onLikeToggle }) => {
           </div>
 
           {/* Description */}
-          <p className="text-sm text-gray-500 mb-3 line-clamp-2">
+          <p className="text-[13px] sm:text-sm text-gray-500 mb-2 line-clamp-2">
             {item.description}
           </p>
 
           {/* Price + View Button */}
           <div className="flex justify-between items-center">
-            <div>
-              <span className="text-2xl font-bold text-gray-900">
-                ₹{item.half_price}
+            <div className="flex-shrink-0">
+              <span className="text-lg sm:text-xl font-bold text-gray-900">
+                ₹{item.half_price ? item.half_price : item.full_price}
               </span>
-              {item.original_full_price && (
-                <span className="text-sm text-gray-500 line-through ml-2">
-                  ₹{item.original_full_price}
-                </span>
+              {item.half_price ? (
+                !isNaN(parseFloat(item.original_half_price)) && parseFloat(item.original_half_price) > 0 && (
+                  <span className="text-sm text-gray-500 line-through ml-2">
+                    ₹{parseFloat(item.original_half_price).toFixed(2)}
+                  </span>
+                )
+              ) : (
+                !isNaN(parseFloat(item.original_full_price)) && parseFloat(item.original_full_price) > 0 && (
+                  <span className="text-sm text-gray-500 line-through ml-2">
+                    ₹{parseFloat(item.original_full_price).toFixed(2)}
+                  </span>
+                )
               )}
             </div>
             <button
               onClick={() => setIsDialogOpen(true)}
               className={`
-                px-4 py-2 rounded-lg transition-all duration-300 
+                px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all duration-300 
                 ${
                   item.available
                     ? "bg-black text-white hover:bg-gray-800 active:scale-95"

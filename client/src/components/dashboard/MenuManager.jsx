@@ -118,12 +118,12 @@ const MenuManager = () => {
               <div className="mt-2">
                 <span className="text-xl font-semibold text-gray-800 flex items-center">
                   <IndianRupee className="w-4 h-4" />
-                  {item.half_price}
+                  {item.full_price}
                 </span>
-                {item.original_half_price &&
-                  item.original_half_price !== item.half_price && (
+                {item.original_full_price &&
+                  item.original_full_price !== item.full_price && (
                     <span className="text-sm text-gray-500 line-through ml-2">
-                      ₹{item.original_half_price}
+                      ₹{item.original_full_price}
                     </span>
                   )}
               </div>
@@ -203,7 +203,7 @@ const MenuManager = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center text-sm font-bold text-gray-900">
                     <IndianRupee className="w-3.5 h-3.5 mr-0.5" />
-                    {item.half_price}
+                    {item.full_price}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -262,7 +262,7 @@ const MenuManager = () => {
               <div className="flex items-center justify-between mt-auto">
                 <span className="text-lg font-black text-gray-900 flex items-center">
                   <IndianRupee className="w-4 h-4 mr-0.5" />
-                  {item.half_price}
+                  {item.full_price}
                 </span>
                 <div className="flex gap-2">
                   <button onClick={() => openEditModal(item.id)} className="p-2 sm:p-2.5 text-blue-600 bg-blue-50 rounded-xl active:scale-90 transition-all border border-blue-100">

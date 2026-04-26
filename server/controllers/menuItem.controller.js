@@ -40,27 +40,28 @@ export const createMenuItem = async (req, res) => {
     // Basic validation
     if (
       !name ||
-      half_price == null ||
-      original_half_price == null ||
-      full_price == null ||
-      original_full_price == null
+      full_price == null
     ) {
       return res.status(400).json({
         success: false,
-        message: "Name, prices (half, full, original) are required",
+        message: "Name and full price are required",
       });
     }
+
+    const parsedHalfPrice = half_price ? parseFloat(half_price) : null;
+    const parsedOriginalHalfPrice = original_half_price ? parseFloat(original_half_price) : null;
+    const parsedOriginalFullPrice = original_full_price ? parseFloat(original_full_price) : null;
 
     const menuItem = await MenuItem.create({
       name,
       description,
-      half_price: parseFloat(half_price),
+      half_price: parsedHalfPrice,
       full_price: parseFloat(full_price),
       categoryId: categoryId ? parseInt(categoryId, 10) : null,
-      isVegetarian: isVegetarian === "true" || isVegetarian === true,
+      isVegetarian: isVegetarian == null ? true : (isVegetarian === "true" || isVegetarian === true),
       available: available === "true" || available === true,
-      original_half_price: parseFloat(original_half_price),
-      original_full_price: parseFloat(original_full_price),
+      original_half_price: parsedOriginalHalfPrice,
+      original_full_price: parsedOriginalFullPrice,
       ingredients: typeof ingredients === 'string' ? JSON.parse(ingredients) : ingredients,
       hotelId,
     });
@@ -272,10 +273,10 @@ export const updateMenuItem = async (req, res) => {
     const updateData = {};
     if (name) updateData.name = name.trim();
     if (description !== undefined) updateData.description = description;
-    if (half_price != null) updateData.half_price = parseFloat(half_price);
-    if (original_half_price != null) updateData.original_half_price = parseFloat(original_half_price);
+    if (half_price !== undefined) updateData.half_price = half_price ? parseFloat(half_price) : null;
+    if (original_half_price !== undefined) updateData.original_half_price = original_half_price ? parseFloat(original_half_price) : null;
     if (full_price != null) updateData.full_price = parseFloat(full_price);
-    if (original_full_price != null) updateData.original_full_price = parseFloat(original_full_price);
+    if (original_full_price !== undefined) updateData.original_full_price = original_full_price ? parseFloat(original_full_price) : null;
     if (categoryId !== undefined) updateData.categoryId = categoryId ? parseInt(categoryId, 10) : null;
     if (isVegetarian != null) updateData.isVegetarian = isVegetarian === "true" || isVegetarian === true;
     if (available != null) updateData.available = available === "true" || available === true;

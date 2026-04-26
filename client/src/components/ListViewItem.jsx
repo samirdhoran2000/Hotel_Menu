@@ -26,17 +26,16 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
   };
 
   // Parse prices into numbers for consistency
-  const basePrice = parseFloat(item.half_price) || 0;
-  const originalPrice = item.original_full_price
-    ? parseFloat(item.original_full_price)
-    : null;
+  const basePrice = item.half_price ? parseFloat(item.half_price) : (parseFloat(item.full_price) || 0);
+  const originalPrice = item.half_price ? item.original_half_price : item.original_full_price;
+  const parsedOriginalPrice = originalPrice ? parseFloat(originalPrice) : null;
 
   return (
     <>
       <div
         className={`
           relative 
-          flex items-stretch space-x-4 p-4 bg-white rounded-xl shadow-md 
+          flex items-stretch space-x-2 sm:space-x-3 p-2 sm:p-3 bg-white rounded-xl shadow-md 
           transition-all duration-300 hover:shadow-xl 
           ${!item.available ? "opacity-50 pointer-events-none" : ""}
         `}
@@ -51,7 +50,7 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
         )}
 
         {/* Image + Like Button */}
-        <div className="relative w-32 h-32 flex-shrink-0">
+        <div className="relative w-20 h-20 sm:w-28 sm:h-28 flex-shrink-0">
           {Array.isArray(item.images) && item.images.length > 0 ? (
             <img
               src={item.images[0]}
@@ -60,9 +59,12 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
               className="w-full h-full object-cover rounded-lg"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-              <span className="text-gray-500 text-sm">No Image</span>
-            </div>
+            <img
+              src="/logo.png"
+              loading="lazy"
+              alt={item.name}
+              className="w-full h-full object-contain rounded-lg p-2 bg-gray-50 border border-gray-100"
+            />
           )}
 
           <button
@@ -79,19 +81,26 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col justify-between relative z-10">
+        <div className="flex-1 flex flex-col justify-between relative z-10 min-w-0">
           <div>
             <div className="flex justify-between items-start mb-1">
               {/* Name + Veg Badge */}
               <div className="flex items-center space-x-2">
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 break-words line-clamp-2">
                   {item.name}
                 </h3>
-                {item.isVegetarian && (
-                  <div className="flex items-center bg-green-100 px-2 py-1 rounded-full">
-                    <Leaf className="w-4 h-4 text-green-600" />
-                    <span className="text-xs font-medium text-green-800 ml-1">
+                {item.isVegetarian ? (
+                  <div className="flex items-center bg-green-100 px-1.5 py-0.5 rounded-full">
+                    <Leaf className="w-3 h-3 text-green-600" />
+                    <span className="text-[10px] font-medium text-green-800 ml-1">
                       Veg
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center bg-red-100 px-1.5 py-0.5 rounded-full">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-600 flex-shrink-0" />
+                    <span className="text-[10px] font-medium text-red-800 ml-1">
+                      Non-Veg
                     </span>
                   </div>
                 )}
@@ -99,9 +108,9 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
 
               {/* Rating (if present) */}
               {item.rating !== undefined && item.rating !== null && (
-                <div className="flex items-center space-x-1 bg-green-100 px-2 py-1 rounded-full">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="text-sm font-medium text-green-800">
+                <div className="flex items-center space-x-1 bg-green-100 px-1.5 py-0.5 rounded-full">
+                  <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                  <span className="text-[11px] font-medium text-green-800">
                     {item.rating}
                   </span>
                 </div>
@@ -109,7 +118,7 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
             </div>
 
             {/* Description */}
-            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+            <p className="text-[13px] sm:text-sm text-gray-600 mb-1.5 line-clamp-2">
               {item.description}
             </p>
 
@@ -131,14 +140,14 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
           </div>
 
           {/* Price & View Button */}
-          <div className="flex justify-between items-end">
+          <div className="flex justify-between items-end mt-auto pt-2 gap-2">
             <div>
-              <span className="text-2xl font-bold text-gray-900">
+              <span className="text-lg sm:text-xl font-bold text-gray-900">
                 ₹{basePrice.toFixed(2)}
               </span>
-              {originalPrice && (
+              {!isNaN(parsedOriginalPrice) && parsedOriginalPrice !== null && parsedOriginalPrice > 0 && (
                 <span className="text-sm text-gray-500 line-through ml-2">
-                  ₹{originalPrice.toFixed(2)}
+                  ₹{parsedOriginalPrice.toFixed(2)}
                 </span>
               )}
             </div>
@@ -146,7 +155,7 @@ const ListViewItem = memo(({ item, isLiked, onLikeToggle }) => {
               <button
                 onClick={() => setIsDialogOpen(true)}
                 className={`
-                  px-4 py-2 rounded-lg transition-all duration-300
+                  px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all duration-300
                   ${
                     item.available
                       ? "bg-black text-white hover:bg-gray-800 active:scale-95"

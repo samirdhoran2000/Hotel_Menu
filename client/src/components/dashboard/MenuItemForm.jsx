@@ -24,7 +24,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     original_full_price: "",
     categoryId: "",
     ingredients: [],
-    isVegetarian: false,
+    isVegetarian: true,
     available: true,
   });
   const [categories, setCategories] = useState([]);
@@ -94,7 +94,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
             ingredients: Array.isArray(result.ingredients)
               ? result.ingredients
               : JSON.parse(result.ingredients || "[]"),
-            isVegetarian: result.isVegetarian || false,
+            isVegetarian: result.isVegetarian ?? true,
             available: result.available || false,
           });
 
@@ -263,11 +263,10 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (
-      !formData.half_price ||
-      isNaN(formData.half_price) ||
-      parseFloat(formData.half_price) < 0
+      formData.half_price &&
+      (isNaN(formData.half_price) || parseFloat(formData.half_price) < 0)
     ) {
-      newErrors.half_price = "Valid price is required";
+      newErrors.half_price = "Valid price is required if provided";
     }
     if (
       !formData.full_price ||
@@ -276,9 +275,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
     ) {
       newErrors.full_price = "Valid price is required";
     }
-    if (existingImages.length + files.length === 0) {
-      newErrors.files = "At least one image is required";
-    }
+    // Image validation removed to make upload optional
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -454,7 +451,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                 {/* Images */}
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-gray-700">
-                    Images <span className="text-red-500">*</span>
+                    Images
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {existingImages.map((img) => (
@@ -610,7 +607,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Half Price *
+                      Half Price
                     </label>
                     <div className="relative">
                       <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -721,11 +718,11 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     <input
                       type="checkbox"
                       name="isVegetarian"
-                      checked={formData.isVegetarian}
-                      onChange={handleInputChange}
+                      checked={!formData.isVegetarian}
+                      onChange={(e) => handleInputChange({ target: { name: 'isVegetarian', type: 'checkbox', checked: !e.target.checked } })}
                       className="rounded"
                     />
-                    <span className="ml-2 text-sm">Vegetarian</span>
+                    <span className="ml-2 text-sm">Non-Vegetarian</span>
                   </label>
                   <label className="flex items-center">
                     <input
