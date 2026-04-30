@@ -98,6 +98,13 @@ export const useDataManager = ({ id = null }) => {
     const signal = controller.signal;
 
     async function fetchData() {
+      // If 'favourite' is selected, we don't fetch from API
+      if (selectedCategory === "favourite") {
+        setLoading(false);
+        setHasMore(false);
+        return;
+      }
+
       // Check cache first for page 1 on filter change
       if (page === 1 && apiCache[cacheKey]) {
         const cached = apiCache[cacheKey];
@@ -199,6 +206,13 @@ export const useDataManager = ({ id = null }) => {
 
   // Reset page and items when filters change
   useEffect(() => {
+    if (selectedCategory === "favourite") {
+      setPage(1);
+      setHasMore(false);
+      setLoading(false);
+      return;
+    }
+
     setPage(1);
     // don't setHasMore(true) here; let the first result from page 1 decide it.
     // If not in cache, clear items immediately so UI shows loading instead of "No items"
@@ -225,11 +239,30 @@ export const useDataManager = ({ id = null }) => {
     }
   };
 
+  const filteredCategories = useMemo(() => {
+    if (dietaryFilter === "all") return categories;
+    return categories.filter(
+      (cat) =>
+        cat.id === "all" || cat.id === "favourite" || cat.type === dietaryFilter
+    );
+  }, [categories, dietaryFilter]);
+
+  // Reset selectedCategory if it's not in the filtered list
+  useEffect(() => {
+    if (selectedCategory === "all" || selectedCategory === "favourite") return;
+    const isAvailable = filteredCategories.some(
+      (cat) => cat.name === selectedCategory
+    );
+    if (!isAvailable && filteredCategories.length > 0) {
+      setSelectedCategory("all");
+    }
+  }, [filteredCategories, selectedCategory]);
+
   // ──────────── 3. RETURN EVERYTHING YOU’LL NEED IN YOUR COMPONENT ────────────
   return {
     // Raw data + category list
     items,
-    categories, // ["all", "beverage", "main_course", …]
+    categories: filteredCategories, // Use filtered categories
     loading,
     isFetchingMore,
     hasMore,
