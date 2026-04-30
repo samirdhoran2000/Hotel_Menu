@@ -141,22 +141,32 @@ export const useDataManager = ({ id = null }) => {
           const fetchedItems = menuJson?.data?.menuItems || [];
           const pagination = menuJson?.data?.pagination || {};
 
-          const newItems = page === 1 ? fetchedItems : [...items, ...fetchedItems];
-          
-          setItems(newItems);
           const nextHasMore = pagination.hasNextPage || false;
           setHasMore(nextHasMore);
 
-          // Update Cache
-          apiCache[cacheKey] = {
-            items: newItems,
-            hasMore: nextHasMore,
-            lastPage: page,
-            hotelDetails: page === 1 ? {
-              name: menuJson.data.hotelName || "Hotel Menu",
-              tableNumber: menuJson.data.tableNumber || ""
-            } : apiCache[cacheKey]?.hotelDetails
-          };
+          // Update items using functional update and deduplicate by ID to prevent double items
+          setItems((prevItems) => {
+            const baseItems = page === 1 ? [] : prevItems;
+            const combined = [...baseItems, ...fetchedItems];
+            
+            // Deduplicate
+            const uniqueItems = combined.filter((item, index, self) => 
+              index === self.findIndex((t) => t.id === item.id)
+            );
+            
+            // Update Cache synchronously here so it captures the deduplicated items
+            apiCache[cacheKey] = {
+              items: uniqueItems,
+              hasMore: nextHasMore,
+              lastPage: page,
+              hotelDetails: page === 1 ? {
+                name: menuJson.data.hotelName || "Hotel Menu",
+                tableNumber: menuJson.data.tableNumber || ""
+              } : apiCache[cacheKey]?.hotelDetails
+            };
+
+            return uniqueItems;
+          });
 
           // --- Image Preloading Logic ---
           // Preload images for the newly fetched items to save bandwidth on scroll

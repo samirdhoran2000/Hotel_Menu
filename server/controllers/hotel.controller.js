@@ -341,7 +341,10 @@ export const getMenuItemsbyHotel = async (req, res) => {
       where: whereClause,
       limit: pageSize,
       offset,
-      order: [[sortBy, finalSortOrder]],
+      order: [
+        [sortBy, finalSortOrder],
+        ["id", "ASC"] // Secondary sort to guarantee deterministic order
+      ],
       include: [
         { model: Category, as: "category" },
         { model: File, as: "files" }
