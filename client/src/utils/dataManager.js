@@ -75,8 +75,12 @@ export const useDataManager = ({ id = null }) => {
         });
         const catJson = await catRes.json();
         if (catJson?.success && catJson?.data) {
-          const officialCats = catJson.data.map(c => c.name) || [];
-          setCategories(["all", "favourite", ...officialCats]);
+          const officialCats = catJson.data || [];
+          setCategories([
+            { id: "all", name: "all" },
+            { id: "favourite", name: "favourite" },
+            ...officialCats,
+          ]);
         }
       } catch (err) {
         if (err.name !== "AbortError") console.error("Error fetching categories:", err);

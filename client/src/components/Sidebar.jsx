@@ -35,30 +35,41 @@ const Sidebar = ({ isOpen, onClose, categories = [], selectedCategory, setSelect
           </div>
 
           <nav className="flex-1 overflow-y-auto overflow-x-hidden space-y-1 pr-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => handleCategoryClick(category)}
-                className={`w-full text-left px-3 py-2.5 rounded-xl transition-all duration-200 ${
-                  selectedCategory === category
-                    ? "bg-black text-white shadow-md transform scale-[1.02]"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2 overflow-hidden">
-                  <span className="font-medium text-sm truncate uppercase tracking-wide">
-                    {category === "all"
-                      ? "All Items"
-                      : category === "favourite"
-                      ? "❤️ Favourite"
-                      : category.replace("_", " ")}
-                  </span>
-                  {selectedCategory === category && (
-                    <div className="min-w-[8px] h-2 bg-white rounded-full animate-pulse flex-shrink-0" />
-                  )}
-                </div>
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const catName = typeof cat === 'string' ? cat : cat.name;
+              const catId = typeof cat === 'string' ? cat : cat.id;
+              const catType = typeof cat === 'object' ? cat.type : null;
+              
+              return (
+                <button
+                  key={catId}
+                  onClick={() => handleCategoryClick(catName)}
+                  className={`w-full text-left px-3 py-2.5 rounded-xl transition-all duration-200 ${
+                    selectedCategory === catName
+                      ? "bg-black text-white shadow-md transform scale-[1.02]"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2 overflow-hidden">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <span className="font-medium text-sm truncate uppercase tracking-wide">
+                        {catName === "all"
+                          ? "All Items"
+                          : catName === "favourite"
+                          ? "❤️ Favourite"
+                          : catName.replace("_", " ")}
+                      </span>
+                      {catType && (
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${catType === 'veg' ? 'bg-green-500' : 'bg-red-500'}`} />
+                      )}
+                    </div>
+                    {selectedCategory === catName && (
+                      <div className="min-w-[8px] h-2 bg-white rounded-full animate-pulse flex-shrink-0" />
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </nav>
 
           <div className="mt-auto pt-6 border-t border-gray-100">

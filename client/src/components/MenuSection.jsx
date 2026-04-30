@@ -174,29 +174,39 @@ const MenuSection = ({ dataManager }) => {
             onScroll={checkScroll}
             className="flex overflow-x-auto overflow-y-hidden no-scrollbar justify-start sm:justify-start lg:justify-center gap-1.5 overscroll-contain px-2 py-1.5 scroll-smooth"
           >
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => handleCategoryChange(category)}
-                className={`
-                  whitespace-nowrap px-4 py-1.5 rounded-full transition-all duration-300 text-xs font-medium
-                  ${
-                    selectedCategory === category
-                      ? "bg-black text-white shadow-md transform scale-[1.02]"
-                      : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                  }
-                `}
-              >
-                {category === "all"
-                  ? "All"
-                  : category === "favourite"
-                    ? "❤️ Favourite"
-                    : category
-                        .replace("_", " ")
-                        .toUpperCase()
-                        .replace("MAIN COURCE", "MAIN COURSE")}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const catName = typeof cat === 'string' ? cat : cat.name;
+              const catId = typeof cat === 'string' ? cat : cat.id;
+              const catType = typeof cat === 'object' ? cat.type : null;
+              
+              return (
+                <button
+                  key={catId}
+                  onClick={() => handleCategoryChange(catName)}
+                  className={`
+                    relative whitespace-nowrap px-4 py-1.5 rounded-full transition-all duration-300 text-xs font-medium flex items-center gap-2
+                    ${
+                      selectedCategory === catName
+                        ? "bg-black text-white shadow-md transform scale-[1.02]"
+                        : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                    }
+                  `}
+                >
+                  {catName === "all"
+                    ? "All"
+                    : catName === "favourite"
+                      ? "❤️ Favourite"
+                      : catName
+                          .replace("_", " ")
+                          .toUpperCase()
+                          .replace("MAIN COURCE", "MAIN COURSE")}
+                  
+                  {catType && (
+                    <span className={`w-1.5 h-1.5 rounded-full ${catType === 'veg' ? 'bg-green-500' : 'bg-red-500'}`} />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* Right Arrow */}

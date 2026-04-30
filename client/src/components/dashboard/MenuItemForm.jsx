@@ -46,6 +46,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
   // --- Quick Add Category States ---
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryType, setNewCategoryType] = useState("veg");
   const [isSavingCategory, setIsSavingCategory] = useState(false);
   const [categoryError, setCategoryError] = useState("");
 
@@ -161,10 +162,22 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
+
+      // Auto-set isVegetarian if category changes
+      if (name === "categoryId" && value) {
+        const selectedCat = categories.find((c) => c.id === parseInt(value));
+        if (selectedCat) {
+          newData.isVegetarian = selectedCat.type === "veg";
+        }
+      }
+
+      return newData;
+    });
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
@@ -361,7 +374,10 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name: newCategoryName.trim() }),
+        body: JSON.stringify({ 
+          name: newCategoryName.trim(),
+          type: newCategoryType 
+        }),
       });
 
       const data = await res.json();
@@ -372,6 +388,7 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
         setFormData((prev) => ({ ...prev, categoryId: data.data.id }));
         // Reset states
         setNewCategoryName("");
+        setNewCategoryType("veg");
         setIsAddingCategory(false);
       } else {
         setCategoryError(data.message || "Failed to add category");
@@ -538,40 +555,66 @@ const MenuItemForm = ({ itemId, onClose, onSuccess }) => {
                     </label>
                     <div className="flex items-center gap-2">
                       {isAddingCategory ? (
-                        <div className="flex-1 flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={newCategoryName}
-                            onChange={(e) => setNewCategoryName(e.target.value)}
-                            placeholder="New category name"
-                            className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${categoryError ? 'border-red-500' : 'border-gray-300'}`}
-                            autoFocus
-                          />
-                          <button
-                            type="button"
-                            onClick={handleQuickAddCategory}
-                            disabled={isSavingCategory}
-                            className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
-                            title="Save Category"
-                          >
-                            {isSavingCategory ? (
-                              <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : (
-                              <Check className="w-5 h-5" />
-                            )}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setIsAddingCategory(false);
-                              setCategoryError("");
-                            }}
-                            className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
-                            title="Cancel"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
+                          <div className="flex flex-col gap-2 flex-1">
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                placeholder="New category name"
+                                className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${categoryError ? "border-red-500" : "border-gray-300"}`}
+                                autoFocus
+                              />
+                              <button
+                                type="button"
+                                onClick={handleQuickAddCategory}
+                                disabled={isSavingCategory}
+                                className="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                                title="Save Category"
+                              >
+                                {isSavingCategory ? (
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                  <Check className="w-5 h-5" />
+                                )}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setIsAddingCategory(false);
+                                  setCategoryError("");
+                                }}
+                                className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
+                                title="Cancel"
+                              >
+                                <X className="w-5 h-5" />
+                              </button>
+                            </div>
+                            <div className="flex gap-4 px-1">
+                              <label className="flex items-center gap-1.5 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="newCategoryType"
+                                  value="veg"
+                                  checked={newCategoryType === "veg"}
+                                  onChange={(e) => setNewCategoryType(e.target.value)}
+                                  className="w-3.5 h-3.5 text-blue-600"
+                                />
+                                <span className="text-xs text-gray-600 font-medium">Veg</span>
+                              </label>
+                              <label className="flex items-center gap-1.5 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="newCategoryType"
+                                  value="non-veg"
+                                  checked={newCategoryType === "non-veg"}
+                                  onChange={(e) => setNewCategoryType(e.target.value)}
+                                  className="w-3.5 h-3.5 text-blue-600"
+                                />
+                                <span className="text-xs text-gray-600 font-medium">Non-Veg</span>
+                              </label>
+                            </div>
+                          </div>
                       ) : (
                         <>
                           <select

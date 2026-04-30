@@ -25,6 +25,14 @@ const Category = sequelize.define(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
+    type: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      defaultValue: "veg",
+      validate: {
+        isIn: [["veg", "non-veg"]],
+      },
+    },
   },
   {
     tableName: "categories",

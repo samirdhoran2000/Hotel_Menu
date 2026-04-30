@@ -8,6 +8,7 @@ const CategoryManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [categoryName, setCategoryName] = useState("");
+  const [categoryType, setCategoryType] = useState("veg");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -39,6 +40,7 @@ const CategoryManager = () => {
   const handleOpenModal = (category = null) => {
     setCurrentCategory(category);
     setCategoryName(category ? category.name : "");
+    setCategoryType(category ? (category.type || "veg") : "veg");
     setError(null);
     setIsModalOpen(true);
   };
@@ -47,6 +49,7 @@ const CategoryManager = () => {
     setIsModalOpen(false);
     setCurrentCategory(null);
     setCategoryName("");
+    setCategoryType("veg");
     setError(null);
   };
 
@@ -72,7 +75,10 @@ const CategoryManager = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name: categoryName.trim() }),
+        body: JSON.stringify({ 
+          name: categoryName.trim(),
+          type: categoryType 
+        }),
       });
       
       const data = await res.json();
@@ -158,6 +164,7 @@ const CategoryManager = () => {
               <thead>
                 <tr className="bg-gray-50 text-gray-600 uppercase text-xs font-semibold tracking-wider">
                   <th className="px-6 py-4">Name</th>
+                  <th className="px-6 py-4">Type</th>
                   <th className="px-6 py-4">Created At</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
@@ -166,6 +173,15 @@ const CategoryManager = () => {
                 {filteredCategories.map((category) => (
                   <tr key={category.id} className="hover:bg-gray-50 transition">
                     <td className="px-6 py-4 font-medium text-gray-900">{category.name}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        category.type === 'non-veg' 
+                          ? 'bg-red-100 text-red-700 border border-red-200' 
+                          : 'bg-green-100 text-green-700 border border-green-200'
+                      }`}>
+                        {category.type === 'non-veg' ? 'Non-Veg' : 'Veg'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-gray-500">{new Date(category.created_at || category.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
@@ -221,6 +237,42 @@ const CategoryManager = () => {
                   placeholder="e.g. Starters, Main Course, Drinks"
                   autoFocus
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category Type</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      type="radio"
+                      name="categoryType"
+                      value="veg"
+                      checked={categoryType === "veg"}
+                      onChange={(e) => setCategoryType(e.target.value)}
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className={`px-3 py-1 rounded-lg text-sm transition ${
+                      categoryType === "veg" 
+                        ? "bg-green-100 text-green-700 border border-green-200 font-medium" 
+                        : "bg-gray-50 text-gray-600 border border-gray-200"
+                    }`}>Veg</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      type="radio"
+                      name="categoryType"
+                      value="non-veg"
+                      checked={categoryType === "non-veg"}
+                      onChange={(e) => setCategoryType(e.target.value)}
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className={`px-3 py-1 rounded-lg text-sm transition ${
+                      categoryType === "non-veg" 
+                        ? "bg-red-100 text-red-700 border border-red-200 font-medium" 
+                        : "bg-gray-50 text-gray-600 border border-gray-200"
+                    }`}>Non-Veg</span>
+                  </label>
+                </div>
               </div>
               
               <div className="flex justify-end gap-3 pt-4">

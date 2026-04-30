@@ -5,7 +5,7 @@ import { decodeCode } from "../utils/codeDecode.utils.js";
 
 export const createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, type } = req.body;
     const hotelId = req.user.id;
 
     if (!name) {
@@ -18,6 +18,7 @@ export const createCategory = async (req, res) => {
     const category = await Category.create({
       name,
       hotelId,
+      type: type || "veg",
     });
 
     res.status(201).json({
@@ -60,7 +61,7 @@ export const getCategories = async (req, res) => {
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name, type } = req.body;
     const hotelId = req.user.id;
 
     const category = await Category.findOne({ where: { id, hotelId } });
@@ -71,7 +72,7 @@ export const updateCategory = async (req, res) => {
       });
     }
 
-    await category.update({ name });
+    await category.update({ name, type });
 
     res.status(200).json({
       success: true,
